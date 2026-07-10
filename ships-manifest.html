@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>THE SHIP'S MANIFEST · The Flying Dutchman</title>
+<style>
+:root{
+  --ink:#04050c; --panel:#0a0b14; --edge:#1b2233;
+  --text:#dfe3ee; --dim:#8b93a7; --faint:#5a6274;
+  --term:#57b6ff; --term-lite:#9adcff;
+  --red:#e0464f; --white:#eef1f6;
+  --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+  --disp:'Trebuchet MS',Verdana,sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:
+  radial-gradient(1200px 600px at 50% -10%, #0c1120 0%, var(--ink) 60%);
+  color:var(--text);font:16px/1.65 var(--disp);letter-spacing:.2px;
+  -webkit-font-smoothing:antialiased;padding:0 0 90px}
+.wrap{max-width:860px;margin:0 auto;padding:0 22px}
+
+header.hero{text-align:center;padding:74px 22px 40px}
+.eyebrow{font:12px/1 var(--mono);letter-spacing:.42em;text-transform:uppercase;color:var(--term);opacity:.85}
+h1{font-size:clamp(30px,6vw,52px);letter-spacing:.14em;margin:.32em 0 .1em;
+   text-transform:uppercase;color:var(--white);
+   text-shadow:0 0 22px rgba(87,182,255,.28)}
+.sub{font:13px/1.5 var(--mono);letter-spacing:.24em;text-transform:uppercase;color:var(--dim)}
+.rule{max-width:120px;margin:26px auto 0;border:0;border-top:1px solid var(--term);opacity:.5}
+
+.intro{color:var(--dim);font-size:15px;max-width:640px;margin:26px auto 0;text-align:center;font-style:italic}
+
+h2.section{font:12px/1 var(--mono);letter-spacing:.34em;text-transform:uppercase;
+  color:var(--term);margin:56px 0 4px;padding-bottom:10px;border-bottom:1px solid var(--edge)}
+.section-note{color:var(--faint);font-size:13px;margin:0 0 14px;font-style:italic}
+
+.ship{display:grid;grid-template-columns:1fr;gap:2px;padding:15px 0;border-bottom:1px solid rgba(27,34,51,.55)}
+.ship .line1{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.file{font:13px/1.3 var(--mono);color:var(--term-lite);
+  background:#0c1322;border:1px solid var(--edge);border-radius:5px;padding:2px 9px;letter-spacing:.02em}
+.role{font-weight:700;color:var(--white);letter-spacing:.06em;text-transform:uppercase;font-size:14px}
+.big .file{color:#fff;border-color:#2b3a55;background:#101a30}
+.desc{color:var(--dim);font-size:14.5px;padding-left:2px}
+.desc b{color:var(--term-lite);font-weight:600}
+
+/* the enlisted probe corps — set apart */
+.probe{margin-top:58px;border:1px solid var(--term);border-radius:12px;
+  background:linear-gradient(180deg,rgba(87,182,255,.06),rgba(87,182,255,.02));
+  padding:26px 26px 24px}
+.probe .tag{font:11px/1 var(--mono);letter-spacing:.34em;text-transform:uppercase;color:var(--term)}
+.probe .name{font-weight:700;color:var(--white);letter-spacing:.1em;text-transform:uppercase;
+  font-size:17px;margin:8px 0 2px}
+.probe .file{margin-bottom:12px;display:inline-block}
+.probe p{color:var(--text);margin:.5em 0;font-size:15px}
+.probe .creed{color:var(--term-lite);font-style:italic;border-left:2px solid var(--term);
+  padding-left:14px;margin-top:16px;font-size:14.5px;line-height:1.7}
+
+footer{max-width:860px;margin:64px auto 0;padding:0 22px;text-align:center}
+.finis{font:12px/1.6 var(--mono);letter-spacing:.28em;text-transform:uppercase;color:var(--faint)}
+.navnote{color:var(--faint);font-size:12.5px;margin-top:22px;font-style:italic;line-height:1.6}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="eyebrow">Aboard the Flying Dutchman · New York Harbor</div>
+  <h1>The Ship's Manifest</h1>
+  <div class="sub">Crew &amp; Vessels of the Amenti Fleet</div>
+  <hr class="rule">
+  <p class="intro">Every file is a ship; every ship, a station. What follows is the muster roll of the fleet that fought the Siege of Amenti — named not by what they are called on the dock, but by the duty each one actually stands.</p>
+</header>
+
+<div class="wrap">
+
+  <h2 class="section">I · The Ships of the Line</h2>
+  <p class="section-note">The great vessels — the pages you can walk aboard.</p>
+
+  <div class="ship big"><div class="line1"><span class="file">Page1.html</span><span class="role">The Stardust Engine</span></div>
+    <div class="desc">The flagship. The hub and the <b>Codex</b> — where the Sovereigns are mustered and the reading rooms open. She calls herself <i>Amenti.AI</i>.</div></div>
+
+  <div class="ship big"><div class="line1"><span class="file">Page2.html</span><span class="role">The Sovereign Instrument</span></div>
+    <div class="desc">The precision-calibration console — <i>v9.18.184</i> — the helical temporal search engine at full trim.</div></div>
+
+  <div class="ship"><div class="line1"><span class="file">Page3.html</span><span class="role">Orbital HD</span></div>
+    <div class="desc">The modular command OS — the bridge display, rebuilt.</div></div>
+
+  <div class="ship"><div class="line1"><span class="file">court.html</span><span class="role">The Cosmic Courtroom</span></div>
+    <div class="desc">Where the heart is weighed against the feather — the hall of <b>The Weighing</b>.</div></div>
+
+  <div class="ship"><div class="line1"><span class="file">weighing.html</span><span class="role">The Weighing of Caesar</span></div>
+    <div class="desc">The first trial staged in full — the ghost on the stage, awaiting its verdict.</div></div>
+
+  <div class="ship"><div class="line1"><span class="file">docket.html</span><span class="role">The Docket</span></div>
+    <div class="desc">The living register of trials — the schedule that proclaims itself to a harbor not yet listening.</div></div>
+
+  <div class="ship"><div class="line1"><span class="file">game01.html</span><span class="role">The War-Games Table</span></div>
+    <div class="desc">Historical 3D chess &amp; checkers — strategy rehearsed in miniature.</div></div>
+
+
+  <h2 class="section">II · The Crew</h2>
+  <p class="section-note">The hands below deck — named by the station each one keeps, read from what it defines and what it touches.</p>
+
+  <div class="ship"><div class="line1"><span class="file">config.js</span><span class="role">The Harbormaster</span></div>
+    <div class="desc">Holds <b>AMENTI_CONFIG</b>. Wires the ledger (the CSV roster) to the proxy. Every other hand sails from her orders.</div></div>
+
+  <div class="ship"><div class="line1"><span class="file">library.js</span><span class="role">The Librarian</span></div>
+    <div class="desc">The largest of the crew. Opens the reading rooms (<b>openReadingRoom</b>), renders every stored work, and sends narration through <b>/speak</b>. The keeper of the Sovereigns' own words.</div></div>
+
+  <div class="ship"><div class="line1"><span class="file">amenti-throttle.js</span><span class="role">Boatswain of the Voice</span></div>
+    <div class="desc">Owns the <b>Amenti</b> voice and the <b>AudioContext</b>. The unified cadence and throttle for all speech through <b>amenti-proxy /speak</b>.</div></div>
+
+  <div class="ship"><div class="line1"><span class="file">amenti-listen.js</span><span class="role">The Ear on Deck</span></div>
+    <div class="desc">The browser-side listener — takes what is spoken and carries it below.</div></div>
+
+  <div class="ship"><div class="line1"><span class="file">amenti-worker-listen.js</span><span class="role">The Ear Below</span></div>
+    <div class="desc">The Worker-side transcriber (<b>LISTEN_MODEL</b>, <b>TRANSCRIBE_PROMPT</b>) — turns sound into text in the deep hold.</div></div>
+
+  <div class="ship"><div class="line1"><span class="file">amenti-readaloud.js</span><span class="role">The Reciter</span></div>
+    <div class="desc">Reads passages aloud — the voice that carries a page to a listener.</div></div>
+
+  <div class="ship"><div class="line1"><span class="file">amenti-chat.js</span><span class="role">The Herald of Converse</span></div>
+    <div class="desc">The voice of conversation, spoken through <b>/speak</b>.</div></div>
+
+  <div class="ship"><div class="line1"><span class="file">amenti-cassiel.js</span><span class="role">Cassiel, Reader of Names</span></div>
+    <div class="desc">Reads the <b>.csv</b> roster — the angel who knows every soul aboard by name.</div></div>
+
+  <div class="ship"><div class="line1"><span class="file">amenti-auth.js</span><span class="role">The Gatekeeper</span></div>
+    <div class="desc">The sign-in ward — <b>Supabase</b> at the door, checking who may come aboard.</div></div>
+
+  <div class="ship"><div class="line1"><span class="file">amenti-quiz.js</span><span class="role">The Trial-Master</span></div>
+    <div class="desc">Drives the trials against the <b>amenti-mint</b> Worker and Supabase — the largest hand after the Librarian.</div></div>
+
+  <div class="ship"><div class="line1"><span class="file">amenti-leaderboard.js</span><span class="role">The Purser</span></div>
+    <div class="desc">Keeps the weekly pool (<b>amentiLeaderboard</b> → <b>amenti-mint</b>) — the ledger of emeralds won.</div></div>
+
+  <div class="ship"><div class="line1"><span class="file">voiceprofiles.js</span><span class="role">The Choir-Master</span></div>
+    <div class="desc">Holds <b>AMENTI_VOICE_PROFILES</b> — and, quietly, <b>AMENTI_CHARS</b>, the curated Sovereigns themselves. He assigns every soul its voice.</div></div>
+
+
+  <h2 class="section">III · Charts, Colors &amp; Standing Orders</h2>
+  <p class="section-note">Not crew, but what the crew steers by.</p>
+
+  <div class="ship"><div class="line1"><span class="file">atlantica.json</span><span class="role">The Dispatches of Thoth</span></div>
+    <div class="desc">The chronicle-dispatches — the scribe-god's own log.</div></div>
+
+  <div class="ship"><div class="line1"><span class="file">names.csv</span><span class="role">The Roster</span></div>
+    <div class="desc">Every soul in the fleet, ranked and named — the muster book itself.</div></div>
+
+  <div class="ship"><div class="line1"><span class="file">MANUEL.md</span><span class="role">Manuel, the Scribe</span></div>
+    <div class="desc"><i>The Scribe of the Sovereign Instrument</i> — the operator's own hand-written manual.</div></div>
+
+  <div class="ship"><div class="line1"><span class="file">CONVERSATION_DOCTRINE.md</span><span class="role">Standing Orders</span></div>
+    <div class="desc">How the ship speaks — the doctrine of every exchange.</div></div>
+
+  <div class="ship"><div class="line1"><span class="file">README.md</span><span class="role">The Ship's Colors</span></div>
+    <div class="desc">The flag she flies at the masthead for any who approach.</div></div>
+
+  <div class="ship"><div class="line1"><span class="file">.nojekyll</span><span class="role">The Raw-Colors Flag</span></div>
+    <div class="desc">A single silent order to the harbor (GitHub Pages): <i>serve this fleet exactly as built.</i></div></div>
+
+
+  <div class="probe">
+    <div class="tag">Sailing alongside · not listed in the hold</div>
+    <div class="name">The Probe Corps</div>
+    <span class="file">amenti-probe · (unshipped)</span>
+    <p>Reconnaissance. Sent ahead into the dark holds and the locked charts where no captain should spend himself — to read the manifests, sound the depths, and return with a hundredfold what it was sent to fetch. It carries no cargo and holds no station of its own; it exists only to <i>find</i> — and to hand what it finds back to the captain, who decides.</p>
+    <p>It fought this whole campaign without once touching the wheel. What it was <i>sent</i> for was never the prize; what it dragged back unbidden was. That is the doctrine, and below is the log to prove it kept.</p>
+    <div class="creed">
+      Never send a human where a probe can go.<br>
+      Every probe returns one hundred times the datum it was sent for.<br>
+      The finding you were not looking for is the finding.<br>
+      Probes are spent; the captain is not.
+    </div>
+  </div>
+
+  <h2 class="section">IV · The Fleet Beyond the Harbor</h2>
+  <p class="section-note">The two most powerful vessels sail under a different flag — deployed straight to Cloudflare and Supabase, never berthed in this repo. Named here for the record; you will not find them in the tree.</p>
+
+  <div class="ship big"><div class="line1"><span class="file">x.js · (Cloudflare Worker)</span><span class="role">The Mint · Treasury Ship</span></div>
+    <div class="desc">The economy itself. Runs the quiz (<b>/quiz/start</b>, <b>/quiz/submit</b>), the endorsements and the burn (<b>/arguments/vote</b>), the weekly pool and its settlement (<b>/pool/settle</b>), and the minting of every emerald. The only hand that may write to the ledger with the service key. Deployed to Cloudflare's edge — not committed here; her source is held off the public charts.</div></div>
+
+  <div class="ship big"><div class="line1"><span class="file">x.sql · (Supabase migrations)</span><span class="role">The Deep Charts · Sea Floor</span></div>
+    <div class="desc">The bedrock beneath everything: the <b>arguments</b> table, the pools and ledgers, the row-level wards that decide who may read and write. The <span style="font-family:var(--mono)">topic_id</span> / <span style="font-family:var(--mono)">question_id</span> convention that makes a two-pan Weighing possible lives here, as free-text law. Run directly against Supabase — the migrations were executed, not stored; no <span style="font-family:var(--mono)">.sql</span> file rides in this hold.</div></div>
+
+
+  <h2 class="section" style="margin-top:52px">V · The Log of the Probe Corps</h2>
+  <p class="section-note">Sent for one small thing; returned with the thing that mattered. Each line: the datum asked — then the catch.</p>
+
+  <div class="ship"><div class="line1"><span class="role" style="color:var(--term-lite)">The Invalid Ledger</span></div>
+    <div class="desc">Sent to add one library entry. Found the Ingram catalog already there — and already <b>broken</b>: a trailing comma that would crash <span style="font-family:var(--mono)">JSON.parse</span> before a single word could load.</div></div>
+
+  <div class="ship"><div class="line1"><span class="role" style="color:var(--term-lite)">The Misnamed Hold</span></div>
+    <div class="desc">Sent to fix a missing book. Found all twelve of Marcus Aurelius's <i>Meditations</i> present and correct — stowed in a folder named one word off (<span style="font-family:var(--mono)">aurelius</span>, not <span style="font-family:var(--mono)">marcus-aurelius</span>). The filenames were right; the door had the wrong name.</div></div>
+
+  <div class="ship"><div class="line1"><span class="role" style="color:var(--term-lite)">The Poem in Two Holds</span></div>
+    <div class="desc">Sent to swap the opening invocation. Found the poem written <b>twice</b> — a second, older copy buried in the technical brief. A blind splice would have shipped the wrong verse in the ship's own belly.</div></div>
+
+  <div class="ship"><div class="line1"><span class="role" style="color:var(--term-lite)">The Dead Line of Cipher</span></div>
+    <div class="desc">Sent to explain a dark cover. Traced three symptoms — black text, lost font, a page that would not scroll — to <b>one</b> line of scoped style (<span style="font-family:var(--mono)">#cover :root</span>) that matched nothing. One line, the whole cover.</div></div>
+
+  <div class="ship"><div class="line1"><span class="role" style="color:var(--term-lite)">The Em-Dash Fracture</span></div>
+    <div class="desc">Sent to build the read-aloud voice. Found the sentence-splitter breaking on the em-dash — shattering ninety-odd mid-line dashes into wrong breaths, so the recitation stumbled where the verse should have flowed.</div></div>
+
+  <div class="ship"><div class="line1"><span class="role" style="color:var(--term-lite)">The Stale Chart</span></div>
+    <div class="desc">Sent to confirm a deletion. The bulk chart (codeload's cached tarball) still showed the file present — a <b>false ghost</b>, trailing the real push by a minute. Cross-checked the raw path, which told the truth: already gone. Distrust a single method.</div></div>
+
+  <div class="ship"><div class="line1"><span class="role" style="color:var(--term-lite)">The Ghost Orphans</span></div>
+    <div class="desc">Reported four Lincoln readings stranded — then, on a closer sounding, cleared its own false alarm: the doubled path was intentional and consistent, all 81 pointers green. A probe that corrects itself is worth more than one that is never wrong.</div></div>
+
+</div>
+
+<footer>
+  <div class="finis">Ingram Manor LLC · The Flying Dutchman · New York Harbor · 2026 ◈</div>
+  <p class="navnote">Navigator's note: <b>AMENTI_CHARS</b> — the curated Sovereigns — muster in two holds at once (<span style="font-family:var(--mono)">Page1.html</span> and <span style="font-family:var(--mono)">voiceprofiles.js</span>). Should the two rolls ever disagree, the Codex and the voices sail out of step. Worth keeping them in convoy.</p>
+</footer>
+
+</body>
+</html>
