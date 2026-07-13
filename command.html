@@ -1,0 +1,893 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fleet Command · base</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  html,body{margin:0;height:100%;background:#04060e;overflow:hidden}
+  #hud{position:fixed;top:12px;left:14px;z-index:10;color:#9adcff;
+    font:11px/1.5 ui-monospace,monospace;letter-spacing:.12em;text-transform:uppercase;
+    text-shadow:0 0 8px #000}
+  #hud b{color:#fff}
+</style>
+<!-- import map: three.js modules (loads in a real browser; CORS-blocked in Claude's sandbox) -->
+<script src="fleet-manifest.js"></script>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+<style>
+.fleet-nav{position:sticky;top:0;z-index:900;display:flex;flex-wrap:wrap;gap:2px;padding:0 20px;
+  background:rgba(4,6,14,.94);backdrop-filter:blur(8px);border-bottom:1px solid #1a2440;margin-bottom:8px}
+.fleet-nav a{font-family:ui-monospace,monospace;font-size:12px;letter-spacing:.18em;color:#8b95ad;
+  text-decoration:none;padding:15px 15px 13px;border-bottom:2px solid transparent;transition:.2s;white-space:nowrap}
+.fleet-nav a:hover{color:#f5d76e;background:rgba(230,180,80,.06)}
+.fleet-nav a.on{color:#57b6ff;border-bottom-color:#57b6ff}
+@media(max-width:640px){.fleet-nav a{font-size:11px;padding:12px 9px;letter-spacing:.08em}}
+</style>
+</head>
+<body>
+<nav class="fleet-nav">
+  <a href="index.html">HARBOR</a>
+  <a href="ships-manifest.html">MANIFEST</a>
+  <a href="engine-room.html">ENGINE ROOM</a>
+  <a href="command.html" class="on">COMMAND VIEW</a>
+  <a href="ocean.html">OCEAN VIEW</a>
+</nav>
+
+<div id="hud"><b>Fleet Command</b> · hover any vessel, file, service, or watch</div>
+<div id="hovercard"></div>
+<style>
+  #hovercard{
+    position:fixed; z-index:50; pointer-events:none; opacity:0;
+    max-width:320px; padding:14px 16px;
+    background:rgba(8,14,26,0.94); border:1px solid rgba(90,150,220,0.5);
+    border-radius:10px; box-shadow:0 8px 30px rgba(0,0,0,0.6);
+    color:#dce8f5; font:12px/1.5 ui-monospace,monospace;
+    transition:opacity .12s; backdrop-filter:blur(4px);
+  }
+  #hovercard.on{opacity:1;}
+  #hovercard .hc-name{font-size:15px;font-weight:700;letter-spacing:.03em;margin-bottom:2px;}
+  #hovercard .hc-type{font-size:10px;text-transform:uppercase;letter-spacing:.15em;opacity:.6;margin-bottom:8px;}
+  #hovercard .hc-role{color:#e8eef7;margin-bottom:8px;}
+  #hovercard .hc-row{display:flex;gap:8px;margin:3px 0;}
+  #hovercard .hc-k{opacity:.55;min-width:64px;}
+  #hovercard .hc-v{color:#9adcff;word-break:break-all;}
+  #hovercard .hc-status{margin-top:8px;padding-top:8px;border-top:1px solid rgba(90,150,220,0.2);}
+  #hovercard .hc-ok{color:#57ff9a;} #hovercard .hc-pend{color:#ffcf6a;}
+  #hovercard ul{margin:4px 0 0;padding-left:16px;} #hovercard li{opacity:.8;}
+</style>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { Reflector } from 'three/addons/objects/Reflector.js';
+
+// ---- SCENE (V13's dark slate 'Naval' background) ----
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x1c2230);
+// depth fog so the void feels deep, not flat — far things dissolve to the bg color
+scene.fog = new THREE.FogExp2(0x0a0e18, 0.0032);
+
+// ---- CAMERA (V13 recipe: 45° fov, big far plane, log depth) ----
+const camera = new THREE.PerspectiveCamera(45, innerWidth/innerHeight, 0.1, 4000);
+camera.position.set(0, 30, 52);          // closer default so the fleet fills the frame
+
+const renderer = new THREE.WebGLRenderer({ antialias:true, logarithmicDepthBuffer:true });
+renderer.setSize(innerWidth, innerHeight);
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+document.body.appendChild(renderer.domElement);
+
+// ---- CONTROLS (V13 recipe: free orbit, permissive polar) ----
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.target.set(0, 0, 0);
+controls.enableDamping = true;
+controls.dampingFactor = 0.06;
+controls.minPolarAngle = 25 * Math.PI/180;
+controls.maxPolarAngle = Math.PI/2 - 0.05;
+controls.minDistance = 8;
+controls.maxDistance = 160;
+
+// ---- LIGHTS (soft, from V13's rig) ----
+scene.add(new THREE.AmbientLight(0xffffff, 0.22));
+const hemi = new THREE.HemisphereLight(0xbcd4ff, 0x101820, 0.35);
+scene.add(hemi);
+const key = new THREE.SpotLight(0xffffff, 3.0, 0, Math.PI/5, 0.4, 1.2);
+key.position.set(0, 120, 40);
+key.target.position.set(0,0,0);
+key.castShadow = true;
+scene.add(key); scene.add(key.target);
+
+// ---- THE REFLECTOR (V13's keeper — reflective water in the void) ----
+const reflW = 160, reflL = 160;          // generous square plane to fill the frame
+const reflGeo = new THREE.PlaneGeometry(reflW, reflL);
+const water = new Reflector(reflGeo, {
+  clipBias: 0.003,
+  textureWidth:  Math.min(innerWidth, 1024) * devicePixelRatio,
+  textureHeight: Math.min(innerHeight, 1024) * devicePixelRatio,
+  color: 0x3a4550                          // darker tint = dimmer, muted reflection (real scene stays bright)
+});
+water.rotation.x = -Math.PI/2;
+water.position.y = 0;
+scene.add(water);
+// a semi-transparent dark scrim just above the water further mutes the mirror for legibility
+const scrim = new THREE.Mesh(new THREE.PlaneGeometry(reflW, reflL),
+  new THREE.MeshBasicMaterial({ color:0x0a0e18, transparent:true, opacity:0.32, depthWrite:false }));
+scrim.rotation.x = -Math.PI/2; scrim.position.y = 0.01; scene.add(scrim);
+
+// A faint charged-void radial glow under the fleet center (a whisper lighter),
+// as a large soft disc just above the water so the darkness "leans inward".
+const glowTex = (() => {
+  const c = document.createElement('canvas'); c.width=c.height=256;
+  const g = c.getContext('2d');
+  const rg = g.createRadialGradient(128,128,10,128,128,128);
+  rg.addColorStop(0,'rgba(90,140,200,0.22)'); rg.addColorStop(1,'rgba(0,0,0,0)');
+  g.fillStyle=rg; g.fillRect(0,0,256,256);
+  return new THREE.CanvasTexture(c);
+})();
+const glow = new THREE.Mesh(
+  new THREE.PlaneGeometry(180,180),
+  new THREE.MeshBasicMaterial({ map:glowTex, transparent:true, depthWrite:false })
+);
+glow.rotation.x = -Math.PI/2; glow.position.y = 0.02;
+scene.add(glow);
+
+// ================= THE TACTICAL GRID (V13 wireframe board on water) =========
+const TILE = 6.3;                     // V13's real tile size
+const BOARD = TILE * 8;               // 50.4
+const GRID_Y = 0.05;                  // a hair above the water
+function tileXZ(col,row){ return { x:(col-3.5)*TILE, z:(row-3.5)*TILE }; }
+
+const gridGroup = new THREE.Group();
+{
+  const pts = [];
+  const half = BOARD/2;
+  for(let i=0;i<=8;i++){
+    const v = -half + i*TILE;
+    pts.push(v,GRID_Y,-half,  v,GRID_Y,half);   // lines along Z
+    pts.push(-half,GRID_Y,v,   half,GRID_Y,v);   // lines along X
+  }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.Float32BufferAttribute(pts,3));
+  const m = new THREE.LineBasicMaterial({ color:0x57b6ff, transparent:true, opacity:0.28 });
+  gridGroup.add(new THREE.LineSegments(g,m));
+  const per = [-half,GRID_Y,-half, half,GRID_Y,-half, half,GRID_Y,half, -half,GRID_Y,half, -half,GRID_Y,-half];
+  const pg = new THREE.BufferGeometry();
+  pg.setAttribute('position', new THREE.Float32BufferAttribute(per,3));
+  gridGroup.add(new THREE.Line(pg, new THREE.LineBasicMaterial({ color:0x7ec8ff, transparent:true, opacity:0.5 })));
+}
+scene.add(gridGroup);
+
+// ================= ARCHITECTURE TIERS (forward rows = the stack) =============
+// The board read front-to-back is the architecture: fleet (client) → logic → data → cloud.
+function tierBand(rowStart, rowEnd, color, label){
+  const g = new THREE.Group();
+  const z0 = (rowStart-3.5)*TILE - TILE/2, z1 = (rowEnd-3.5)*TILE + TILE/2;
+  const w = BOARD, d = z1 - z0;
+  // tinted floor band
+  const band = new THREE.Mesh(new THREE.PlaneGeometry(w, d),
+    new THREE.MeshBasicMaterial({ color, transparent:true, opacity:0.10, side:THREE.DoubleSide, depthWrite:false }));
+  band.rotation.x = -Math.PI/2; band.position.set(0, 0.06, (z0+z1)/2); g.add(band);
+  // leading edge glow line
+  const ep = [-w/2,0.07,z0,  w/2,0.07,z0];
+  const eg = new THREE.BufferGeometry(); eg.setAttribute('position', new THREE.Float32BufferAttribute(ep,3));
+  g.add(new THREE.Line(eg, new THREE.LineBasicMaterial({ color, transparent:true, opacity:0.5 })));
+  // tier label at the left edge of the band, camera-facing
+  const lbl = makeLabel(label, '#'+color.toString(16).padStart(6,'0'), 1.15);
+  lbl.position.set(-w/2 - TILE*1.3, 6, (z0+z1)/2);
+  g.add(lbl);
+  scene.add(g);
+  return g;
+}
+// The real stack (matches the fleet's actual architecture):
+tierBand(3, 4, 0x9a7bd0, 'LOGIC TIER');    // purple — Workers / quiz / auth logic
+tierBand(5, 6, 0x57b6ff, 'DATA TIER');     // blue — Supabase tables / RLS
+tierBand(7, 7, 0xe6b450, 'CLOUD EDGE');    // gold — off-repo services boundary
+
+const floatingActors = [];
+const actorPos = {};   // label -> THREE.Vector3 (top of the actor, for wiring)
+// ---- place the ACTUAL ACTORS on the tier squares ----
+function actorNode(col, row, label, color, shape='box'){
+  const {x,z} = tileXZ(col,row);
+  const g = new THREE.Group(); g.position.set(x, GRID_Y, z);
+  let mesh, floats=false, yBase=TILE*0.28;
+  // richer shading: physical material with clearcoat + flat-shaded facets so light reads on the geometry
+  const mat = new THREE.MeshPhysicalMaterial({
+    color, metalness:0.35, roughness:0.28, clearcoat:0.6, clearcoatRoughness:0.3,
+    emissive:color, emissiveIntensity:0.28, flatShading:true, reflectivity:0.5 });
+  if(shape==='cyl'){                                   // hexagonal prism (Worker) — FLOATS
+    mesh = new THREE.Mesh(new THREE.CylinderGeometry(TILE*0.26, TILE*0.26, TILE*0.5, 6), mat);
+    floats = true; yBase = TILE*0.62;                  // lifted so it hovers
+  } else if(shape==='disc'){                            // disc (table)
+    mesh = new THREE.Mesh(new THREE.CylinderGeometry(TILE*0.30, TILE*0.30, TILE*0.16, 24), mat);
+  } else if(shape==='oct'){                             // octahedron (cloud service) — FLOATS
+    mesh = new THREE.Mesh(new THREE.OctahedronGeometry(TILE*0.28), mat);
+    floats = true; yBase = TILE*0.70;
+  } else {                                             // box (endpoint)
+    mesh = new THREE.Mesh(new THREE.BoxGeometry(TILE*0.44, TILE*0.44, TILE*0.44), mat);
+  }
+  mesh.position.y = yBase; mesh.castShadow=true; g.add(mesh);
+
+  // ---- PLATINUM edge highlights on the shape's corners ----
+  const edges = new THREE.LineSegments(
+    new THREE.EdgesGeometry(mesh.geometry, 25),
+    new THREE.LineBasicMaterial({ color:0xf0f4f8, transparent:true, opacity:0.9 }));   // bright platinum
+  edges.position.y = yBase; g.add(edges);
+  if(floats){ edges.userData.follow = mesh; }   // edges track the floating mesh's bob
+
+  if(floats){
+    // ---- floating separator: a glowing ring at the divide line + a tether + ground shadow-disc ----
+    const ring = new THREE.Mesh(new THREE.TorusGeometry(TILE*0.34, TILE*0.02, 8, 32),
+      new THREE.MeshBasicMaterial({ color, transparent:true, opacity:0.9 }));
+    ring.rotation.x = Math.PI/2; ring.position.y = yBase; g.add(ring);
+    // faint lower "base" halo on the ground so it reads as hovering above its square
+    const pad = new THREE.Mesh(new THREE.RingGeometry(TILE*0.10, TILE*0.30, 28),
+      new THREE.MeshBasicMaterial({ color, transparent:true, opacity:0.25, side:THREE.DoubleSide, depthWrite:false }));
+    pad.rotation.x = -Math.PI/2; pad.position.y = 0.07; g.add(pad);
+    // thin tether from pad to the divide ring
+    const tp=[0,0.07,0, 0,yBase,0];
+    const tg=new THREE.BufferGeometry(); tg.setAttribute('position',new THREE.Float32BufferAttribute(tp,3));
+    g.add(new THREE.Line(tg, new THREE.LineBasicMaterial({ color, transparent:true, opacity:0.35 })));
+    g.userData.floatMesh = mesh; g.userData.floatEdges = edges; g.userData.floatBase = yBase;
+  }
+  const lbl = makeLabel(label, '#'+color.toString(16).padStart(6,'0'), 0.7);
+  lbl.position.set(0, TILE*1.15, 0); g.add(lbl);
+  scene.add(g);
+  if(floats) floatingActors.push(g);
+  actorPos[label] = new THREE.Vector3(x, GRID_Y + TILE*0.35, z);
+  return g;
+}
+
+const P = 0x9a7bd0, B = 0x57b6ff, G = 0xe6b450;
+// LOGIC TIER (rows 3-4) — the Workers and their real endpoints
+actorNode(2, 3, 'Mint Worker',  P, 'cyl');
+actorNode(2, 4, '/quiz/submit', P, 'box');
+actorNode(3, 4, '/arguments/vote', P, 'box');
+actorNode(4, 4, '/pool/leaderboard', P, 'box');
+actorNode(5, 3, 'Proxy Worker', P, 'cyl');
+actorNode(5, 4, '/speak',       P, 'box');
+actorNode(6, 4, '/generate',    P, 'box');
+// DATA TIER (rows 5-6) — the real Supabase tables
+actorNode(1, 5, 'subscribers',     B, 'disc');
+actorNode(3, 5, 'emerald_balance', B, 'disc');
+actorNode(5, 5, 'argument_reports', B, 'disc');
+actorNode(3, 6, 'Supabase · RLS',  B, 'disc');
+// CLOUD EDGE (row 7) — off-repo service boundary
+actorNode(1, 7, 'Cloudflare Workers', G, 'oct');
+actorNode(4, 7, 'Supabase Cloud',     G, 'oct');
+actorNode(6, 7, 'Cloudflare Email',   G, 'oct');
+
+
+// ---- text label sprite (floating name tag above a vessel) ----
+function makeLabel(text, color='#ffe6a0', scale=1){
+  const c = document.createElement('canvas'); c.width=512; c.height=128;
+  const x2 = c.getContext('2d');
+  x2.font = 'bold 52px ui-monospace, monospace';
+  x2.textAlign='center'; x2.textBaseline='middle';
+  x2.shadowColor='#000'; x2.shadowBlur=8;
+  x2.lineWidth=6; x2.strokeStyle='#000';
+  x2.strokeText(text,256,64); x2.fillStyle=color; x2.fillText(text,256,64);
+  const tex = new THREE.CanvasTexture(c);
+  const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map:tex, transparent:true, depthTest:false, depthWrite:false }));
+  sp.scale.set(9*scale, 2.25*scale, 1);
+  return sp;
+}
+
+// ================= THE FLEET (clean ships, game01's real tapered hull) ======
+function makeTaperedHullGeo(length, beamTop, beamBot, height, lengthBot){
+  const halfL=length/2, halfLb=lengthBot/2, halfBt=beamTop/2, halfBb=beamBot/2;
+  const verts=new Float32Array([
+    -halfL,height,-halfBt,  halfL,height,-halfBt,  halfL,height,halfBt,  -halfL,height,halfBt,
+    -halfLb,0,-halfBb,  halfLb,0,-halfBb,  halfLb,0,halfBb,  -halfLb,0,halfBb ]);
+  const indices=new Uint16Array([
+    0,2,1, 0,3,2,  4,5,6, 4,6,7,  0,1,5, 0,5,4,  3,7,6, 3,6,2,  0,4,7, 0,7,3,  1,2,6, 1,6,5 ]);
+  const geo=new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.BufferAttribute(verts,3));
+  geo.setIndex(new THREE.BufferAttribute(indices,1));
+  geo.computeVertexNormals();
+  return geo;
+}
+
+// White sail cloth with a single brand letter (Amenti font = Orbitron fallback).
+function makeSailLetter(letter){
+  const c = document.createElement('canvas'); c.width=256; c.height=384;
+  const g = c.getContext('2d');
+  // white cloth with faint vertical seams
+  g.fillStyle='#fdfdfb'; g.fillRect(0,0,256,384);
+  g.strokeStyle='rgba(120,120,130,0.10)'; g.lineWidth=2;
+  for(let i=1;i<5;i++){ g.beginPath(); g.moveTo(i*51,0); g.lineTo(i*51,384); g.stroke(); }
+  if(letter){
+    g.fillStyle='#0e1424';                         // dark ink letter
+    g.font='900 210px Orbitron, sans-serif';
+    g.textAlign='center'; g.textBaseline='middle';
+    g.fillText(letter, 128, 200);
+  }
+  const tex = new THREE.CanvasTexture(c);
+  tex.anisotropy = 4;
+  return tex;
+}
+
+// black ship-name text on a transparent plane, to sit ON the sail
+function makeSailName(text, wide){
+  const c = document.createElement('canvas'); c.width=512; c.height=160;
+  const g = c.getContext('2d');
+  g.clearRect(0,0,512,160);
+  g.font = 'bold 60px Orbitron, ui-monospace, sans-serif';
+  g.textAlign='center'; g.textBaseline='middle';
+  g.fillStyle = '#000000';                       // BLACK font
+  const words = text.split(' ');
+  if(text.length > 9 && words.length > 1){
+    const mid = Math.ceil(words.length/2);
+    g.fillText(words.slice(0,mid).join(' '), 256, 60);
+    g.fillText(words.slice(mid).join(' '), 256, 110);
+  } else {
+    g.fillText(text, 256, 80);
+  }
+  const tex = new THREE.CanvasTexture(c);
+  const spr = new THREE.Sprite(new THREE.SpriteMaterial({ map:tex, transparent:true, depthTest:false, depthWrite:false }));
+  spr.scale.set(wide, wide*0.31, 1);
+  spr.renderOrder = 1000;
+  return spr;
+}
+
+function buildFleetShip(opts){
+  const { flag=false, accent=0xf5d76e } = opts;
+  const ship = new THREE.Group();
+  const S = flag ? 5.4 : 4.4;
+  const ivory=0xf3ead4, ivoryDark=0xcbbb98, ivoryMat = () => new THREE.MeshStandardMaterial({ color:ivory, metalness:0.12, roughness:0.45, emissive:0x2a2418, emissiveIntensity:0.18 });
+  const trimMat = new THREE.MeshStandardMaterial({ color:accent, metalness:0.5, roughness:0.3, emissive:accent, emissiveIntensity:0.8 });
+
+  // ---- HULL (tapered V-hull, game01 geometry) ----
+  const hull = new THREE.Mesh(makeTaperedHullGeo(S*2.0, S*0.82, S*0.42, S*0.5, S*1.76), ivoryMat());
+  hull.castShadow = true; ship.add(hull);
+
+  // ---- GUNWALE: accent rail running the deck edge (two thin strips port/stbd) ----
+  for(const zs of [1,-1]){
+    const rail = new THREE.Mesh(new THREE.BoxGeometry(S*1.9, S*0.06, S*0.05), trimMat);
+    rail.position.set(0, S*0.5, zs*S*0.40); ship.add(rail);
+  }
+
+  // ---- RAISED STERN CASTLE (aft superstructure — the signature galleon look) ----
+  const castle = new THREE.Mesh(new THREE.BoxGeometry(S*0.5, S*0.42, S*0.66), ivoryMat());
+  castle.position.set(-S*0.72, S*0.72, 0); castle.castShadow=true; ship.add(castle);
+  const castleRoof = new THREE.Mesh(new THREE.BoxGeometry(S*0.56, S*0.06, S*0.72), trimMat);
+  castleRoof.position.set(-S*0.72, S*0.96, 0); ship.add(castleRoof);
+  // small forecastle at the bow
+  const fore = new THREE.Mesh(new THREE.BoxGeometry(S*0.34, S*0.26, S*0.5), ivoryMat());
+  fore.position.set(S*0.80, S*0.63, 0); fore.castShadow=true; ship.add(fore);
+
+  // ---- BOWSPRIT (angled spar off the bow) ----
+  const bowsprit = new THREE.Mesh(new THREE.CylinderGeometry(S*0.025, S*0.035, S*0.9, 8), ivoryMat());
+  bowsprit.position.set(S*1.15, S*0.62, 0); bowsprit.rotation.z = Math.PI/2 - 0.4; ship.add(bowsprit);
+
+  // ---- MAINMAST + crow's nest ----
+  const mast = new THREE.Mesh(new THREE.CylinderGeometry(S*0.03, S*0.045, S*2.6, 10), ivoryMat());
+  mast.position.set(-S*0.15, S*1.75, 0); mast.castShadow=true; ship.add(mast);
+  const nest = new THREE.Mesh(new THREE.CylinderGeometry(S*0.11, S*0.09, S*0.14, 12), trimMat);
+  nest.position.set(-S*0.15, S*2.7, 0); ship.add(nest);
+  // yardarm (horizontal spar the sail hangs from)
+  const yard = new THREE.Mesh(new THREE.CylinderGeometry(S*0.02, S*0.02, S*1.6, 8), ivoryMat());
+  yard.position.set(0, S*2.75, 0); yard.rotation.x = Math.PI/2; ship.add(yard);
+  // ---- SAIL: white, hung under the yardarm ----
+  const sailW = S*1.0, sailH = S*1.55;
+  const sail = new THREE.Mesh(new THREE.PlaneGeometry(sailW, sailH),
+    new THREE.MeshBasicMaterial({ color:0xffffff, side:THREE.DoubleSide, transparent:true, opacity:0.98 }));
+  sail.position.set(0, S*1.95, 0); sail.rotation.y = Math.PI/2; ship.add(sail);
+  // ship NAME printed on the sail, in black
+  if(opts.name){
+    const nameP = makeSailName(opts.name, sailW*1.0);
+    nameP.position.set(S*0.02, S*1.95, 0);        // centered on sail; sprite faces viewer, renderOrder draws on top
+    ship.add(nameP);
+  }
+  // accent border frame (origin color)
+  const bpts=[-sailW/2,-sailH/2,0, sailW/2,-sailH/2,0, sailW/2,sailH/2,0, -sailW/2,sailH/2,0, -sailW/2,-sailH/2,0];
+  const bgeo=new THREE.BufferGeometry(); bgeo.setAttribute('position',new THREE.Float32BufferAttribute(bpts,3));
+  const border=new THREE.Line(bgeo, new THREE.LineBasicMaterial({ color:accent }));
+  border.position.set(0, S*1.95, 0.11); border.rotation.y=Math.PI/2; ship.add(border);
+  // masthead beacon
+  const beacon = new THREE.Mesh(new THREE.SphereGeometry(S*0.08,12,12), new THREE.MeshBasicMaterial({ color:accent }));
+  beacon.position.set(-S*0.15, S*3.05, 0); ship.add(beacon);
+  ship.userData.beacon = beacon; ship.userData.flag = flag;
+  return ship;
+}
+
+// FLEET — read from the mother-ship manifest
+const M = window.FLEET_MANIFEST;
+
+/* ── THE GLASS GATE ────────────────────────────────────────────────────────
+   NO READING -> SHOW NOTHING. Not the last thing we saw.
+   A mirror with a memory is a portrait. This board has no memory, on purpose. */
+if (!M || !M.ships || !M.crew || !M.watches) {
+  document.body.innerHTML =
+    '<div style="max-width:640px;margin:16vh auto;padding:38px 40px;border:2px solid #f87171;' +
+    'border-radius:8px;background:rgba(248,113,113,.08);font:16px/1.7 ui-monospace,monospace;color:#e8b0b0">' +
+    '<div style="font-size:30px;color:#f87171;margin-bottom:18px">&#9888; NO READING.</div>' +
+    '<p>fleet-manifest.js has not been published through the gate, or it failed to load.</p>' +
+    '<p style="font-size:22px;color:#f87171;margin-top:22px;line-height:1.4">I AM SHOWING YOU NOTHING.<br>' +
+    'I am not showing you the last thing I saw.</p>' +
+    '<p style="margin-top:24px"><a href="index.html" style="color:#00ffe0">&larr; back to the harbor</a></p>' +
+    '</div>';
+  throw new Error('no reading');
+}
+
+/* THE STAMPS. A ship that CONTRADICTS the reading burns red on the board.
+   The old view could not do this — it had no idea a ship could be wrong. */
+const RED   = 0xf87171, AMBER = 0xfbbf24;
+function stampOf(x) {
+  const s = x.stamps || [];
+  if (s.indexOf('CONTRADICTED') >= 0) return 'CONTRADICTED';
+  if (s.indexOf('ADRIFT') >= 0)       return 'ADRIFT';
+  return 'CONFIRMED';
+}
+function tint(x) {
+  const st = stampOf(x);
+  if (st === 'CONTRADICTED') return RED;
+  if (st === 'ADRIFT')       return AMBER;
+  return x.color || 0x9adcff;
+}
+
+for(const ship of M.ships){
+  const s = buildFleetShip({ flag: !!ship.flag, name: ship.name, accent: tint(ship) });
+  const {x,z} = tileXZ(ship.board.col, ship.board.row);
+  s.position.set(x, GRID_Y, z);
+  s.rotation.y = Math.PI/2 + Math.PI;
+  s.userData.name = ship.name; s.userData.baseY = GRID_Y;
+  s.userData.baseRotY = Math.PI/2 + Math.PI;
+  s.userData.manifest = ship;              // attach full manifest entry (for hover cards)
+  scene.add(s); fleetShips.push(s);
+}
+
+// ================= THE CREW (pawns on row 2 = the JS files) ==================
+const CREW = M.crew.map(c => c.name);   // from the manifest
+const crewPawns = [];
+for(let col=0; col<CREW.length; col++){
+  const {x,z} = tileXZ(col, 2);
+  // a low pawn puck (base + gold rim) — small, distinct from ships
+  const pawn = new THREE.Group();
+  const crewEntry = M.crew[col];
+  const pawnAccent = tint(crewEntry);   // a crew member that is ADRIFT burns amber
+  const ivMat = new THREE.MeshStandardMaterial({ color:0xf3ead4, metalness:0.12, roughness:0.45, emissive:0x2a2418, emissiveIntensity:0.2 });
+  const accMat = new THREE.MeshStandardMaterial({ color:pawnAccent, metalness:0.6, roughness:0.3, emissive:pawnAccent, emissiveIntensity:0.7 });
+  // turned chess-pawn profile: flared base, collar, tapered stem, head
+  const base = new THREE.Mesh(new THREE.CylinderGeometry(TILE*0.24, TILE*0.30, TILE*0.14, 24), ivMat);
+  base.position.y = TILE*0.07; base.castShadow=true; pawn.add(base);
+  const collar = new THREE.Mesh(new THREE.TorusGeometry(TILE*0.20, TILE*0.035, 12, 28), accMat);   // accent collar
+  collar.rotation.x = Math.PI/2; collar.position.y = TILE*0.17; pawn.add(collar);
+  const stem = new THREE.Mesh(new THREE.CylinderGeometry(TILE*0.10, TILE*0.18, TILE*0.34, 20), ivMat);
+  stem.position.y = TILE*0.35; stem.castShadow=true; pawn.add(stem);
+  const neck = new THREE.Mesh(new THREE.CylinderGeometry(TILE*0.13, TILE*0.09, TILE*0.06, 20), accMat);  // accent neck ring
+  neck.position.y = TILE*0.54; pawn.add(neck);
+  const head = new THREE.Mesh(new THREE.SphereGeometry(TILE*0.14, 20, 16), ivMat);
+  head.position.y = TILE*0.64; head.castShadow=true; pawn.add(head);
+  pawn.position.set(x, GRID_Y, z);
+  const lbl = makeLabel(CREW[col], '#cdbf9a', 0.8);
+  lbl.position.set(x, GRID_Y + 7, z);
+  scene.add(lbl); scene.add(pawn);
+  pawn.userData.manifest = crewEntry; pawn.userData.name = crewEntry.name;
+  crewPawns.push({ pawn, label:lbl });
+}
+
+// ================= THE SENTRY CORPS (four shield-domes on the edges) =========
+// Each sentry wards one edge of the board. A faint glowing hemisphere (a ward),
+// slow-pulsing like a watch heartbeat. Blue — distinct from the gold fleet.
+const half = BOARD/2;
+const EDGE = half + TILE*4.5;             // well clear of the board — sentries ring at standoff distance
+// SENTRIES from manifest — edge maps to a board side
+const EDGE_XZ = { front:[0,-EDGE], right:[EDGE,0], left:[-EDGE,0], far:[0,EDGE] };
+/* The sentries are now WATCHES, and a watch with no instrument burns AMBER.
+   Not because it has failed — because NOTHING IS WATCHING, and the board will
+   no longer show a green light over an empty tower. */
+const SENTRIES = M.watches.map(w => {
+  const [sx,sz] = EDGE_XZ[(w.board && w.board.edge) || 'front'];
+  const col = (w.stamp === 'CONFIRMED') ? w.color
+            : (w.stamp === 'CONTRADICTED' ? RED : AMBER);
+  return [w.id, sx, sz, col, w];
+});
+const sentries = [];
+for(const [name,sx,sz,col,manifestEntry] of SENTRIES){
+  const g = new THREE.Group();
+  g.position.set(sx, GRID_Y, sz);
+  // the ward dome (hemisphere, faint, additive glow)
+  const domeR = TILE*1.28;   // 20% smaller
+  const dome = new THREE.Mesh(
+    new THREE.SphereGeometry(domeR, 28, 16, 0, Math.PI*2, 0, Math.PI/2),
+    new THREE.MeshBasicMaterial({ color:col, transparent:true, opacity:0.10,
+      side:THREE.DoubleSide, blending:THREE.AdditiveBlending, depthWrite:false }));
+  g.add(dome);
+  // dome rim ring on the water
+  const rim = new THREE.Mesh(
+    new THREE.RingGeometry(domeR*0.94, domeR, 40),
+    new THREE.MeshBasicMaterial({ color:col, transparent:true, opacity:0.5,
+      side:THREE.DoubleSide, blending:THREE.AdditiveBlending, depthWrite:false }));
+  rim.rotation.x = -Math.PI/2; rim.position.y = 0.03; g.add(rim);
+  // core beacon at the dome's base
+  const core = new THREE.Mesh(new THREE.SphereGeometry(TILE*0.18, 16, 16),
+    new THREE.MeshBasicMaterial({ color:0x9adcff }));
+  core.position.y = TILE*0.2; g.add(core);
+  // pulse-wave rings that expand outward from the sentry (watch broadcast)
+  const pulseRings = [];
+  for(let pr=0; pr<2; pr++){
+    const ring = new THREE.Mesh(
+      new THREE.RingGeometry(domeR*0.5, domeR*0.56, 40),
+      new THREE.MeshBasicMaterial({ color:0x9adcff, transparent:true, opacity:0.6,
+        side:THREE.DoubleSide, blending:THREE.AdditiveBlending, depthWrite:false }));
+    ring.rotation.x = -Math.PI/2; ring.position.y = 0.05;
+    ring.userData.phase = pr*0.5;   // stagger the two rings
+    g.add(ring); pulseRings.push(ring);
+  }
+  g.userData = { name, dome, core, pulseRings, domeR, manifest: manifestEntry };
+  const slbl = makeLabel(name, '#9adcff', 1.1);
+  slbl.position.set(sx, GRID_Y + TILE*2.4, sz);
+  scene.add(slbl);
+  scene.add(g); sentries.push(g);
+}
+
+// ================= SKY-ORBS + LASER UPLINKS (off-repo services overhead) =====
+const SKY_Y = 70;                         // V13 sky height
+// ORBS (satellites) from manifest
+const ORBS = M.satellites.map(s => [s.name || s.id, s.sky.x, s.sky.y, s.sky.z, s.color, s]);
+const flagPos = (()=>{ const {x,z}=tileXZ(4,0); return new THREE.Vector3(x, 8, z); })();
+const orbs = [];
+for(const [name,ox,oy,oz,col,manifestEntry] of ORBS){
+  const orb = new THREE.Group();
+  orb.position.set(ox,oy,oz);
+  // ---- satellite BUS (central body) ----
+  const bus = new THREE.Mesh(new THREE.BoxGeometry(3.2, 2.4, 2.4),
+    new THREE.MeshStandardMaterial({ color:0xd8d8e0, metalness:0.6, roughness:0.35,
+      emissive:0x223344, emissiveIntensity:0.3 }));
+  orb.add(bus);
+  // gold foil accent wrap
+  const foil = new THREE.Mesh(new THREE.BoxGeometry(3.3, 1.0, 2.5),
+    new THREE.MeshStandardMaterial({ color:0xe6b450, metalness:0.8, roughness:0.3, emissive:0x6b541f, emissiveIntensity:0.3 }));
+  orb.add(foil);
+  // ---- SOLAR PANEL wings (two, dark blue with grid) ----
+  for(const side of [1,-1]){
+    const panel = new THREE.Mesh(new THREE.BoxGeometry(5, 0.12, 2.6),
+      new THREE.MeshStandardMaterial({ color:0x1c3a6e, metalness:0.5, roughness:0.4, emissive:0x0a1a3a, emissiveIntensity:0.4 }));
+    panel.position.set(side*4.2, 0, 0); orb.add(panel);
+    // green edge frame on each panel
+    const frame = new THREE.Mesh(new THREE.BoxGeometry(5.1, 0.16, 2.7),
+      new THREE.MeshBasicMaterial({ color:0x33cc77, transparent:true, opacity:0.5, blending:THREE.AdditiveBlending, depthWrite:false }));
+    frame.position.set(side*4.2, 0, 0); orb.add(frame);
+  }
+  // ---- DISH antenna on top ----
+  const boom = new THREE.Mesh(new THREE.CylinderGeometry(0.1,0.1,1.6,8),
+    new THREE.MeshStandardMaterial({ color:0xaaaaaa, metalness:0.6, roughness:0.4 }));
+  boom.position.set(0, 2.0, 0); orb.add(boom);
+  const dish = new THREE.Mesh(new THREE.SphereGeometry(1.0, 16, 8, 0, Math.PI*2, 0, Math.PI/2),
+    new THREE.MeshStandardMaterial({ color:0xeaeaf0, metalness:0.5, roughness:0.4, side:THREE.DoubleSide }));
+  dish.position.set(0, 2.8, 0); dish.rotation.x = Math.PI; orb.add(dish);
+  // ---- GREEN blinking status dot ----
+  const blink = new THREE.Mesh(new THREE.SphereGeometry(0.55, 12, 12),
+    new THREE.MeshBasicMaterial({ color:0x2bff77 }));
+  blink.position.set(0, 0, 1.4); orb.add(blink);
+  // ---- radiating PULSE rings (broadcast) ----
+  const pulses = [];
+  for(let pr=0; pr<2; pr++){
+    const ring = new THREE.Mesh(new THREE.TorusGeometry(2.0, 0.08, 8, 40),
+      new THREE.MeshBasicMaterial({ color:0x9affc4, transparent:true, opacity:0.6,
+        blending:THREE.AdditiveBlending, depthWrite:false }));
+    ring.userData.phase = pr*0.5; orb.add(ring); pulses.push(ring);
+  }
+  scene.add(orb);
+  const olbl = makeLabel(name, '#8affc0', 1);
+  olbl.position.set(ox, oy+6, oz);
+  scene.add(olbl);
+  // laser uplink from flagship to orb (thin line) — only for Mint + Supabase (data paths)
+  let beam=null, dot=null;
+  if(name==='Mint' || name==='Supabase'){
+    const bg = new THREE.BufferGeometry().setFromPoints([flagPos, orb.position]);
+    beam = new THREE.Line(bg, new THREE.LineBasicMaterial({ color:0x9adcff, transparent:true, opacity:0.4 }));
+    scene.add(beam);
+    dot = new THREE.Mesh(new THREE.SphereGeometry(0.7,10,10),
+      new THREE.MeshBasicMaterial({ color:0xffffff }));
+    scene.add(dot);
+  }
+  orb.userData.manifest = manifestEntry; orb.userData.name = name;
+  orbs.push({ name, orb, blink, pulses, beam, dot, from:flagPos, to:orb.position.clone() });
+}
+
+// ================= THEATRICAL PLANETS (decorative only — mood, not data) =====
+// Glossy spheres on lazy hand-tuned drift. NOT astronomical. Large, slow, distant,
+// high up — unmistakably sky/atmosphere so they never read as instruments.
+const planets = [];
+const PLANET_DEFS = [
+  { r:14, color:0x9a7bd0, ring:false, dist:230, height:120, speed:0.010, phase:0.0, tilt:0.3 },
+  { r:9,  color:0xd08a5a, ring:true,  dist:300, height:160, speed:0.007, phase:2.1, tilt:0.6 },
+  { r:20, color:0x5a7fd0, ring:false, dist:380, height:100, speed:0.005, phase:4.0, tilt:0.15 },
+  { r:6,  color:0xd0b060, ring:false, dist:180, height:200, speed:0.013, phase:1.2, tilt:0.9 },
+];
+for(const d of PLANET_DEFS){
+  const g = new THREE.Group();
+  const body = new THREE.Mesh(new THREE.SphereGeometry(d.r, 32, 32),
+    new THREE.MeshStandardMaterial({ color:d.color, roughness:0.35, metalness:0.1,
+      emissive:d.color, emissiveIntensity:0.08 }));
+  g.add(body);
+  if(d.ring){
+    const ring = new THREE.Mesh(new THREE.RingGeometry(d.r*1.4, d.r*2.1, 48),
+      new THREE.MeshBasicMaterial({ color:0xe6c878, transparent:true, opacity:0.35, side:THREE.DoubleSide }));
+    ring.rotation.x = Math.PI/2 - 0.4; g.add(ring);
+  }
+  // soft glossy highlight glow
+  const glow = new THREE.Mesh(new THREE.SphereGeometry(d.r*1.25, 24, 24),
+    new THREE.MeshBasicMaterial({ color:d.color, transparent:true, opacity:0.10,
+      blending:THREE.AdditiveBlending, depthWrite:false }));
+  g.add(glow);
+  scene.add(g);
+  planets.push({ g, ...d });
+}
+
+
+// ================= DATA FLOWS (real paths, labeled packets) =================
+// The transactions the fleet actually makes. Paths + labels are REAL (probed from
+// the repo's endpoints); pulse timing is representative until wired to live traffic.
+function pktLabel(text, hex){
+  const css = '#' + hex.toString(16).padStart(6,'0');
+  const c=document.createElement('canvas'); c.width=256; c.height=48;
+  const x2=c.getContext('2d');
+  x2.font='bold 26px ui-monospace,monospace'; x2.textAlign='center'; x2.textBaseline='middle';
+  x2.fillStyle='rgba(10,20,36,0.88)'; x2.fillRect(0,0,256,48);
+  x2.strokeStyle=css; x2.lineWidth=4; x2.strokeRect(2,2,252,44);   // border = ORIGIN color
+  x2.fillStyle=css; x2.fillText(text,128,26);
+  return new THREE.CanvasTexture(c);
+}
+function orbPos(name){ const o=orbs.find(o=>o.name===name); return o?o.orb.position.clone():new THREE.Vector3(0,70,0); }
+function shipPos(name){ const s=fleetShips.find(s=>s.userData.name===name); return s?s.position.clone().add(new THREE.Vector3(0,8,0)):new THREE.Vector3(); }
+function crewPos(i){ return crewPawns[i]?crewPawns[i].pawn.position.clone().add(new THREE.Vector3(0,4,0)):new THREE.Vector3(); }
+
+const FLOWS = [
+  { label:'subscribers',     from:shipPos('Page1 · Codex'), to:orbPos('Supabase'), color:0x00ff66, speed:0.22 },  // origin: flagship (green)
+  { label:'emerald_balance', from:crewPos(3),               to:orbPos('Mint'),     color:0xffcc00, speed:0.17 },  // origin: quiz pawn (gold)
+  { label:'/speak',          from:crewPos(5),               to:orbPos('Proxy'),    color:0x00ccff, speed:0.28 },  // origin: throttle pawn (blue)
+  { label:'dispatch',        from:shipPos('Page1 · Codex'), to:orbPos('CF Email'), color:0x00ff66, speed:0.14 },  // origin: flagship (green)
+];
+const flowPackets = [];
+for(const f of FLOWS){
+  // faint path line
+  const lg = new THREE.BufferGeometry().setFromPoints([f.from, f.to]);
+  scene.add(new THREE.Line(lg, new THREE.LineBasicMaterial({ color:f.color, transparent:true, opacity:0.18 })));
+  // traveling labeled packet
+  const spr = new THREE.Sprite(new THREE.SpriteMaterial({ map:pktLabel(f.label, f.color), transparent:true, depthTest:false, depthWrite:false }));
+  spr.scale.set(11, 2.1, 1); spr.renderOrder=998;
+  scene.add(spr);
+  flowPackets.push({ ...f, spr });
+}
+
+addEventListener('resize', () => {
+  camera.aspect = innerWidth/innerHeight; camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+});
+
+
+// register crew-pawn + flagship positions as wiring sources
+for(let ci=0; ci<CREW.length; ci++){
+  const {x,z} = tileXZ(ci, 2);
+  actorPos[CREW[ci]] = new THREE.Vector3(x, GRID_Y+TILE*0.4, z);
+}
+{ const {x,z} = tileXZ(4,0); actorPos['Page1 · Codex'] = new THREE.Vector3(x, GRID_Y+8, z); }
+
+// ---- THE REAL CALL PATHS (dependency edges) ----
+// file → endpoint → worker → table, from the actual repo architecture.
+const EDGES = [
+  // quiz flow
+  ['amenti-quiz.js','/quiz/submit', 0x9a7bd0],
+  ['/quiz/submit','Mint Worker',   0x9a7bd0],
+  ['Mint Worker','emerald_balance',0x57b6ff],
+  ['Mint Worker','Supabase Cloud', 0xe6b450],
+  // leaderboard
+  ['amenti-leaderboard.js','/pool/leaderboard', 0x9a7bd0],
+  ['/pool/leaderboard','Mint Worker', 0x9a7bd0],
+  // arguments
+  ['/arguments/vote','argument_reports', 0x57b6ff],
+  // voice flow
+  ['amenti-throttle.js','/speak',  0x00ccff],
+  ['/speak','Proxy Worker',        0x9a7bd0],
+  ['amenti-chat.js','/generate',   0x9a7bd0],
+  ['/generate','Proxy Worker',     0x9a7bd0],
+  // auth/data
+  ['amenti-auth.js','subscribers', 0x57b6ff],
+  ['subscribers','Supabase Cloud', 0xe6b450],
+  ['emerald_balance','Supabase Cloud', 0xe6b450],
+  ['argument_reports','Supabase Cloud', 0xe6b450],
+  // RLS guards the tables
+  ['Supabase · RLS','subscribers', 0x57b6ff],
+  ['Supabase · RLS','emerald_balance', 0x57b6ff],
+];
+const edgeLines = [];
+for(const [a,b,color] of EDGES){
+  const pa = actorPos[a], pb = actorPos[b];
+  if(!pa || !pb) continue;   // skip if either endpoint missing
+  // gentle arc between the two points (lift the midpoint)
+  const mid = pa.clone().lerp(pb,0.5); mid.y += Math.max(2, pa.distanceTo(pb)*0.12);
+  const curve = new THREE.QuadraticBezierCurve3(pa, mid, pb);
+  const pts = curve.getPoints(24);
+  const lg = new THREE.BufferGeometry().setFromPoints(pts);
+  // brighten the line color toward white so the thin line reads strongly
+  const lc = new THREE.Color(color); lc.lerp(new THREE.Color(0xffffff), 0.45);
+  const line = new THREE.Line(lg, new THREE.LineBasicMaterial({ color:lc, transparent:true, opacity:1.0 }));
+  scene.add(line);
+  // a traveling pulse dot along the edge
+  const dot = new THREE.Mesh(new THREE.SphereGeometry(0.5, 8, 8),
+    new THREE.MeshBasicMaterial({ color }));
+  scene.add(dot);
+  edgeLines.push({ curve, dot, phase: Math.random() });
+}
+
+// ================= HOVER CARDS (raycast → read manifest) ====================
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+const card = document.getElementById('hovercard');
+let hoverActive = false;
+
+// collect all hoverable objects (each carries userData.manifest somewhere up its tree)
+function collectHoverTargets(){
+  const targets = [];
+  for(const s of fleetShips) targets.push(s);
+  for(const cp of crewPawns) targets.push(cp.pawn);
+  for(const g of sentries) targets.push(g);
+  for(const o of orbs) targets.push(o.orb);
+  return targets;
+}
+const hoverTargets = collectHoverTargets();
+
+// walk up an intersected object to find the one carrying a manifest entry
+function findManifest(obj){
+  let cur = obj;
+  while(cur){
+    if(cur.userData && cur.userData.manifest) return cur.userData.manifest;
+    cur = cur.parent;
+  }
+  return null;
+}
+
+function hex(c){ return '#'+(c>>>0).toString(16).padStart(6,'0'); }
+function statusClass(s){
+  if(!s) return '';
+  if(s.indexOf('\u2713')>=0 || s.indexOf('verified')>=0 || s.indexOf('built')>=0) return 'hc-ok';
+  return 'hc-pend';
+}
+
+function renderCard(m){
+  const st = m.stamp || stampOf(m);
+  const stCol = st === 'CONTRADICTED' ? '#f87171' : (st === 'CONFIRMED' ? '#4ade80' : '#fbbf24');
+  let html = `<div class="hc-name" style="color:${hex(tint(m))}">${m.name || m.id}</div>` +
+    `<div style="font:11px ui-monospace;letter-spacing:.14em;color:${stCol};margin:4px 0 6px">${st}</div>` +
+    (m.file ? `<div style="font:11px ui-monospace;color:#8b95ad">${m.file}</div>` : '');
+  html += `<div class="hc-type">${m.group||''} · ${m.type||''}</div>`;
+  if(m.role) html += `<div class="hc-role">${m.role}</div>`;
+  if(m.file && m.file!=='\u2014') html += `<div class="hc-row"><span class="hc-k">file</span><span class="hc-v">${m.file}</span></div>`;
+  if(m.size && m.size!=='\u2014') html += `<div class="hc-row"><span class="hc-k">size</span><span class="hc-v">${m.size}</span></div>`;
+  if(m.service) html += `<div class="hc-row"><span class="hc-k">service</span><span class="hc-v">${m.service}</span></div>`;
+  if(m.url) html += `<div class="hc-row"><span class="hc-k">url</span><span class="hc-v">${m.url}</span></div>`;
+  if(m.endpoints) html += `<div class="hc-row"><span class="hc-k">endpoints</span><span class="hc-v">${m.endpoints.join(', ')}</span></div>`;
+  if(m.tables) html += `<div class="hc-row"><span class="hc-k">tables</span><span class="hc-v">${m.tables.join(', ')}</span></div>`;
+  if(m.calls) html += `<div class="hc-row"><span class="hc-k">calls</span><span class="hc-v">${m.calls.join(', ')}</span></div>`;
+  if(m.guards) html += `<div class="hc-row"><span class="hc-k">guards</span><span class="hc-v">${m.guards}</span></div>`;
+  if(m.threat) html += `<div class="hc-row"><span class="hc-k">threat</span><span class="hc-v" style="color:#ff9a9a">${m.threat}</span></div>`;
+  if(m.status) html += `<div class="hc-status ${statusClass(m.status)}">${m.status}</div>`;
+  card.innerHTML = html;
+}
+
+let lastHovered = null;
+addEventListener('mousemove', (e)=>{
+  mouse.x = (e.clientX/innerWidth)*2 - 1;
+  mouse.y = -(e.clientY/innerHeight)*2 + 1;
+  raycaster.setFromCamera(mouse, camera);
+  const hits = raycaster.intersectObjects(hoverTargets, true);
+  let m = null;
+  for(const h of hits){ m = findManifest(h.object); if(m) break; }
+  if(m){
+    if(m !== lastHovered){ renderCard(m); lastHovered = m; }
+    card.classList.add('on');
+    // position card near cursor, kept on-screen
+    const cw = card.offsetWidth, ch = card.offsetHeight;
+    let cx = e.clientX + 16, cy = e.clientY + 16;
+    if(cx + cw > innerWidth) cx = e.clientX - cw - 16;
+    if(cy + ch > innerHeight) cy = e.clientY - ch - 16;
+    card.style.left = cx + 'px'; card.style.top = cy + 'px';
+    renderer.domElement.style.cursor = 'pointer';
+  } else {
+    card.classList.remove('on'); lastHovered = null;
+    renderer.domElement.style.cursor = 'default';
+  }
+});
+
+let t=0;
+(function loop(){
+  requestAnimationFrame(loop);
+  t += 0.016;
+  // fleet bob + beacon pulse (only ambient motion in the void)
+  for(let i=0;i<fleetShips.length;i++){
+    const s = fleetShips[i];
+    s.position.y = s.userData.baseY + Math.sin(t*0.8 + i)*0.25;
+    s.rotation.x = Math.sin(t*0.6 + i)*0.02;      // gentle roll (pitch/roll on the forward-facing hull)
+    const b = s.userData.beacon;
+    b.scale.setScalar(1 + Math.sin(t*2.2 + i)*0.18);
+  }
+  // sentry watch-pulse + expanding pulse-wave rings
+  for(let i=0;i<sentries.length;i++){
+    const g = sentries[i];
+    const pulse = 0.5 + 0.5*Math.sin(t*0.9 + i*1.6);   // slow dome breathe
+    g.userData.dome.material.opacity = 0.06 + pulse*0.12;
+    g.userData.core.scale.setScalar(1 + pulse*0.3);
+    // expanding pulse waves
+    const dr = g.userData.domeR;
+    for(const ring of g.userData.pulseRings){
+      const p = (t*0.5 + ring.userData.phase) % 1;      // 0..1 expansion
+      const s = 0.5 + p*3.0;                             // grows from dome to 3x out
+      ring.scale.set(s, s, s);
+      ring.material.opacity = 0.6 * (1 - p);             // fade as it expands
+    }
+  }
+  // sky-orbs pulse + data climbing the uplink beams
+  for(let i=0;i<orbs.length;i++){
+    const o = orbs[i];
+    // gentle satellite drift-spin
+    o.orb.rotation.y = Math.sin(t*0.3 + i)*0.3;
+    o.orb.position.y += Math.sin(t*0.8 + i)*0.02;       // slight bob
+    // green status dot blinks
+    const on = (Math.sin(t*3 + i*1.3) > 0);
+    o.blink.material.color.setHex(on ? 0x2bff77 : 0x0a3a1e);
+    o.blink.scale.setScalar(on ? 1.2 : 0.8);
+    // radiating pulse rings expand + fade
+    for(const ring of o.pulses){
+      const p = (t*0.5 + ring.userData.phase) % 1;
+      const s = 1 + p*4;
+      ring.scale.set(s,s,s);
+      ring.material.opacity = 0.6*(1-p);
+      ring.rotation.x = Math.PI/2;                        // lie flat-ish, facing out
+    }
+    if(o.dot){
+      const climb = (t*0.35 + i*0.5) % 1;
+      o.dot.position.lerpVectors(o.from, o.to, climb);
+      o.dot.material.opacity = 1 - Math.abs(climb-0.5)*1.2;
+    }
+  }
+  // data-flow packets travel the real paths (labeled)
+  for(let i=0;i<flowPackets.length;i++){
+    const f = flowPackets[i];
+    const prog = (t*f.speed + i*0.4) % 1;
+    f.spr.position.lerpVectors(f.from, f.to, prog);
+    f.spr.material.opacity = Math.sin(prog*Math.PI);      // fade in/out along the path
+  }
+  // dependency-edge pulses travel the real call paths
+  for(let i=0;i<edgeLines.length;i++){
+    const e = edgeLines[i];
+    const p = (t*0.25 + e.phase) % 1;
+    e.dot.position.copy(e.curve.getPoint(p));
+    e.dot.material.opacity = Math.sin(p*Math.PI);
+  }
+  // floating actors hover (Workers + cloud services seem to float above their square)
+  for(let i=0;i<floatingActors.length;i++){
+    const fa = floatingActors[i];
+    if(fa.userData.floatMesh){
+      const yy = fa.userData.floatBase + Math.sin(t*1.1 + i)*0.4;
+      fa.userData.floatMesh.position.y = yy;
+      if(fa.userData.floatEdges) fa.userData.floatEdges.position.y = yy;
+    }
+  }
+  // theatrical planet drift (lazy circular arcs, purely decorative)
+  for(let i=0;i<planets.length;i++){
+    const pl = planets[i];
+    const a = t*pl.speed + pl.phase;
+    pl.g.position.set(
+      Math.cos(a)*pl.dist,
+      pl.height + Math.sin(a*0.7)*10,
+      Math.sin(a)*pl.dist*Math.cos(pl.tilt) );
+    pl.g.rotation.y += 0.001;                            // slow self-spin
+  }
+  controls.update();
+  renderer.render(scene, camera);
+})();
+</script>
+</body>
+</html>
