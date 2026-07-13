@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>THE ENGINE ROOM · Amenti Fleet</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Special+Elite&family=Rajdhani:wght@200;300;400;600&display=swap" rel="stylesheet">
+<!-- ============================================================================
+     engine-room.html  ·  A PANE OF THE GLASS GATE
+     ----------------------------------------------------------------------------
+     THIS FILE KNOWS NOTHING.
+
+     It contains no facts. It renders fleet-manifest.js and nothing else. If a
+     sentence in this HTML states something that could be false, IT IS A BUG.
+
+       NO hand-written fallback data.  A view with a fallback will render the
+                                       fallback and never tell you.
+       NO cached reading.              A mirror with a memory is a portrait.
+       NO prose that states a fact.    If it can be wrong, it belongs in
+                                       fleet-semantics.js as a falsifiable claim.
+
+     The only text allowed here is text that cannot be false: headings, labels,
+     and the poetry stamped AUTHORED — which no probe can contradict.
+
+     AND IF THERE IS NO READING, IT SHOWS THE EMPTY-GLASS BOX.
+     Not a stale fleet. Not a blank page. THE BOX.
+
+     ships-manifest.html has been showing a beautiful, confident, months-old
+     fleet, in green, with no way to know it had gone blind. It was not lying.
+     IT WAS STILL SHOWING THE LAST THING IT SAW, FOREVER.
+     ============================================================================ -->
+<style>
+:root{
+  --gold:#d4a017; --gold-bright:#f5c542; --gold-deep:#a87c14;
+  --neon:#00ffe0; --term:#80ffc0;
+  --ink:#0a0a0f; --granite:#12121a; --slate:#2a2a38; --wire:#3a3a52;
+  --text:#c8c8d8; --dim:#a4a4b8;
+  --red:#f87171; --amber:#fbbf24; --green:#4ade80;
+  --elite:'Special Elite',cursive; --mono:'Share Tech Mono',monospace; --body:'Rajdhani',sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ink);color:var(--text);font-family:var(--body);font-weight:300;font-size:18px;line-height:1.7}
+main{max-width:1060px;margin:0 auto;padding:48px 24px 140px}
+
+.mark{position:fixed;top:20px;left:24px;z-index:99;font-family:var(--elite);font-size:19px;letter-spacing:.14em;color:var(--gold)}
+.mark .live{color:var(--term);text-shadow:0 0 10px var(--term);animation:blink 1.35s steps(1,end) infinite}
+@keyframes blink{0%,54%{opacity:1}55%,100%{opacity:.18}}
+
+h1{font-family:var(--elite);font-size:clamp(30px,5vw,50px);color:var(--gold-bright);letter-spacing:.04em;margin:36px 0 6px}
+.sub{font-family:var(--elite);font-size:16px;letter-spacing:.2em;color:var(--gold-deep);margin:0 0 8px}
+.eyebrow{font-family:var(--mono);font-size:13px;letter-spacing:.3em;color:var(--neon);text-transform:uppercase;margin:0}
+h2{font-family:var(--elite);font-size:clamp(21px,3vw,29px);color:var(--gold);margin:56px 0 16px;border-bottom:1px solid var(--slate);padding-bottom:10px}
+h3{font-family:var(--mono);font-size:14px;letter-spacing:.22em;color:var(--neon);text-transform:uppercase;margin:34px 0 12px}
+
+/* ── THE EMPTY-GLASS BOX ─────────────────────────────────────────────────── */
+#empty{display:none;margin:60px 0;padding:38px 40px;border:2px solid var(--red);border-radius:6px;background:linear-gradient(180deg,rgba(248,113,113,.09),transparent)}
+#empty .t{font-family:var(--elite);font-size:clamp(22px,3.4vw,32px);color:var(--red);margin-bottom:18px;letter-spacing:.03em}
+#empty p{margin:0 0 12px;color:#e8b0b0}
+#empty .loud{font-family:var(--elite);font-size:22px;color:var(--red);margin-top:22px;line-height:1.4}
+
+/* ── THE READING BAR ─────────────────────────────────────────────────────── */
+.reading{display:flex;flex-wrap:wrap;gap:26px;padding:16px 20px;border:1px solid var(--slate);border-radius:5px;background:var(--granite);font-family:var(--mono);font-size:13px;margin:26px 0 10px}
+.reading b{color:var(--neon);font-weight:400;letter-spacing:.1em}
+.reading span{color:var(--dim)}
+#stale{display:none;margin:10px 0 0;padding:12px 18px;border:1px solid var(--amber);border-radius:5px;background:rgba(251,191,36,.07);color:var(--amber);font-family:var(--mono);font-size:13px}
+
+/* ── HEALTH ──────────────────────────────────────────────────────────────── */
+.health{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin:26px 0}
+.h{padding:18px;border:1px solid var(--slate);border-radius:5px;background:var(--granite);text-align:center}
+.h .n{font-family:var(--elite);font-size:38px;line-height:1}
+.h .l{font-family:var(--mono);font-size:12px;letter-spacing:.18em;color:var(--dim);text-transform:uppercase;margin-top:8px}
+.h.bad{border-color:#7a2a2a}.h.bad .n{color:var(--red)}
+.h.warn{border-color:#7a5a1a}.h.warn .n{color:var(--amber)}
+.h.ok{border-color:#1e4d38}.h.ok .n{color:var(--green)}
+
+/* ── THE DRIFT ───────────────────────────────────────────────────────────── */
+.drift{margin:14px 0;padding:18px 22px;border-left:3px solid var(--wire);border-radius:0 5px 5px 0;background:var(--granite)}
+.drift.CONTRADICTED{border-left-color:var(--red);background:linear-gradient(90deg,rgba(248,113,113,.08),transparent 70%)}
+.drift.UNPROVEN,.drift.ADRIFT,.drift.UNDECLARED{border-left-color:var(--amber);background:linear-gradient(90deg,rgba(251,191,36,.06),transparent 70%)}
+.stamp{font-family:var(--mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase}
+.CONTRADICTED .stamp{color:var(--red)} .UNPROVEN .stamp,.ADRIFT .stamp,.UNDECLARED .stamp{color:var(--amber)}
+.drift .subj{font-family:var(--mono);font-size:16px;color:#e8e8f2;margin:6px 0 12px}
+.drift .kv{display:grid;grid-template-columns:88px 1fr;gap:6px 14px;font-size:16px}
+.drift .k{font-family:var(--mono);font-size:13px;color:var(--dim);letter-spacing:.1em}
+.drift .note{margin-top:12px;font-size:15px;color:var(--dim);font-style:italic;line-height:1.6}
+.clean{padding:26px;border:1px solid #1e4d38;border-radius:5px;background:rgba(74,222,128,.05);color:var(--green);font-family:var(--elite);font-size:22px;text-align:center}
+
+/* ── ENGINES ─────────────────────────────────────────────────────────────── */
+.eng{margin:18px 0;border:1px solid var(--slate);border-radius:6px;background:var(--granite);overflow:hidden}
+.eng .top{display:flex;align-items:center;gap:14px;padding:18px 22px;border-bottom:1px solid var(--slate)}
+.eng .dot{width:11px;height:11px;border-radius:50%;flex:none}
+.eng .nm{font-family:var(--elite);font-size:22px;color:var(--gold-bright);flex:1}
+.eng .st{font-family:var(--mono);font-size:12px;letter-spacing:.2em;padding:4px 12px;border-radius:20px;border:1px solid}
+.st.CONFIRMED{color:var(--green);border-color:#2f7a52}
+.st.UNPROVEN{color:var(--amber);border-color:#7a5a1a}
+.st.CONTRADICTED{color:var(--red);border-color:#7a2a2a}
+.st.UNDEFINED{color:var(--dim);border-color:var(--wire)}
+.eng .body{padding:20px 22px}
+.eng .role{color:var(--dim);margin-bottom:16px}
+.chip{display:inline-block;font-family:var(--mono);font-size:13px;padding:3px 10px;margin:0 6px 6px 0;border:1px solid var(--wire);border-radius:4px;color:var(--text)}
+.chain{font-family:var(--mono);font-size:13px;color:var(--dim);line-height:2;word-break:break-word}
+.chain b{color:var(--neon);font-weight:400}
+.inv{margin:10px 0;padding:12px 16px;border-left:2px solid var(--wire);font-size:16px}
+.inv.UNPROVEN{border-left-color:var(--amber)}
+.inv.CONFIRMED{border-left-color:var(--green)}
+.inv .p{font-family:var(--mono);font-size:13px;color:var(--dim);margin-top:5px}
+.inv .cost{font-size:15px;color:var(--red);font-style:italic;margin-top:5px}
+
+/* ── TABLES ──────────────────────────────────────────────────────────────── */
+table{width:100%;border-collapse:collapse;margin:18px 0;font-size:17px}
+th{font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--neon);text-align:left;padding:11px 12px;border-bottom:1px solid var(--gold-deep)}
+td{padding:11px 12px;border-bottom:1px solid #1e1e28;vertical-align:top}
+td .nm{font-family:var(--elite);color:var(--gold)}
+td .fl{font-family:var(--mono);font-size:14px;color:var(--dim)}
+.tag{font-family:var(--mono);font-size:12px;letter-spacing:.12em;padding:2px 8px;border-radius:3px;border:1px solid}
+.tag.CONFIRMED{color:var(--green);border-color:#2f7a52}
+.tag.ADRIFT,.tag.UNPROVEN{color:var(--amber);border-color:#7a5a1a}
+.tag.CONTRADICTED{color:var(--red);border-color:#7a2a2a}
+.tag.AUTHORED{color:var(--dim);border-color:var(--wire)}
+
+.law{margin:60px 0 0;padding:26px 30px;border:1px solid var(--gold-deep);border-radius:6px;background:linear-gradient(180deg,rgba(212,160,23,.06),transparent)}
+.law p{font-family:var(--elite);font-size:19px;color:var(--gold-bright);margin:0 0 10px;line-height:1.5}
+.foot{margin-top:70px;padding-top:28px;border-top:1px solid var(--slate);text-align:center;font-family:var(--mono);font-size:13px;letter-spacing:.2em;color:#9a9ab2}
+</style>
+</head>
+<body>
+
+<div class="mark">AMENTI<span style="color:#8a8a9e">.</span><span class="live">LIVE</span></div>
+
+<main>
+  <p class="eyebrow">The Glass Gate</p>
+  <h1>THE ENGINE ROOM</h1>
+  <p class="sub">THE FLEET, BY CAPABILITY</p>
+
+  <!-- ══ THE EMPTY-GLASS BOX ══ the most important thing on this page ══ -->
+  <div id="empty">
+    <div class="t">⚠ NO READING.</div>
+    <p><code>fleet-manifest.js</code> has not been published through the gate, or it failed to load.</p>
+    <p class="loud">I AM SHOWING YOU NOTHING.<br>I am not showing you the last thing I saw.</p>
+    <p style="margin-top:22px;font-size:16px;color:#c88">A mirror with a memory is a portrait. This pane has no memory, on purpose.</p>
+  </div>
+
+  <div id="glass" style="display:none">
+    <div class="reading">
+      <span><b>READING</b> <i id="r-read"></i></span>
+      <span><b>MERGED</b> <i id="r-merge"></i></span>
+      <span><b>CLAIMS</b> <i id="r-sem"></i></span>
+      <span><b>SHIP</b> <i id="r-repo"></i></span>
+    </div>
+    <div id="stale"></div>
+
+    <div class="health" id="health"></div>
+
+    <h2>THE DRIFT</h2>
+    <p style="color:var(--dim);margin-top:-6px">A manifest that shows itself broken is not broken. It is working.<br>
+       <b style="color:var(--green)">Green</b> means <i>“I looked, and the claims held.”</i>
+       <b style="color:var(--red)">Red</b> means <i>“I looked.”</i>
+       Silence means nothing was looked at at all.</p>
+    <div id="drift"></div>
+
+    <h2>THE ENGINES</h2>
+    <p style="color:var(--dim);margin-top:-6px">An engine is not a file. It is a <b>capability</b> that spans files, surfaces and workers —
+       and that is precisely why nobody noticed the Terminal was not wired.<br>
+       <b style="color:var(--gold-bright)">There was no object in the model whose job it was to be whole.</b></p>
+    <div id="engines"></div>
+
+    <h2>THE WATCHES</h2>
+    <table><thead><tr><th>Watch</th><th>Guards</th><th>Instrument</th><th></th></tr></thead>
+      <tbody id="watches"></tbody></table>
+
+    <h2>THE CREW</h2>
+    <table><thead><tr><th>Ship</th><th>Station</th><th>Loaded by</th><th></th></tr></thead>
+      <tbody id="crew"></tbody></table>
+
+    <h2>THE SHIPS OF THE LINE</h2>
+    <table><thead><tr><th>Vessel</th><th>Station</th><th></th></tr></thead>
+      <tbody id="ships"></tbody></table>
+
+    <div class="law" id="law"></div>
+  </div>
+
+  <p class="foot">INGRAM MANOR LLC <span style="color:var(--gold)">·</span> THE FLYING DUTCHMAN <span style="color:var(--gold)">◈</span></p>
+</main>
+
+<!-- The reading. If this fails to load, window.FLEET_MANIFEST is undefined and
+     the EMPTY-GLASS BOX shows. There is no fallback. That is deliberate. -->
+<script src="fleet-manifest.js" onerror="void 0"></script>
+<script>
+(function () {
+  'use strict';
+  var M = window.FLEET_MANIFEST;
+
+  /* NO READING -> THE BOX. Never a memory. Never a guess. */
+  if (!M || !M.meta || !M.drift) {
+    document.getElementById('empty').style.display = 'block';
+    return;
+  }
+  document.getElementById('glass').style.display = 'block';
+
+  var $ = function (id) { return document.getElementById(id); };
+  var esc = function (s) {
+    return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  };
+  var hex = function (n) { return '#' + ('000000' + (n >>> 0).toString(16)).slice(-6); };
+
+  /* ── the reading bar ── */
+  $('r-read').textContent  = (M.meta.reading  || '—').replace('T',' ').slice(0,19);
+  $('r-merge').textContent = (M.meta.merged   || '—').replace('T',' ').slice(0,19);
+  $('r-sem').textContent   = M.meta.semantics || '—';
+  $('r-repo').textContent  = M.meta.repo      || '—';
+
+  /* STALENESS. "I have a reading" and "I have a CURRENT reading" are not the
+     same claim. Every document that lied to us was a reading that had stopped
+     being current and had no way to say so. */
+  var readAt = Date.parse(M.meta.reading), mergedAt = Date.parse(M.meta.merged);
+  var age = (Date.now() - mergedAt) / 36e5;
+  if (isNaN(mergedAt) || age > 24) {
+    var s = $('stale');
+    s.style.display = 'block';
+    s.textContent = '⚠ THIS READING IS ' + (isNaN(age) ? 'OF UNKNOWN AGE' : Math.round(age) + ' HOURS OLD') +
+                    '. The fleet may have sailed since I looked.';
+  }
+
+  /* ── health ── */
+  var h = M.health || {};
+  var cards = [
+    { n: h.contradicted || 0, l: 'contradicted', c: (h.contradicted ? 'bad' : 'ok') },
+    { n: h.unproven     || 0, l: 'unproven',     c: (h.unproven ? 'warn' : 'ok') },
+    { n: h.adrift       || 0, l: 'adrift',       c: (h.adrift ? 'warn' : 'ok') },
+    { n: h.undeclared   || 0, l: 'undeclared',   c: (h.undeclared ? 'warn' : 'ok') }
+  ];
+  $('health').innerHTML = cards.map(function (c) {
+    return '<div class="h ' + c.c + '"><div class="n">' + c.n + '</div><div class="l">' + c.l + '</div></div>';
+  }).join('');
+
+  /* ── the drift ── */
+  $('drift').innerHTML = M.drift.length
+    ? M.drift.map(function (d) {
+        return '<div class="drift ' + esc(d.stamp) + '">' +
+          '<div class="stamp">' + esc(d.stamp) + '</div>' +
+          '<div class="subj">' + esc(d.subject) + '</div>' +
+          '<div class="kv">' +
+            '<div class="k">CLAIMED</div><div>' + esc(d.claim) + '</div>' +
+            '<div class="k">OBSERVED</div><div>' + esc(d.reading) + '</div>' +
+          '</div>' +
+          (d.note ? '<div class="note">' + esc(d.note) + '</div>' : '') +
+        '</div>';
+      }).join('')
+    : '<div class="clean">✓ NO DRIFT. Every claim held.</div>';
+
+  /* ── engines ── */
+  $('engines').innerHTML = (M.engines || []).map(function (e) {
+    var ch = e.chain
+      ? Object.keys(e.chain).map(function (k) {
+          return '<div class="chain"><b>' + esc(k.toUpperCase()) + '</b> &nbsp; ' +
+                 e.chain[k].map(esc).join(' <span style="color:#5a5a70">→</span> ') + '</div>';
+        }).join('')
+      : '';
+    var inv = (e.invariants || []).map(function (i) {
+      return '<div class="inv ' + esc(i.stamp) + '">' + esc(i.claim) +
+        '<div class="p">' + (i.probe ? 'probe: ' + esc(i.probe) : 'NO PROBE — an invariant with no probe is a prayer') + '</div>' +
+        (i.cost ? '<div class="cost">cost: ' + esc(i.cost) + '</div>' : '') + '</div>';
+    }).join('');
+    var gd = (e.guards || []).map(function (g) {
+      return '<div class="inv"><b>' + esc(g.name) + '</b> — <span style="color:var(--dim)">' + esc(g.against) + '</span></div>';
+    }).join('');
+    var tr = (e.traps || []).map(function (t) {
+      return '<div class="inv" style="border-left-color:var(--red)">' + esc(t) + '</div>';
+    }).join('');
+
+    return '<div class="eng">' +
+      '<div class="top">' +
+        '<span class="dot" style="background:' + hex(e.color || 0x888888) + '"></span>' +
+        '<span class="nm">' + esc(e.name) + '</span>' +
+        '<span class="st ' + esc(e.stamp) + '">' + esc(e.stamp) + '</span>' +
+      '</div>' +
+      '<div class="body">' +
+        '<div class="role">' + esc(e.role) + '</div>' +
+        (e.members ? '<h3>Members</h3>' + e.members.map(function (m) { return '<span class="chip">' + esc(m) + '</span>'; }).join('') : '') +
+        (e.workers ? e.workers.map(function (w) { return '<span class="chip" style="border-color:#2bff77;color:#2bff77">' + esc(w) + '</span>'; }).join('') : '') +
+        (ch  ? '<h3>The chain</h3>' + ch : '') +
+        (e.contracts ? '<h3>Contracts</h3>' + e.contracts.map(function (c) { return '<div class="chain">' + esc(c) + '</div>'; }).join('') : '') +
+        (inv ? '<h3>Invariants — and the probe that holds each</h3>' + inv : '') +
+        (gd  ? '<h3>Guards</h3>' + gd : '') +
+        (tr  ? '<h3>Traps — already paid for. Do not rediscover them.</h3>' + tr : '') +
+      '</div></div>';
+  }).join('');
+
+  /* ── watches ── */
+  $('watches').innerHTML = (M.watches || []).map(function (w) {
+    return '<tr><td><span class="nm">' + esc(w.id) + '</span></td>' +
+      '<td><span style="color:var(--dim)">' + esc(w.guards) + '</span><br>' +
+        '<span style="font-size:15px;color:var(--red)">' + esc(w.threat) + '</span></td>' +
+      '<td class="fl">' + (w.probe ? esc(w.probe) : '<span style="color:var(--amber)">— none —</span>') + '</td>' +
+      '<td><span class="tag ' + esc(w.stamp) + '">' + esc(w.stamp) + '</span></td></tr>';
+  }).join('');
+
+  /* ── crew ── */
+  $('crew').innerHTML = (M.crew || []).map(function (c) {
+    return '<tr><td><span class="nm">' + esc(c.name) + '</span><br><span class="fl">' + esc(c.file) + '</span></td>' +
+      '<td><span style="color:var(--dim)">' + esc(c.role) + '</span>' +
+        (c.note ? '<br><i style="font-size:15px;color:#8a8a9e">' + esc(c.note) + '</i>' : '') + '</td>' +
+      '<td class="fl">' + ((c.loadedBy && c.loadedBy.length) ? c.loadedBy.map(esc).join('<br>') : '—') + '</td>' +
+      '<td>' + (c.stamps || []).map(function (s) { return '<span class="tag ' + esc(s) + '">' + esc(s) + '</span>'; }).join(' ') + '</td></tr>';
+  }).join('');
+
+  /* ── ships ── */
+  $('ships').innerHTML = (M.ships || []).map(function (s) {
+    return '<tr><td><span class="nm">' + esc(s.name) + '</span><br><span class="fl">' + esc(s.file) + '</span></td>' +
+      '<td><span style="color:var(--dim)">' + esc(s.role) + '</span></td>' +
+      '<td>' + (s.stamps || []).map(function (x) { return '<span class="tag ' + esc(x) + '">' + esc(x) + '</span>'; }).join(' ') + '</td></tr>';
+  }).join('');
+
+  /* ── the doctrine. AUTHORED. Unfalsifiable by construction, and therefore safe. ── */
+  $('law').innerHTML = (M.doctrine || []).map(function (d) { return '<p>' + esc(d) + '</p>'; }).join('');
+})();
+</script>
+</body>
+</html>
