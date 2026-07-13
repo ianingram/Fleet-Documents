@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>THE ORDNANCE BAY · Amenti Fleet</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Special+Elite&family=Rajdhani:wght@200;300;400;600&display=swap" rel="stylesheet">
+<!-- ============================================================================
+     ordnance.html  ·  A PANE OF THE GLASS GATE
+     ----------------------------------------------------------------------------
+     WHAT HAS THE FLEET ACTUALLY FIRED?
+
+     Four tubes publish from this ship, and until tonight NOTHING COULD SEE THEM:
+
+       ATLANTICA         a daily dispatch, in a figure's own voice
+       THE DAILY PLANET  a daily piece
+       THE WEEK          the VAL·HAL·LA weekly, assembled from all of it
+       THE PODCAST       …scheduled. And nobody knew whether it fires.
+       THE DOCKET        the trials — and their verdicts
+
+     THE QUESTION NOBODY COULD ASK:
+         What went out? What is loaded? WHAT WAS MISSED?
+
+     A SCHEDULE THAT NOBODY CHECKS IS A PROMISE NOBODY KEEPS.
+
+     On 13 July 2026 the first set of cases closed on the Docket. Zero arguments
+     had been submitted. The Docket had done its job perfectly — it proclaimed
+     itself, on time, to a harbour that was not listening. And the only reason
+     anybody knows is that A HUMAN HAPPENED TO LOOK AT THE DATE.
+
+     The old manifest even said it, months before it came true, and neither of us
+     noticed it was literal:
+
+         "The Docket — the living register of trials — the schedule that
+          proclaims itself to a harbour NOT YET LISTENING."
+
+     This pane makes that visible. It states no facts. It renders the firing log.
+     If nobody has walked the tubes, IT SAYS SO.
+     ============================================================================ -->
+<style>
+:root{
+  --gold:#d4a017;--gold-bright:#f5c542;--gold-deep:#a87c14;
+  --neon:#00ffe0;--term:#80ffc0;--fire:#ff7847;
+  --ink:#0a0a0f;--granite:#12121a;--slate:#2a2a38;--wire:#3a3a52;
+  --text:#c8c8d8;--dim:#a4a4b8;
+  --red:#f87171;--amber:#fbbf24;--green:#4ade80;
+  --elite:'Special Elite',cursive;--mono:'Share Tech Mono',monospace;--body:'Rajdhani',sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ink);color:var(--text);font-family:var(--body);font-weight:300;font-size:18px;line-height:1.7}
+main{max-width:1040px;margin:0 auto;padding:0 24px 140px}
+
+.fleet-nav{position:sticky;top:0;z-index:90;display:flex;flex-wrap:wrap;gap:2px;padding:0 24px;background:rgba(10,10,15,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--slate);margin:0 -24px 8px}
+.fleet-nav a{font-family:var(--mono);font-size:12px;letter-spacing:.16em;color:var(--dim);text-decoration:none;padding:16px 13px 14px;border-bottom:2px solid transparent;transition:.2s;white-space:nowrap}
+.fleet-nav a:hover{color:var(--gold-bright);background:rgba(212,160,23,.06)}
+.fleet-nav a.on{color:var(--neon);border-bottom-color:var(--neon)}
+@media(max-width:700px){.fleet-nav a{font-size:11px;padding:12px 8px;letter-spacing:.06em}}
+
+.mark{position:fixed;bottom:18px;right:22px;font-family:var(--elite);font-size:17px;letter-spacing:.14em;color:var(--gold);opacity:.8}
+.mark .live{color:var(--term);text-shadow:0 0 10px var(--term);animation:blink 1.35s steps(1,end) infinite}
+@keyframes blink{0%,54%{opacity:1}55%,100%{opacity:.18}}
+
+.eyebrow{font-family:var(--mono);font-size:13px;letter-spacing:.3em;color:var(--fire);text-transform:uppercase;margin:34px 0 0}
+h1{font-family:var(--elite);font-size:clamp(30px,5vw,50px);color:var(--gold-bright);letter-spacing:.04em;margin:8px 0 6px}
+.sub{font-family:var(--elite);font-size:16px;letter-spacing:.2em;color:var(--gold-deep);margin:0 0 14px}
+.lede{color:var(--dim);max-width:780px}
+.lede b{color:var(--gold-bright);font-weight:400}
+
+#empty{display:none;margin:60px 0;padding:38px 40px;border:2px solid var(--red);border-radius:6px;background:linear-gradient(180deg,rgba(248,113,113,.09),transparent)}
+#empty .t{font-family:var(--elite);font-size:clamp(22px,3.4vw,32px);color:var(--red);margin-bottom:18px}
+#empty p{margin:0 0 12px;color:#e8b0b0}
+#empty .loud{font-family:var(--elite);font-size:22px;color:var(--red);margin-top:22px;line-height:1.4}
+
+#nolog{display:none;margin:36px 0;padding:26px 30px;border:2px solid var(--amber);border-radius:6px;background:rgba(251,191,36,.06)}
+#nolog .t{font-family:var(--elite);font-size:24px;color:var(--amber);margin-bottom:12px}
+#nolog p{color:#e8d4a0;margin:0 0 10px}
+
+.bar{display:flex;flex-wrap:wrap;gap:26px;padding:15px 20px;border:1px solid var(--slate);border-radius:5px;background:var(--granite);font-family:var(--mono);font-size:13px;margin:26px 0 6px}
+.bar b{color:var(--fire);font-weight:400;letter-spacing:.1em}
+.bar span{color:var(--dim)}
+
+.tubes{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin:30px 0}
+.tube{border:1px solid var(--slate);border-left-width:4px;border-radius:0 8px 8px 0;background:var(--granite);padding:22px 24px}
+.tube.OK{border-left-color:var(--green)}
+.tube.WARN{border-left-color:var(--amber)}
+.tube.FAIL{border-left-color:var(--red)}
+.tube .h{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.tube .lamp{width:12px;height:12px;border-radius:50%;flex:none}
+.tube.OK .lamp{background:var(--green);box-shadow:0 0 12px var(--green)}
+.tube.WARN .lamp{background:var(--amber);box-shadow:0 0 12px var(--amber);animation:pulse 1.8s infinite}
+.tube.FAIL .lamp{background:var(--red);box-shadow:0 0 16px var(--red);animation:pulse .9s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.tube .nm{font-family:var(--elite);font-size:22px;color:var(--gold-bright);flex:1}
+.tube .cad{font-family:var(--mono);font-size:12px;letter-spacing:.14em;color:var(--dim);text-transform:uppercase}
+.tube .big{font-family:var(--elite);font-size:44px;line-height:1.1;margin:12px 0 2px}
+.tube.OK .big{color:var(--green)} .tube.WARN .big{color:var(--amber)} .tube.FAIL .big{color:var(--red)}
+.tube .biglabel{font-family:var(--mono);font-size:12px;letter-spacing:.18em;color:var(--dim);text-transform:uppercase}
+.tube .note{margin-top:14px;font-size:16px;color:var(--dim);line-height:1.6;border-left:2px solid var(--wire);padding-left:12px}
+.tube .miss{margin-top:12px;padding:10px 14px;border-radius:4px;background:rgba(248,113,113,.08);border:1px solid #5a2020;color:#e8b0b0;font-family:var(--mono);font-size:13px;line-height:1.8}
+
+h2{font-family:var(--elite);font-size:clamp(21px,3vw,29px);color:var(--gold);margin:54px 0 10px;border-bottom:1px solid var(--slate);padding-bottom:10px}
+
+/* ── THE CALENDAR ── */
+.cal{margin:22px 0}
+.cal .m{font-family:var(--mono);font-size:13px;letter-spacing:.2em;color:var(--neon);text-transform:uppercase;margin:20px 0 8px}
+.days{display:grid;grid-template-columns:repeat(auto-fill,minmax(30px,1fr));gap:4px}
+.d{aspect-ratio:1;border-radius:3px;border:1px solid #1e1e28;display:flex;align-items:center;justify-content:center;
+   font-family:var(--mono);font-size:11px;color:#5a5a70;background:#0e0e14;position:relative}
+.d.fired{background:rgba(74,222,128,.16);border-color:#2f7a52;color:#8ee8b0}
+.d.miss{background:rgba(248,113,113,.14);border-color:#7a2a2a;color:#f0a0a0}
+.d.today{outline:2px solid var(--gold);outline-offset:1px;color:var(--gold-bright);font-weight:700}
+.d.future{opacity:.3}
+.legend{display:flex;gap:18px;margin-top:14px;font-family:var(--mono);font-size:12px;color:var(--dim)}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+
+.law{margin:56px 0 0;padding:26px 30px;border:1px solid var(--gold-deep);border-radius:6px;background:linear-gradient(180deg,rgba(212,160,23,.06),transparent)}
+.law p{font-family:var(--elite);font-size:20px;color:var(--gold-bright);margin:0 0 12px;line-height:1.5}
+.law p:last-child{margin-bottom:0;color:var(--term)}
+.foot{margin-top:70px;padding-top:28px;border-top:1px solid var(--slate);text-align:center;font-family:var(--mono);font-size:13px;letter-spacing:.2em;color:#9a9ab2}
+</style>
+</head>
+<body>
+
+<nav class="fleet-nav">
+  <a href="index.html">HARBOR</a>
+  <a href="ships-manifest.html">MANIFEST</a>
+  <a href="engine-room.html">ENGINE ROOM</a>
+  <a href="watch.html">THE WATCH</a>
+  <a href="ordnance.html" class="on">ORDNANCE BAY</a>
+  <a href="command.html">COMMAND</a>
+  <a href="ocean.html">OCEAN</a>
+</nav>
+
+<main>
+  <p class="eyebrow">The Glass Gate</p>
+  <h1>THE ORDNANCE BAY</h1>
+  <p class="sub">WHAT THE FLEET HAS FIRED · WHAT IS LOADED · WHAT WAS MISSED</p>
+  <p class="lede">Five tubes publish from this ship. Until tonight, <b>nothing could see them.</b><br><br>
+     A schedule that nobody checks is <b>a promise nobody keeps</b>.</p>
+
+  <div id="empty">
+    <div class="t">⚠ NO READING.</div>
+    <p><code>fleet-manifest.js</code> has not been published through the gate, or it failed to load.</p>
+    <p class="loud">I AM SHOWING YOU NOTHING.<br>I am not showing you the last thing I saw.</p>
+  </div>
+
+  <div id="nolog">
+    <div class="t">⚠ NOBODY HAS WALKED THE TUBES.</div>
+    <p>There is no firing log. <b>What went out, what is loaded, and what was missed — all unknown.</b></p>
+    <p style="font-family:var(--mono);font-size:14px;color:var(--amber)">run: probes/probe-ordnance.mjs</p>
+  </div>
+
+  <div id="glass" style="display:none">
+    <div class="bar">
+      <span><b>LAST WALK</b> <i id="l-at">—</i></span>
+      <span><b>TODAY</b> <i id="l-today">—</i></span>
+      <span><b>THIS WEEK</b> <i id="l-week">—</i></span>
+    </div>
+
+    <div class="tubes" id="tubes"></div>
+
+    <h2>THE FIRING CALENDAR · LAST 28 DAYS</h2>
+    <p class="lede" style="margin-top:-4px">Every day a daily tube should have fired. <b style="color:var(--green)">Green</b> = it did.
+       <b style="color:var(--red)">Red</b> = <i>it did not, and nobody knew.</i></p>
+    <div class="cal" id="cal"></div>
+
+    <div class="law">
+      <p>A schedule that nobody checks is a promise nobody keeps.</p>
+      <p>The tube is the instrument. The firing log is the reading.</p>
+      <p>The Docket proclaimed itself, on time, to a harbour that was not listening.</p>
+    </div>
+  </div>
+
+  <p class="foot">INGRAM MANOR LLC <span style="color:var(--gold)">·</span> THE FLYING DUTCHMAN <span style="color:var(--gold)">◈</span></p>
+</main>
+
+<div class="mark">AMENTI<span style="color:#8a8a9e">.</span><span class="live">LIVE</span></div>
+
+<script src="fleet-manifest.js" onerror="void 0"></script>
+<script>
+(function () {
+  'use strict';
+  var M = window.FLEET_MANIFEST;
+  var $ = function (id) { return document.getElementById(id); };
+  var esc = function (s) { return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); };
+
+  /* NO READING -> THE BOX. */
+  if (!M || !M.meta) { $('empty').style.display = 'block'; return; }
+
+  /* NO FIRING LOG -> SAY SO. Do not draw five green tubes and let anyone assume. */
+  var D = M.dispatch;
+  if (!D || !D.tubes) { $('nolog').style.display = 'block'; return; }
+
+  $('glass').style.display = 'block';
+  $('l-at').textContent    = String(D.at || '—').replace('T',' ').slice(0,19);
+  $('l-today').textContent = D.today || '—';
+  $('l-week').textContent  = D.thisWeek || '—';
+
+  /* ── the tubes ── */
+  var tubes = Object.keys(D.tubes).map(function (k) { return D.tubes[k]; });
+  $('tubes').innerHTML = tubes.map(function (t) {
+    var miss = (t.missedLast14 && t.missedLast14.length) ? t.missedLast14
+             : (t.missedLast8 && t.missedLast8.length) ? t.missedLast8 : null;
+
+    var big = (t.fired === null || t.fired === undefined) ? '—' : t.fired;
+    var lbl = (t.fired === 0) ? 'never fired' : 'rounds fired';
+
+    return '<div class="tube ' + esc(t.status) + '">' +
+      '<div class="h"><span class="lamp"></span><span class="nm">' + esc(t.id) + '</span></div>' +
+      '<div class="cad">' + esc(t.cadence || '—') + '</div>' +
+      '<div class="big">' + esc(big) + '</div>' +
+      '<div class="biglabel">' + lbl + '</div>' +
+      (t.last ? '<div class="cad" style="margin-top:10px;color:var(--neon)">LAST · ' +
+                esc(t.last.date || t.last) + (t.last.figure ? ' · ' + esc(t.last.figure) : '') + '</div>' : '') +
+      (t.note ? '<div class="note">' + esc(t.note) + '</div>' : '') +
+      (miss ? '<div class="miss"><b>MISSED</b><br>' + miss.map(esc).join('<br>') + '</div>' : '') +
+    '</div>';
+  }).join('');
+
+  /* ── THE FIRING CALENDAR. Twenty-eight days. Every gap is a promise not kept. ── */
+  var daily = tubes.filter(function (t) { return t.cadence === 'daily'; });
+  var fired = {};
+  daily.forEach(function (t) {
+    (t.recent || []).forEach(function (r) {
+      var d = (typeof r === 'string') ? (/(\d{4}-\d{2}-\d{2})/.exec(r) || [])[1] : r.date;
+      if (d) (fired[d] = fired[d] || []).push(t.id);
+    });
+  });
+
+  var today = D.today;
+  var cells = [];
+  for (var i = 27; i >= 0; i--) {
+    var dt = new Date(Date.parse(today) - i * 864e5);
+    var iso = dt.toISOString().slice(0, 10);
+    var cls = fired[iso] ? 'fired' : 'miss';
+    if (iso === today) cls += ' today';
+    cells.push('<div class="d ' + cls + '" title="' + iso +
+      (fired[iso] ? ' — fired: ' + fired[iso].join(', ') : ' — NOTHING FIRED') + '">' +
+      dt.getUTCDate() + '</div>');
+  }
+  $('cal').innerHTML =
+    '<div class="days">' + cells.join('') + '</div>' +
+    '<div class="legend">' +
+      '<span><i style="background:rgba(74,222,128,.4);border:1px solid #2f7a52"></i>fired</span>' +
+      '<span><i style="background:rgba(248,113,113,.35);border:1px solid #7a2a2a"></i>nothing fired</span>' +
+      '<span><i style="outline:2px solid #d4a017;background:transparent"></i>today</span>' +
+    '</div>';
+})();
+</script>
+</body>
+</html>
