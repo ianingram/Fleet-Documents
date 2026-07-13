@@ -435,6 +435,11 @@ function tint(x) {
   return x.color || 0x9adcff;
 }
 
+/* RESTORED. I deleted this line when I replaced the guard block above, and the
+   ship loop pushes into it. ReferenceError on the first ship. BLANK SCREEN.
+   The scanner cannot catch this — it is a runtime error, not a wiring one. */
+const fleetShips = [];
+
 for(const ship of M.ships){
   const s = buildFleetShip({ flag: !!ship.flag, name: ship.name, accent: tint(ship) });
   const {x,z} = tileXZ(ship.board.col, ship.board.row);
