@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>THE WATCH · Amenti Fleet</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Special+Elite&family=Rajdhani:wght@200;300;400;600&display=swap" rel="stylesheet">
+<!-- ============================================================================
+     watch.html  ·  A PANE OF THE GLASS GATE
+     ----------------------------------------------------------------------------
+     THE FOUR WATCHES. What guards the fleet, what it guards against, and — the
+     only question that has ever mattered — WHETHER ANYTHING IS ACTUALLY WATCHING.
+
+     THE LIE THIS PANE EXISTS TO KILL:
+
+         DATA WATCH: 'verified ✓ — anon reads blocked'
+
+     That tick sat on the old manifest FOR MONTHS. There was no probe. No file.
+     Nothing to re-run. It was the memory of a manual browser check from a
+     session nobody can name — an unverifiable claim rendered as a verified fact,
+     MANUFACTURING CONFIDENCE THAT NOBODY HAD EARNED.
+
+     A watch is green here only when a RECENT PATROL LOOKED AND THE WARD HELD.
+     No patrol -> amber. Stale patrol -> amber. A stub -> amber, and it says so.
+
+         THE PROBE IS THE INSTRUMENT. THE PATROL RECORD IS THE READING.
+         A PROBE THAT HAS NEVER RUN IS A PRAYER.
+
+     This file states no facts. It renders fleet-manifest.js. If there is no
+     reading, it shows the EMPTY-GLASS BOX — not the last thing it saw.
+     ============================================================================ -->
+<style>
+:root{
+  --gold:#d4a017;--gold-bright:#f5c542;--gold-deep:#a87c14;
+  --neon:#00ffe0;--term:#80ffc0;--watch:#57b6ff;
+  --ink:#0a0a0f;--granite:#12121a;--slate:#2a2a38;--wire:#3a3a52;
+  --text:#c8c8d8;--dim:#a4a4b8;
+  --red:#f87171;--amber:#fbbf24;--green:#4ade80;
+  --elite:'Special Elite',cursive;--mono:'Share Tech Mono',monospace;--body:'Rajdhani',sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ink);color:var(--text);font-family:var(--body);font-weight:300;font-size:18px;line-height:1.7}
+main{max-width:1000px;margin:0 auto;padding:0 24px 140px}
+
+.fleet-nav{position:sticky;top:0;z-index:90;display:flex;flex-wrap:wrap;gap:2px;padding:0 24px;background:rgba(10,10,15,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--slate);margin:0 -24px 8px}
+.fleet-nav a{font-family:var(--mono);font-size:12px;letter-spacing:.18em;color:var(--dim);text-decoration:none;padding:16px 15px 14px;border-bottom:2px solid transparent;transition:.2s;white-space:nowrap}
+.fleet-nav a:hover{color:var(--gold-bright);background:rgba(212,160,23,.06)}
+.fleet-nav a.on{color:var(--neon);border-bottom-color:var(--neon)}
+@media(max-width:640px){.fleet-nav a{font-size:11px;padding:13px 9px;letter-spacing:.08em}}
+
+.mark{position:fixed;bottom:18px;right:22px;font-family:var(--elite);font-size:17px;letter-spacing:.14em;color:var(--gold);opacity:.8}
+.mark .live{color:var(--term);text-shadow:0 0 10px var(--term);animation:blink 1.35s steps(1,end) infinite}
+@keyframes blink{0%,54%{opacity:1}55%,100%{opacity:.18}}
+
+.eyebrow{font-family:var(--mono);font-size:13px;letter-spacing:.3em;color:var(--watch);text-transform:uppercase;margin:34px 0 0}
+h1{font-family:var(--elite);font-size:clamp(30px,5vw,50px);color:var(--gold-bright);letter-spacing:.04em;margin:8px 0 6px}
+.sub{font-family:var(--elite);font-size:16px;letter-spacing:.2em;color:var(--gold-deep);margin:0 0 14px}
+.lede{color:var(--dim);max-width:760px}
+.lede b{color:var(--gold-light,#f0c040);font-weight:400}
+
+#empty{display:none;margin:60px 0;padding:38px 40px;border:2px solid var(--red);border-radius:6px;background:linear-gradient(180deg,rgba(248,113,113,.09),transparent)}
+#empty .t{font-family:var(--elite);font-size:clamp(22px,3.4vw,32px);color:var(--red);margin-bottom:18px}
+#empty p{margin:0 0 12px;color:#e8b0b0}
+#empty .loud{font-family:var(--elite);font-size:22px;color:var(--red);margin-top:22px;line-height:1.4}
+
+.patrol{display:flex;flex-wrap:wrap;gap:26px;align-items:center;padding:16px 20px;border:1px solid var(--slate);border-radius:5px;background:var(--granite);font-family:var(--mono);font-size:13px;margin:26px 0 6px}
+.patrol b{color:var(--watch);font-weight:400;letter-spacing:.1em}
+.patrol span{color:var(--dim)}
+#stale{display:none;margin:8px 0 0;padding:13px 18px;border:1px solid var(--amber);border-radius:5px;background:rgba(251,191,36,.07);color:var(--amber);font-family:var(--mono);font-size:13px}
+#nopatrol{display:none;margin:8px 0 0;padding:13px 18px;border:1px solid var(--red);border-radius:5px;background:rgba(248,113,113,.07);color:var(--red);font-family:var(--mono);font-size:13px}
+
+.tally{display:flex;flex-wrap:wrap;gap:12px;margin:26px 0 40px}
+.t{flex:1;min-width:150px;padding:20px;border:1px solid var(--slate);border-radius:6px;background:var(--granite);text-align:center}
+.t .n{font-family:var(--elite);font-size:40px;line-height:1}
+.t .l{font-family:var(--mono);font-size:12px;letter-spacing:.18em;color:var(--dim);text-transform:uppercase;margin-top:8px}
+.t.ok{border-color:#1e4d38}.t.ok .n{color:var(--green)}
+.t.warn{border-color:#7a5a1a}.t.warn .n{color:var(--amber)}
+.t.bad{border-color:#7a2a2a}.t.bad .n{color:var(--red)}
+
+.w{margin:18px 0;border:1px solid var(--slate);border-left-width:4px;border-radius:0 8px 8px 0;background:var(--granite);overflow:hidden}
+.w.CONFIRMED{border-left-color:var(--green)}
+.w.UNPROVEN{border-left-color:var(--amber)}
+.w.CONTRADICTED{border-left-color:var(--red)}
+.w .top{display:flex;align-items:center;gap:16px;padding:20px 24px;border-bottom:1px solid var(--slate)}
+.w .lamp{width:14px;height:14px;border-radius:50%;flex:none}
+.w.CONFIRMED .lamp{background:var(--green);box-shadow:0 0 14px var(--green)}
+.w.UNPROVEN .lamp{background:var(--amber);box-shadow:0 0 14px var(--amber);animation:pulse 1.8s ease-in-out infinite}
+.w.CONTRADICTED .lamp{background:var(--red);box-shadow:0 0 18px var(--red);animation:pulse .9s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.w .nm{font-family:var(--elite);font-size:24px;color:var(--gold-bright);flex:1;letter-spacing:.03em}
+.w .st{font-family:var(--mono);font-size:12px;letter-spacing:.2em;padding:5px 14px;border-radius:20px;border:1px solid}
+.CONFIRMED .st{color:var(--green);border-color:#2f7a52}
+.UNPROVEN .st{color:var(--amber);border-color:#7a5a1a}
+.CONTRADICTED .st{color:var(--red);border-color:#7a2a2a}
+.w .body{padding:20px 24px}
+.row{display:grid;grid-template-columns:104px 1fr;gap:8px 16px;margin-bottom:14px}
+.k{font-family:var(--mono);font-size:12px;letter-spacing:.16em;color:var(--dim);text-transform:uppercase;padding-top:3px}
+.threat{color:#e8a0a0}
+.inst{font-family:var(--mono);font-size:15px;color:var(--neon)}
+.inst.none{color:var(--amber)}
+.saw{padding:14px 18px;border-radius:5px;font-size:16px;line-height:1.65;margin-top:4px}
+.saw.CONFIRMED{background:rgba(74,222,128,.06);border:1px solid #1e4d38;color:#b6e8c8}
+.saw.UNPROVEN{background:rgba(251,191,36,.05);border:1px solid #5a4514;color:#e8d4a0}
+.saw.CONTRADICTED{background:rgba(248,113,113,.07);border:1px solid #7a2a2a;color:#e8b0b0}
+.saw .h{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;opacity:.75;margin-bottom:6px}
+.note{font-size:16px;color:var(--dim);font-style:italic;line-height:1.6;border-left:2px solid var(--wire);padding-left:14px;margin-top:14px}
+
+.law{margin:56px 0 0;padding:26px 30px;border:1px solid var(--gold-deep);border-radius:6px;background:linear-gradient(180deg,rgba(212,160,23,.06),transparent)}
+.law p{font-family:var(--elite);font-size:20px;color:var(--gold-bright);margin:0 0 12px;line-height:1.5}
+.law p:last-child{margin-bottom:0}
+.foot{margin-top:70px;padding-top:28px;border-top:1px solid var(--slate);text-align:center;font-family:var(--mono);font-size:13px;letter-spacing:.2em;color:#9a9ab2}
+</style>
+</head>
+<body>
+
+<nav class="fleet-nav">
+  <a href="index.html">HARBOR</a>
+  <a href="ships-manifest.html">MANIFEST</a>
+  <a href="engine-room.html">ENGINE ROOM</a>
+  <a href="watch.html" class="on">THE WATCH</a>
+  <a href="command.html">COMMAND VIEW</a>
+  <a href="ocean.html">OCEAN VIEW</a>
+</nav>
+
+<main>
+  <p class="eyebrow">The Glass Gate</p>
+  <h1>THE WATCH</h1>
+  <p class="sub">THE SENTRY CORPS · WHAT GUARDS THE FLEET</p>
+  <p class="lede">Four towers on the edges of the board. Each one names a <b>threat</b>, and each one must name
+     the <b>instrument</b> that proves it holds.<br><br>
+     A watch is <b style="color:var(--green)">green</b> here only when a <b>recent patrol looked and the ward held</b>.
+     No patrol → amber. Stale patrol → amber. A stub → amber, and it says so.</p>
+
+  <div id="empty">
+    <div class="t">⚠ NO READING.</div>
+    <p><code>fleet-manifest.js</code> has not been published through the gate, or it failed to load.</p>
+    <p class="loud">I AM SHOWING YOU NOTHING.<br>I am not showing you the last thing I saw.</p>
+    <p style="margin-top:22px;font-size:16px;color:#c88">A mirror with a memory is a portrait. This pane has no memory, on purpose.</p>
+  </div>
+
+  <div id="glass" style="display:none">
+    <div class="patrol">
+      <span><b>LAST PATROL</b> <i id="p-at">—</i></span>
+      <span><b>BY</b> <i id="p-by">—</i></span>
+      <span><b>MERGED</b> <i id="p-merged">—</i></span>
+    </div>
+    <div id="stale"></div>
+    <div id="nopatrol"></div>
+
+    <div class="tally" id="tally"></div>
+
+    <div id="watches"></div>
+
+    <div class="law">
+      <p>The probe is the instrument. The patrol record is the reading.</p>
+      <p>A probe that has never run is a prayer.</p>
+      <p>A watch that reports green with no instrument is worse than no watch at all.</p>
+      <p style="color:var(--term)">Green means “I looked, and the ward held.” Amber means “nothing is watching.”</p>
+    </div>
+  </div>
+
+  <p class="foot">INGRAM MANOR LLC <span style="color:var(--gold)">·</span> THE FLYING DUTCHMAN <span style="color:var(--gold)">◈</span></p>
+</main>
+
+<div class="mark">AMENTI<span style="color:#8a8a9e">.</span><span class="live">LIVE</span></div>
+
+<script src="fleet-manifest.js" onerror="void 0"></script>
+<script>
+(function () {
+  'use strict';
+  var M = window.FLEET_MANIFEST;
+
+  /* NO READING -> THE BOX. Never a memory. Never a guess. */
+  if (!M || !M.meta || !M.watches) { document.getElementById('empty').style.display = 'block'; return; }
+  document.getElementById('glass').style.display = 'block';
+
+  var $   = function (id) { return document.getElementById(id); };
+  var esc = function (s) { return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); };
+
+  /* THE PATROL. A watch carries its patrol record if one was folded in by the
+     merge. If none of them do, NOBODY HAS MADE THE ROUNDS — and this pane will
+     say so, loudly, rather than draw four grey towers and let you assume. */
+  var withPatrol = M.watches.filter(function (w) { return w.patrol; });
+  var first = withPatrol[0];
+
+  $('p-at').textContent     = first ? String(first.patrol.at).replace('T',' ').slice(0,19) : '— never —';
+  $('p-by').textContent     = first ? 'probes/probe-watches.mjs' : '— nobody —';
+  $('p-merged').textContent = (M.meta.merged || '—').replace('T',' ').slice(0,19);
+
+  if (!first) {
+    var np = $('nopatrol'); np.style.display = 'block';
+    np.textContent = '⚠ NO PATROL HAS EVER RUN. Every watch below is UNPROVEN — not because it failed, ' +
+                     'but because NOTHING IS WATCHING.';
+  } else {
+    var ageH = (Date.now() - Date.parse(first.patrol.at)) / 36e5;
+    if (ageH > 26) {
+      var st = $('stale'); st.style.display = 'block';
+      st.textContent = '⚠ THE LAST PATROL WAS ' + Math.round(ageH) + ' HOURS AGO. ' +
+        'A reading older than 26h is not a CURRENT reading — the wards may have changed since anyone looked.';
+    }
+  }
+
+  /* ── the tally ── */
+  var n = { CONFIRMED: 0, UNPROVEN: 0, CONTRADICTED: 0 };
+  M.watches.forEach(function (w) { n[w.stamp] = (n[w.stamp] || 0) + 1; });
+  $('tally').innerHTML =
+    '<div class="t ' + (n.CONFIRMED ? 'ok' : 'warn') + '"><div class="n">' + n.CONFIRMED + '</div><div class="l">proven</div></div>' +
+    '<div class="t ' + (n.UNPROVEN ? 'warn' : 'ok') + '"><div class="n">' + n.UNPROVEN + '</div><div class="l">nothing watching</div></div>' +
+    '<div class="t ' + (n.CONTRADICTED ? 'bad' : 'ok') + '"><div class="n">' + (n.CONTRADICTED || 0) + '</div><div class="l">breached</div></div>';
+
+  /* ── the towers ── */
+  $('watches').innerHTML = M.watches.map(function (w) {
+    var p = w.patrol;
+    var saw = p
+      ? '<div class="saw ' + esc(w.stamp) + '">' +
+          '<div class="h">what the patrol saw &nbsp;·&nbsp; ' + String(p.at).replace('T',' ').slice(0,16) + '</div>' +
+          esc(p.note) +
+        '</div>'
+      : '<div class="saw UNPROVEN">' +
+          '<div class="h">what the patrol saw</div>' +
+          'NOTHING. No patrol has made the rounds for this watch. ' +
+          'It is not failing — <b>it is unwatched</b>, and the manifest will no longer pretend otherwise.' +
+        '</div>';
+
+    return '<div class="w ' + esc(w.stamp) + '">' +
+      '<div class="top">' +
+        '<span class="lamp"></span>' +
+        '<span class="nm">' + esc(w.id) + '</span>' +
+        '<span class="st">' + esc(w.stamp) + '</span>' +
+      '</div>' +
+      '<div class="body">' +
+        '<div class="row"><div class="k">Guards</div><div>' + esc(w.guards) + '</div></div>' +
+        '<div class="row"><div class="k">Threat</div><div class="threat">' + esc(w.threat) + '</div></div>' +
+        '<div class="row"><div class="k">Instrument</div><div class="inst' + (w.probe ? '' : ' none') + '">' +
+          (w.probe ? esc(w.probe) : '— NONE. And that is why this tower is amber. —') + '</div></div>' +
+        saw +
+        (w.note ? '<div class="note">' + esc(w.note) + '</div>' : '') +
+      '</div></div>';
+  }).join('');
+})();
+</script>
+</body>
+</html>
