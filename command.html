@@ -448,9 +448,16 @@ for(const ship of M.ships){
 
 // ================= THE CREW (pawns on row 2 = the JS files) ==================
 const CREW = M.crew.map(c => c.name);   // from the manifest
+/* THE CREW SIT WHERE THE MANIFEST PUTS THEM.
+   The old loop placed them by ARRAY INDEX on row 2 — which worked while there
+   were exactly 8 of them and an 8-wide board. There are now FOURTEEN, and six
+   pawns were being planted off the edge of the world.
+   Every crew member carries board:{col,row} in fleet-semantics.js. Use it. */
 const crewPawns = [];
 for(let col=0; col<CREW.length; col++){
-  const {x,z} = tileXZ(col, 2);
+  const _c = M.crew[col];
+  const _b = (_c && _c.board) || { col: col % 8, row: 2 };
+  const {x,z} = tileXZ(_b.col, _b.row);
   // a low pawn puck (base + gold rim) — small, distinct from ships
   const pawn = new THREE.Group();
   const crewEntry = M.crew[col];
