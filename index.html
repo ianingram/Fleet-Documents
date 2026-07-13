@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>THE HARBOR · Amenti Fleet Documents</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Special+Elite&family=Rajdhani:wght@200;300;400;600&display=swap" rel="stylesheet">
+<!-- ============================================================================
+     index.html  ·  THE HARBOR
+     ----------------------------------------------------------------------------
+     The way in. Every pane, one click away.
+
+     This page states NO FACTS about the fleet except the health tally, which it
+     reads from fleet-manifest.js. If there is no reading, it says so — and the
+     links still work, because you must always be able to navigate away from a
+     broken mirror.
+     ============================================================================ -->
+<style>
+:root{
+  --gold:#d4a017;--gold-bright:#f5c542;--gold-deep:#a87c14;
+  --neon:#00ffe0;--term:#80ffc0;
+  --ink:#0a0a0f;--granite:#12121a;--slate:#2a2a38;--wire:#3a3a52;
+  --text:#c8c8d8;--dim:#a4a4b8;
+  --red:#f87171;--amber:#fbbf24;--green:#4ade80;
+  --elite:'Special Elite',cursive;--mono:'Share Tech Mono',monospace;--body:'Rajdhani',sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(ellipse at 50% 0%,#16161f 0%,var(--ink) 70%);
+  color:var(--text);font-family:var(--body);font-weight:300;font-size:18px;line-height:1.7;min-height:100vh}
+main{max-width:1000px;margin:0 auto;padding:70px 24px 120px}
+
+.mark{position:fixed;top:20px;left:24px;font-family:var(--elite);font-size:19px;letter-spacing:.14em;color:var(--gold)}
+.mark .live{color:var(--term);text-shadow:0 0 10px var(--term);animation:blink 1.35s steps(1,end) infinite}
+@keyframes blink{0%,54%{opacity:1}55%,100%{opacity:.18}}
+
+.eyebrow{font-family:var(--mono);font-size:13px;letter-spacing:.34em;color:var(--neon);text-transform:uppercase;text-align:center;margin:0}
+h1{font-family:var(--elite);font-size:clamp(36px,7vw,66px);color:var(--gold-bright);letter-spacing:.04em;text-align:center;margin:12px 0 8px;text-shadow:0 0 40px rgba(212,160,23,.3)}
+.sub{font-family:var(--elite);font-size:clamp(15px,2.2vw,20px);letter-spacing:.2em;color:var(--gold-deep);text-align:center;margin:0 0 28px}
+.law{max-width:640px;margin:0 auto 12px;text-align:center;color:var(--dim);font-size:19px;line-height:1.6}
+.law b{color:var(--gold-light,#f0c040);font-weight:400}
+
+/* health strip — the ONLY fact on this page, and it is read, not typed */
+.health{display:flex;justify-content:center;flex-wrap:wrap;gap:10px;margin:34px 0 8px}
+.h{padding:9px 18px;border:1px solid var(--wire);border-radius:22px;font-family:var(--mono);font-size:13px;letter-spacing:.12em}
+.h.bad{border-color:#7a2a2a;color:var(--red);background:rgba(248,113,113,.06)}
+.h.warn{border-color:#7a5a1a;color:var(--amber);background:rgba(251,191,36,.05)}
+.h.ok{border-color:#2f7a52;color:var(--green);background:rgba(74,222,128,.05)}
+#noread{display:none;text-align:center;margin:34px auto;max-width:620px;padding:20px 24px;border:1px solid var(--red);border-radius:6px;background:rgba(248,113,113,.07);color:#e8b0b0}
+#noread b{display:block;font-family:var(--elite);font-size:21px;color:var(--red);margin-bottom:8px}
+#stamp{text-align:center;font-family:var(--mono);font-size:13px;color:#9a9ab2;letter-spacing:.14em;margin:0 0 40px}
+
+/* the panes */
+.panes{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-top:16px}
+a.pane{display:block;text-decoration:none;padding:26px 26px 24px;border:1px solid var(--slate);border-radius:8px;
+  background:var(--granite);transition:.22s;position:relative;overflow:hidden}
+a.pane:hover{border-color:var(--gold);background:#16161f;transform:translateY(-2px)}
+a.pane .n{font-family:var(--mono);font-size:12px;letter-spacing:.28em;color:var(--neon);text-transform:uppercase}
+a.pane .t{font-family:var(--elite);font-size:26px;color:var(--gold-bright);margin:8px 0 8px;line-height:1.15}
+a.pane .d{color:var(--dim);font-size:17px;line-height:1.55}
+a.pane.soon{opacity:.45}
+a.pane.soon .t{color:var(--dim)}
+.tagsoon{position:absolute;top:14px;right:16px;font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--dim);border:1px solid var(--wire);border-radius:3px;padding:2px 7px}
+
+.foot{margin-top:80px;padding-top:28px;border-top:1px solid var(--slate);text-align:center;font-family:var(--mono);font-size:13px;letter-spacing:.2em;color:#9a9ab2}
+</style>
+</head>
+<body>
+
+<div class="mark">AMENTI<span style="color:#8a8a9e">.</span><span class="live">LIVE</span></div>
+
+<main>
+  <p class="eyebrow">Ingram Manor LLC · The Flying Dutchman</p>
+  <h1>THE HARBOR</h1>
+  <p class="sub">FLEET DOCUMENTS</p>
+
+  <p class="law">
+    <b>The truth lives in the ship. These documents are a reflection of it.</b><br>
+    Every pane here reads one file, published by the fleet itself.<br>
+    None of them knows anything. None of them can lie to you on purpose.
+  </p>
+
+  <div class="health" id="health"></div>
+  <p id="stamp"></p>
+
+  <div id="noread">
+    <b>⚠ NO READING</b>
+    fleet-manifest.js has not been published through the gate.
+    The panes will show you nothing — <i>not the last thing they saw.</i>
+  </div>
+
+  <div class="panes">
+    <a class="pane" href="ships-manifest.html">
+      <div class="n">Pane I</div>
+      <div class="t">The Ship's Manifest</div>
+      <div class="d">The fleet <b>by ship</b>. Every vessel, every hand below deck, and where the claims and the ship disagree.</div>
+    </a>
+
+    <a class="pane" href="engine-room.html">
+      <div class="n">Pane II</div>
+      <div class="t">The Engine Room</div>
+      <div class="d">The fleet <b>by capability</b>. The chain, the invariants, the guards — and the probe that holds each one.</div>
+    </a>
+
+    <a class="pane" href="command.html">
+      <div class="n">Pane III</div>
+      <div class="t">The Command View</div>
+      <div class="d">The board. Eight by eight, in three dimensions.</div>
+    </a>
+
+    <a class="pane" href="ocean.html">
+      <div class="n">Pane IV</div>
+      <div class="t">The Ocean View</div>
+      <div class="d">The bird's-eye. The whole harbour at a glance.</div>
+    </a>
+  </div>
+
+  <p class="foot">THE GLASS GATE <span style="color:var(--gold)">·</span> ONE DIRECTION <span style="color:var(--gold)">◈</span></p>
+</main>
+
+<script src="fleet-manifest.js" onerror="void 0"></script>
+<script>
+(function () {
+  'use strict';
+  var M = window.FLEET_MANIFEST;
+  var $ = function (id) { return document.getElementById(id); };
+
+  /* No reading -> say so. The LINKS still work: you must always be able to
+     navigate away from a broken mirror. */
+  if (!M || !M.health || !M.meta) { $('noread').style.display = 'block'; return; }
+
+  var h = M.health;
+  var cell = function (n, l, warn) {
+    return '<span class="h ' + (n ? (warn ? 'warn' : 'bad') : 'ok') + '">' + l + ' ' + n + '</span>';
+  };
+  $('health').innerHTML =
+    cell(h.contradicted || 0, 'CONTRADICTED', false) +
+    cell(h.unproven     || 0, 'UNPROVEN',     true)  +
+    cell(h.adrift       || 0, 'ADRIFT',       true)  +
+    cell(h.undeclared   || 0, 'UNDECLARED',   true);
+
+  var age = (Date.now() - Date.parse(M.meta.merged)) / 36e5;
+  $('stamp').textContent = 'READING TAKEN ' + (M.meta.reading || '—').replace('T', ' ').slice(0, 19) +
+    (isNaN(age) ? '' : (age > 24 ? '  ·  ⚠ ' + Math.round(age) + ' HOURS OLD' : '  ·  CURRENT'));
+})();
+</script>
+</body>
+</html>

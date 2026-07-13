@@ -40,9 +40,14 @@
 }
 *{box-sizing:border-box}
 body{margin:0;background:var(--ink);color:var(--text);font-family:var(--body);font-weight:300;font-size:18px;line-height:1.7}
+.fleet-nav{position:sticky;top:0;z-index:90;display:flex;flex-wrap:wrap;gap:2px;padding:0 24px;background:rgba(10,10,15,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--slate);margin:0 -24px 8px}
+.fleet-nav a{font-family:var(--mono);font-size:12px;letter-spacing:.18em;color:var(--dim);text-decoration:none;padding:16px 16px 14px;border-bottom:2px solid transparent;transition:.2s;white-space:nowrap}
+.fleet-nav a:hover{color:var(--gold-bright);background:rgba(212,160,23,.06)}
+.fleet-nav a.on{color:var(--neon);border-bottom-color:var(--neon)}
+@media(max-width:640px){.fleet-nav a{font-size:11px;padding:13px 10px;letter-spacing:.1em}}
 main{max-width:1060px;margin:0 auto;padding:48px 24px 140px}
 
-.mark{position:fixed;top:20px;left:24px;z-index:99;font-family:var(--elite);font-size:19px;letter-spacing:.14em;color:var(--gold)}
+.mark{position:fixed;bottom:18px;right:22px;z-index:99;opacity:.8;font-family:var(--elite);font-size:19px;letter-spacing:.14em;color:var(--gold)}
 .mark .live{color:var(--term);text-shadow:0 0 10px var(--term);animation:blink 1.35s steps(1,end) infinite}
 @keyframes blink{0%,54%{opacity:1}55%,100%{opacity:.18}}
 
@@ -127,8 +132,16 @@ td .fl{font-family:var(--mono);font-size:14px;color:var(--dim)}
 
 <div class="mark">AMENTI<span style="color:#8a8a9e">.</span><span class="live">LIVE</span></div>
 
+<nav class="fleet-nav">
+  <a href="index.html">HARBOR</a>
+  <a href="ships-manifest.html">MANIFEST</a>
+  <a href="engine-room.html" class="on">ENGINE ROOM</a>
+  <a href="command.html">COMMAND VIEW</a>
+  <a href="ocean.html">OCEAN VIEW</a>
+</nav>
+
 <main>
-  <p class="eyebrow">The Glass Gate</p>
+  <p class="eyebrow" style="margin-top:34px">The Glass Gate</p>
   <h1>THE ENGINE ROOM</h1>
   <p class="sub">THE FLEET, BY CAPABILITY</p>
 

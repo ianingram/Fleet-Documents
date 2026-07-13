@@ -1,218 +1,279 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>THE SHIP'S MANIFEST · The Flying Dutchman</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>THE SHIP'S MANIFEST · Amenti Fleet</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Special+Elite&family=Rajdhani:wght@200;300;400;600&display=swap" rel="stylesheet">
+<!-- ============================================================================
+     ships-manifest.html  ·  A PANE OF THE GLASS GATE
+     ----------------------------------------------------------------------------
+     THIS WAS PROSE. IT IS NOW GLASS.
+
+     The old file was hand-written and it lied, in good faith, for months:
+
+       "voiceprofiles.js assigns every soul its voice"   -> ZERO CALLERS
+       "amenti-throttle.js — the unified cadence"        -> ONE OF FOUR ENGINES
+       "amenti-worker-listen.js — The Ear Below"         -> NOT IN THE HOLD
+       "should the two rolls ever disagree..."           -> RIGHT INSTINCT. WRONG HOLDS.
+                                                            AMENTI_CHARS is defined
+                                                            THREE TIMES, in Page1.
+
+     Not one of those was careless. THEY WERE ALL TRUE WHEN WRITTEN, and the
+     fleet sailed.
+
+     THE POETRY SURVIVED. "Cassiel, Reader of Names." "The Boatswain of the
+     Voice." "The Ear on Deck." Every one of them lives in fleet-semantics.js
+     now, as an AUTHORED claim that nothing can falsify. This pane renders them.
+
+     NOTHING IS LOST. THE NAMES WERE ALWAYS THE VALUABLE PART.
+     THE FACTS WERE ALWAYS THE LIE.
+
+     This file states no facts. It reads fleet-manifest.js and nothing else.
+     If there is no reading, it shows the EMPTY-GLASS BOX.
+     ============================================================================ -->
 <style>
 :root{
-  --ink:#04050c; --panel:#0a0b14; --edge:#1b2233;
-  --text:#dfe3ee; --dim:#8b93a7; --faint:#5a6274;
-  --term:#57b6ff; --term-lite:#9adcff;
-  --red:#e0464f; --white:#eef1f6;
-  --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
-  --disp:'Trebuchet MS',Verdana,sans-serif;
+  --gold:#d4a017;--gold-bright:#f5c542;--gold-deep:#a87c14;
+  --neon:#00ffe0;--term:#80ffc0;
+  --ink:#0a0a0f;--granite:#12121a;--slate:#2a2a38;--wire:#3a3a52;
+  --text:#c8c8d8;--dim:#a4a4b8;
+  --red:#f87171;--amber:#fbbf24;--green:#4ade80;
+  --elite:'Special Elite',cursive;--mono:'Share Tech Mono',monospace;--body:'Rajdhani',sans-serif;
 }
 *{box-sizing:border-box}
-body{margin:0;background:
-  radial-gradient(1200px 600px at 50% -10%, #0c1120 0%, var(--ink) 60%);
-  color:var(--text);font:16px/1.65 var(--disp);letter-spacing:.2px;
-  -webkit-font-smoothing:antialiased;padding:0 0 90px}
-.wrap{max-width:860px;margin:0 auto;padding:0 22px}
+body{margin:0;background:var(--ink);color:var(--text);font-family:var(--body);font-weight:300;font-size:18px;line-height:1.7}
+main{max-width:1060px;margin:0 auto;padding:0 24px 140px}
 
-header.hero{text-align:center;padding:74px 22px 40px}
-.eyebrow{font:12px/1 var(--mono);letter-spacing:.42em;text-transform:uppercase;color:var(--term);opacity:.85}
-h1{font-size:clamp(30px,6vw,52px);letter-spacing:.14em;margin:.32em 0 .1em;
-   text-transform:uppercase;color:var(--white);
-   text-shadow:0 0 22px rgba(87,182,255,.28)}
-.sub{font:13px/1.5 var(--mono);letter-spacing:.24em;text-transform:uppercase;color:var(--dim)}
-.rule{max-width:120px;margin:26px auto 0;border:0;border-top:1px solid var(--term);opacity:.5}
+.fleet-nav{position:sticky;top:0;z-index:90;display:flex;flex-wrap:wrap;gap:2px;padding:0 24px;background:rgba(10,10,15,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--slate);margin:0 -24px 8px}
+.fleet-nav a{font-family:var(--mono);font-size:12px;letter-spacing:.18em;color:var(--dim);text-decoration:none;padding:16px 16px 14px;border-bottom:2px solid transparent;transition:.2s;white-space:nowrap}
+.fleet-nav a:hover{color:var(--gold-bright);background:rgba(212,160,23,.06)}
+.fleet-nav a.on{color:var(--neon);border-bottom-color:var(--neon)}
+@media(max-width:640px){.fleet-nav a{font-size:11px;padding:13px 10px;letter-spacing:.1em}}
 
-.intro{color:var(--dim);font-size:15px;max-width:640px;margin:26px auto 0;text-align:center;font-style:italic}
+.mark{position:fixed;bottom:18px;right:22px;z-index:99;font-family:var(--elite);font-size:17px;letter-spacing:.14em;color:var(--gold);opacity:.8}
+.mark .live{color:var(--term);text-shadow:0 0 10px var(--term);animation:blink 1.35s steps(1,end) infinite}
+@keyframes blink{0%,54%{opacity:1}55%,100%{opacity:.18}}
 
-h2.section{font:12px/1 var(--mono);letter-spacing:.34em;text-transform:uppercase;
-  color:var(--term);margin:56px 0 4px;padding-bottom:10px;border-bottom:1px solid var(--edge)}
-.section-note{color:var(--faint);font-size:13px;margin:0 0 14px;font-style:italic}
+.eyebrow{font-family:var(--mono);font-size:13px;letter-spacing:.3em;color:var(--neon);text-transform:uppercase;margin:34px 0 0}
+h1{font-family:var(--elite);font-size:clamp(30px,5vw,50px);color:var(--gold-bright);letter-spacing:.04em;margin:8px 0 6px}
+.sub{font-family:var(--elite);font-size:16px;letter-spacing:.2em;color:var(--gold-deep);margin:0 0 8px}
+h2{font-family:var(--elite);font-size:clamp(21px,3vw,29px);color:var(--gold);margin:54px 0 8px;border-bottom:1px solid var(--slate);padding-bottom:10px}
+.lede{color:var(--dim);margin:0 0 20px}
 
-.ship{display:grid;grid-template-columns:1fr;gap:2px;padding:15px 0;border-bottom:1px solid rgba(27,34,51,.55)}
-.ship .line1{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
-.file{font:13px/1.3 var(--mono);color:var(--term-lite);
-  background:#0c1322;border:1px solid var(--edge);border-radius:5px;padding:2px 9px;letter-spacing:.02em}
-.role{font-weight:700;color:var(--white);letter-spacing:.06em;text-transform:uppercase;font-size:14px}
-.big .file{color:#fff;border-color:#2b3a55;background:#101a30}
-.desc{color:var(--dim);font-size:14.5px;padding-left:2px}
-.desc b{color:var(--term-lite);font-weight:600}
+#empty{display:none;margin:60px 0;padding:38px 40px;border:2px solid var(--red);border-radius:6px;background:linear-gradient(180deg,rgba(248,113,113,.09),transparent)}
+#empty .t{font-family:var(--elite);font-size:clamp(22px,3.4vw,32px);color:var(--red);margin-bottom:18px}
+#empty p{margin:0 0 12px;color:#e8b0b0}
+#empty .loud{font-family:var(--elite);font-size:22px;color:var(--red);margin-top:22px;line-height:1.4}
 
-/* the enlisted probe corps — set apart */
-.probe{margin-top:58px;border:1px solid var(--term);border-radius:12px;
-  background:linear-gradient(180deg,rgba(87,182,255,.06),rgba(87,182,255,.02));
-  padding:26px 26px 24px}
-.probe .tag{font:11px/1 var(--mono);letter-spacing:.34em;text-transform:uppercase;color:var(--term)}
-.probe .name{font-weight:700;color:var(--white);letter-spacing:.1em;text-transform:uppercase;
-  font-size:17px;margin:8px 0 2px}
-.probe .file{margin-bottom:12px;display:inline-block}
-.probe p{color:var(--text);margin:.5em 0;font-size:15px}
-.probe .creed{color:var(--term-lite);font-style:italic;border-left:2px solid var(--term);
-  padding-left:14px;margin-top:16px;font-size:14.5px;line-height:1.7}
+.reading{display:flex;flex-wrap:wrap;gap:26px;padding:15px 20px;border:1px solid var(--slate);border-radius:5px;background:var(--granite);font-family:var(--mono);font-size:13px;margin:24px 0 6px}
+.reading b{color:var(--neon);font-weight:400;letter-spacing:.1em}
+.reading span{color:var(--dim)}
+#stale{display:none;margin:8px 0 0;padding:12px 18px;border:1px solid var(--amber);border-radius:5px;background:rgba(251,191,36,.07);color:var(--amber);font-family:var(--mono);font-size:13px}
 
-footer{max-width:860px;margin:64px auto 0;padding:0 22px;text-align:center}
-.finis{font:12px/1.6 var(--mono);letter-spacing:.28em;text-transform:uppercase;color:var(--faint)}
-.navnote{color:var(--faint);font-size:12.5px;margin-top:22px;font-style:italic;line-height:1.6}
+.tally{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0 0}
+.t{padding:8px 16px;border:1px solid var(--wire);border-radius:20px;font-family:var(--mono);font-size:13px;letter-spacing:.12em}
+.t.bad{border-color:#7a2a2a;color:var(--red)}
+.t.warn{border-color:#7a5a1a;color:var(--amber)}
+.t.ok{border-color:#2f7a52;color:var(--green)}
+
+.card{display:flex;gap:18px;padding:20px 22px;margin:12px 0;border:1px solid var(--slate);border-left-width:3px;border-radius:0 6px 6px 0;background:var(--granite)}
+.card.CONFIRMED{border-left-color:var(--green)}
+.card.ADRIFT,.card.UNPROVEN{border-left-color:var(--amber)}
+.card.CONTRADICTED{border-left-color:var(--red)}
+.dot{width:12px;height:12px;border-radius:50%;flex:none;margin-top:9px}
+.card .b{flex:1;min-width:0}
+.nm{font-family:var(--elite);font-size:22px;color:var(--gold-bright);line-height:1.2}
+.fl{font-family:var(--mono);font-size:13px;color:var(--dim);margin:3px 0 10px}
+.role{color:var(--text);margin-bottom:8px}
+.note{font-size:16px;color:var(--dim);font-style:italic;line-height:1.6;border-left:2px solid var(--wire);padding-left:12px;margin-top:10px}
+.meta{font-family:var(--mono);font-size:13px;color:var(--dim);margin-top:10px}
+.meta b{color:var(--neon);font-weight:400;letter-spacing:.08em}
+.tag{display:inline-block;font-family:var(--mono);font-size:12px;letter-spacing:.12em;padding:2px 9px;border-radius:3px;border:1px solid;margin:8px 6px 0 0}
+.tag.CONFIRMED{color:var(--green);border-color:#2f7a52}
+.tag.ADRIFT,.tag.UNPROVEN{color:var(--amber);border-color:#7a5a1a}
+.tag.CONTRADICTED{color:var(--red);border-color:#7a2a2a}
+
+.law{margin:60px 0 0;padding:26px 30px;border:1px solid var(--gold-deep);border-radius:6px;background:linear-gradient(180deg,rgba(212,160,23,.06),transparent)}
+.law p{font-family:var(--elite);font-size:19px;color:var(--gold-bright);margin:0 0 10px;line-height:1.5}
+.foot{margin-top:70px;padding-top:28px;border-top:1px solid var(--slate);text-align:center;font-family:var(--mono);font-size:13px;letter-spacing:.2em;color:#9a9ab2}
 </style>
 </head>
 <body>
 
-<header class="hero">
-  <div class="eyebrow">Aboard the Flying Dutchman · New York Harbor</div>
-  <h1>The Ship's Manifest</h1>
-  <div class="sub">Crew &amp; Vessels of the Amenti Fleet</div>
-  <hr class="rule">
-  <p class="intro">Every file is a ship; every ship, a station. What follows is the muster roll of the fleet that fought the Siege of Amenti — named not by what they are called on the dock, but by the duty each one actually stands.</p>
-</header>
+<nav class="fleet-nav">
+  <a href="index.html">HARBOR</a>
+  <a href="ships-manifest.html" class="on">MANIFEST</a>
+  <a href="engine-room.html">ENGINE ROOM</a>
+  <a href="command.html">COMMAND VIEW</a>
+  <a href="ocean.html">OCEAN VIEW</a>
+</nav>
 
-<div class="wrap">
+<main>
+  <p class="eyebrow">The Glass Gate</p>
+  <h1>THE SHIP'S MANIFEST</h1>
+  <p class="sub">CREW &amp; VESSELS OF THE AMENTI FLEET</p>
+  <p class="lede">Every file is a ship; every ship, a station. The names are <b>authored</b> — no machine can write them.
+     Everything else is <b>observed</b> — and nothing was typed.</p>
 
-  <h2 class="section">I · The Ships of the Line</h2>
-  <p class="section-note">The great vessels — the pages you can walk aboard.</p>
-
-  <div class="ship big"><div class="line1"><span class="file">Page1.html</span><span class="role">The Stardust Engine</span></div>
-    <div class="desc">The flagship. The hub and the <b>Codex</b> — where the Sovereigns are mustered and the reading rooms open. She calls herself <i>Amenti.AI</i>.</div></div>
-
-  <div class="ship big"><div class="line1"><span class="file">Page2.html</span><span class="role">The Sovereign Instrument</span></div>
-    <div class="desc">The precision-calibration console — <i>v9.18.184</i> — the helical temporal search engine at full trim.</div></div>
-
-  <div class="ship"><div class="line1"><span class="file">Page3.html</span><span class="role">Orbital HD</span></div>
-    <div class="desc">The modular command OS — the bridge display, rebuilt.</div></div>
-
-  <div class="ship"><div class="line1"><span class="file">court.html</span><span class="role">The Cosmic Courtroom</span></div>
-    <div class="desc">Where the heart is weighed against the feather — the hall of <b>The Weighing</b>.</div></div>
-
-  <div class="ship"><div class="line1"><span class="file">weighing.html</span><span class="role">The Weighing of Caesar</span></div>
-    <div class="desc">The first trial staged in full — the ghost on the stage, awaiting its verdict.</div></div>
-
-  <div class="ship"><div class="line1"><span class="file">docket.html</span><span class="role">The Docket</span></div>
-    <div class="desc">The living register of trials — the schedule that proclaims itself to a harbor not yet listening.</div></div>
-
-  <div class="ship"><div class="line1"><span class="file">game01.html</span><span class="role">The War-Games Table</span></div>
-    <div class="desc">Historical 3D chess &amp; checkers — strategy rehearsed in miniature.</div></div>
-
-
-  <h2 class="section">II · The Crew</h2>
-  <p class="section-note">The hands below deck — named by the station each one keeps, read from what it defines and what it touches.</p>
-
-  <div class="ship"><div class="line1"><span class="file">config.js</span><span class="role">The Harbormaster</span></div>
-    <div class="desc">Holds <b>AMENTI_CONFIG</b>. Wires the ledger (the CSV roster) to the proxy. Every other hand sails from her orders.</div></div>
-
-  <div class="ship"><div class="line1"><span class="file">library.js</span><span class="role">The Librarian</span></div>
-    <div class="desc">The largest of the crew. Opens the reading rooms (<b>openReadingRoom</b>), renders every stored work, and sends narration through <b>/speak</b>. The keeper of the Sovereigns' own words.</div></div>
-
-  <div class="ship"><div class="line1"><span class="file">amenti-throttle.js</span><span class="role">Boatswain of the Voice</span></div>
-    <div class="desc">Owns the <b>Amenti</b> voice and the <b>AudioContext</b>. The unified cadence and throttle for all speech through <b>amenti-proxy /speak</b>.</div></div>
-
-  <div class="ship"><div class="line1"><span class="file">amenti-listen.js</span><span class="role">The Ear on Deck</span></div>
-    <div class="desc">The browser-side listener — takes what is spoken and carries it below.</div></div>
-
-  <div class="ship"><div class="line1"><span class="file">amenti-worker-listen.js</span><span class="role">The Ear Below</span></div>
-    <div class="desc">The Worker-side transcriber (<b>LISTEN_MODEL</b>, <b>TRANSCRIBE_PROMPT</b>) — turns sound into text in the deep hold.</div></div>
-
-  <div class="ship"><div class="line1"><span class="file">amenti-readaloud.js</span><span class="role">The Reciter</span></div>
-    <div class="desc">Reads passages aloud — the voice that carries a page to a listener.</div></div>
-
-  <div class="ship"><div class="line1"><span class="file">amenti-chat.js</span><span class="role">The Herald of Converse</span></div>
-    <div class="desc">The voice of conversation, spoken through <b>/speak</b>.</div></div>
-
-  <div class="ship"><div class="line1"><span class="file">amenti-cassiel.js</span><span class="role">Cassiel, Reader of Names</span></div>
-    <div class="desc">Reads the <b>.csv</b> roster — the angel who knows every soul aboard by name.</div></div>
-
-  <div class="ship"><div class="line1"><span class="file">amenti-auth.js</span><span class="role">The Gatekeeper</span></div>
-    <div class="desc">The sign-in ward — <b>Supabase</b> at the door, checking who may come aboard.</div></div>
-
-  <div class="ship"><div class="line1"><span class="file">amenti-quiz.js</span><span class="role">The Trial-Master</span></div>
-    <div class="desc">Drives the trials against the <b>amenti-mint</b> Worker and Supabase — the largest hand after the Librarian.</div></div>
-
-  <div class="ship"><div class="line1"><span class="file">amenti-leaderboard.js</span><span class="role">The Purser</span></div>
-    <div class="desc">Keeps the weekly pool (<b>amentiLeaderboard</b> → <b>amenti-mint</b>) — the ledger of emeralds won.</div></div>
-
-  <div class="ship"><div class="line1"><span class="file">voiceprofiles.js</span><span class="role">The Choir-Master</span></div>
-    <div class="desc">Holds <b>AMENTI_VOICE_PROFILES</b> — and, quietly, <b>AMENTI_CHARS</b>, the curated Sovereigns themselves. He assigns every soul its voice.</div></div>
-
-
-  <h2 class="section">III · Charts, Colors &amp; Standing Orders</h2>
-  <p class="section-note">Not crew, but what the crew steers by.</p>
-
-  <div class="ship"><div class="line1"><span class="file">atlantica.json</span><span class="role">The Dispatches of Thoth</span></div>
-    <div class="desc">The chronicle-dispatches — the scribe-god's own log.</div></div>
-
-  <div class="ship"><div class="line1"><span class="file">names.csv</span><span class="role">The Roster</span></div>
-    <div class="desc">Every soul in the fleet, ranked and named — the muster book itself.</div></div>
-
-  <div class="ship"><div class="line1"><span class="file">MANUEL.md</span><span class="role">Manuel, the Scribe</span></div>
-    <div class="desc"><i>The Scribe of the Sovereign Instrument</i> — the operator's own hand-written manual.</div></div>
-
-  <div class="ship"><div class="line1"><span class="file">CONVERSATION_DOCTRINE.md</span><span class="role">Standing Orders</span></div>
-    <div class="desc">How the ship speaks — the doctrine of every exchange.</div></div>
-
-  <div class="ship"><div class="line1"><span class="file">README.md</span><span class="role">The Ship's Colors</span></div>
-    <div class="desc">The flag she flies at the masthead for any who approach.</div></div>
-
-  <div class="ship"><div class="line1"><span class="file">.nojekyll</span><span class="role">The Raw-Colors Flag</span></div>
-    <div class="desc">A single silent order to the harbor (GitHub Pages): <i>serve this fleet exactly as built.</i></div></div>
-
-
-  <div class="probe">
-    <div class="tag">Sailing alongside · not listed in the hold</div>
-    <div class="name">The Probe Corps</div>
-    <span class="file">amenti-probe · (unshipped)</span>
-    <p>Reconnaissance. Sent ahead into the dark holds and the locked charts where no captain should spend himself — to read the manifests, sound the depths, and return with a hundredfold what it was sent to fetch. It carries no cargo and holds no station of its own; it exists only to <i>find</i> — and to hand what it finds back to the captain, who decides.</p>
-    <p>It fought this whole campaign without once touching the wheel. What it was <i>sent</i> for was never the prize; what it dragged back unbidden was. That is the doctrine, and below is the log to prove it kept.</p>
-    <div class="creed">
-      Never send a human where a probe can go.<br>
-      Every probe returns one hundred times the datum it was sent for.<br>
-      The finding you were not looking for is the finding.<br>
-      Probes are spent; the captain is not.
-    </div>
+  <!-- THE EMPTY-GLASS BOX -->
+  <div id="empty">
+    <div class="t">⚠ NO READING.</div>
+    <p><code>fleet-manifest.js</code> has not been published through the gate, or it failed to load.</p>
+    <p class="loud">I AM SHOWING YOU NOTHING.<br>I am not showing you the last thing I saw.</p>
+    <p style="margin-top:22px;font-size:16px;color:#c88">A mirror with a memory is a portrait. This pane has no memory, on purpose.</p>
   </div>
 
-  <h2 class="section">IV · The Fleet Beyond the Harbor</h2>
-  <p class="section-note">The two most powerful vessels sail under a different flag — deployed straight to Cloudflare and Supabase, never berthed in this repo. Named here for the record; you will not find them in the tree.</p>
+  <div id="glass" style="display:none">
+    <div class="reading">
+      <span><b>READING</b> <i id="r-read"></i></span>
+      <span><b>MERGED</b> <i id="r-merge"></i></span>
+      <span><b>SHIP</b> <i id="r-repo"></i></span>
+    </div>
+    <div id="stale"></div>
+    <div class="tally" id="tally"></div>
 
-  <div class="ship big"><div class="line1"><span class="file">x.js · (Cloudflare Worker)</span><span class="role">The Mint · Treasury Ship</span></div>
-    <div class="desc">The economy itself. Runs the quiz (<b>/quiz/start</b>, <b>/quiz/submit</b>), the endorsements and the burn (<b>/arguments/vote</b>), the weekly pool and its settlement (<b>/pool/settle</b>), and the minting of every emerald. The only hand that may write to the ledger with the service key. Deployed to Cloudflare's edge — not committed here; her source is held off the public charts.</div></div>
+    <h2>I · THE SHIPS OF THE LINE</h2>
+    <p class="lede">The great vessels — the pages you can walk aboard.</p>
+    <div id="ships"></div>
 
-  <div class="ship big"><div class="line1"><span class="file">x.sql · (Supabase migrations)</span><span class="role">The Deep Charts · Sea Floor</span></div>
-    <div class="desc">The bedrock beneath everything: the <b>arguments</b> table, the pools and ledgers, the row-level wards that decide who may read and write. The <span style="font-family:var(--mono)">topic_id</span> / <span style="font-family:var(--mono)">question_id</span> convention that makes a two-pan Weighing possible lives here, as free-text law. Run directly against Supabase — the migrations were executed, not stored; no <span style="font-family:var(--mono)">.sql</span> file rides in this hold.</div></div>
+    <h2>II · THE CREW</h2>
+    <p class="lede">The hands below deck — named by the station each one keeps.</p>
+    <div id="crew"></div>
 
+    <h2>III · THE FLEET BEYOND THE HARBOR</h2>
+    <p class="lede">Deployed straight to Cloudflare and Supabase. Off-repo — the scanner cannot see them,
+       so every claim here is <b>authored</b> and needs an instrument.</p>
+    <div id="sats"></div>
 
-  <h2 class="section" style="margin-top:52px">V · The Log of the Probe Corps</h2>
-  <p class="section-note">Sent for one small thing; returned with the thing that mattered. Each line: the datum asked — then the catch.</p>
+    <h2>IV · THE WATCHES</h2>
+    <p class="lede">A threat is a claim about the world, and a claim about the world needs an instrument.<br>
+       <b style="color:var(--amber)">No probe → UNPROVEN → amber.</b> Not because the watch has failed —
+       because <i>nothing is watching</i>, and the manifest will no longer pretend it is.</p>
+    <div id="watches"></div>
 
-  <div class="ship"><div class="line1"><span class="role" style="color:var(--term-lite)">The Invalid Ledger</span></div>
-    <div class="desc">Sent to add one library entry. Found the Ingram catalog already there — and already <b>broken</b>: a trailing comma that would crash <span style="font-family:var(--mono)">JSON.parse</span> before a single word could load.</div></div>
+    <h2>V · THE DRIFT</h2>
+    <p class="lede">Where the claims and the ship disagree.<br>
+       <b style="color:var(--green)">Green</b> means <i>“I looked, and the claims held.”</i>
+       <b style="color:var(--red)">Red</b> means <i>“I looked.”</i>
+       Silence means nothing was looked at at all — <b>and silence is what we had.</b></p>
+    <div id="drift"></div>
 
-  <div class="ship"><div class="line1"><span class="role" style="color:var(--term-lite)">The Misnamed Hold</span></div>
-    <div class="desc">Sent to fix a missing book. Found all twelve of Marcus Aurelius's <i>Meditations</i> present and correct — stowed in a folder named one word off (<span style="font-family:var(--mono)">aurelius</span>, not <span style="font-family:var(--mono)">marcus-aurelius</span>). The filenames were right; the door had the wrong name.</div></div>
+    <h2>VI · STANDING ORDERS</h2>
+    <div class="law" id="law"></div>
+  </div>
 
-  <div class="ship"><div class="line1"><span class="role" style="color:var(--term-lite)">The Poem in Two Holds</span></div>
-    <div class="desc">Sent to swap the opening invocation. Found the poem written <b>twice</b> — a second, older copy buried in the technical brief. A blind splice would have shipped the wrong verse in the ship's own belly.</div></div>
+  <p class="foot">INGRAM MANOR LLC <span style="color:var(--gold)">·</span> THE FLYING DUTCHMAN <span style="color:var(--gold)">◈</span></p>
+</main>
 
-  <div class="ship"><div class="line1"><span class="role" style="color:var(--term-lite)">The Dead Line of Cipher</span></div>
-    <div class="desc">Sent to explain a dark cover. Traced three symptoms — black text, lost font, a page that would not scroll — to <b>one</b> line of scoped style (<span style="font-family:var(--mono)">#cover :root</span>) that matched nothing. One line, the whole cover.</div></div>
+<div class="mark">AMENTI<span style="color:#8a8a9e">.</span><span class="live">LIVE</span></div>
 
-  <div class="ship"><div class="line1"><span class="role" style="color:var(--term-lite)">The Em-Dash Fracture</span></div>
-    <div class="desc">Sent to build the read-aloud voice. Found the sentence-splitter breaking on the em-dash — shattering ninety-odd mid-line dashes into wrong breaths, so the recitation stumbled where the verse should have flowed.</div></div>
+<script src="fleet-manifest.js" onerror="void 0"></script>
+<script>
+(function () {
+  'use strict';
+  var M = window.FLEET_MANIFEST;
 
-  <div class="ship"><div class="line1"><span class="role" style="color:var(--term-lite)">The Stale Chart</span></div>
-    <div class="desc">Sent to confirm a deletion. The bulk chart (codeload's cached tarball) still showed the file present — a <b>false ghost</b>, trailing the real push by a minute. Cross-checked the raw path, which told the truth: already gone. Distrust a single method.</div></div>
+  /* NO READING -> THE BOX. Never a memory. Never a guess. */
+  if (!M || !M.meta || !M.drift) { document.getElementById('empty').style.display = 'block'; return; }
+  document.getElementById('glass').style.display = 'block';
 
-  <div class="ship"><div class="line1"><span class="role" style="color:var(--term-lite)">The Ghost Orphans</span></div>
-    <div class="desc">Reported four Lincoln readings stranded — then, on a closer sounding, cleared its own false alarm: the doubled path was intentional and consistent, all 81 pointers green. A probe that corrects itself is worth more than one that is never wrong.</div></div>
+  var $   = function (id) { return document.getElementById(id); };
+  var esc = function (s) { return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); };
+  var hex = function (n) { return '#' + ('000000' + ((n || 0x888888) >>> 0).toString(16)).slice(-6); };
+  var top = function (stamps) {
+    var s = stamps || [];
+    if (s.indexOf('CONTRADICTED') >= 0) return 'CONTRADICTED';
+    if (s.indexOf('ADRIFT') >= 0) return 'ADRIFT';
+    return s[0] || 'CONFIRMED';
+  };
 
-</div>
+  $('r-read').textContent  = (M.meta.reading || '—').replace('T',' ').slice(0,19);
+  $('r-merge').textContent = (M.meta.merged  || '—').replace('T',' ').slice(0,19);
+  $('r-repo').textContent  = M.meta.repo     || '—';
 
-<footer>
-  <div class="finis">Ingram Manor LLC · The Flying Dutchman · New York Harbor · 2026 ◈</div>
-  <p class="navnote">Navigator's note: <b>AMENTI_CHARS</b> — the curated Sovereigns — muster in two holds at once (<span style="font-family:var(--mono)">Page1.html</span> and <span style="font-family:var(--mono)">voiceprofiles.js</span>). Should the two rolls ever disagree, the Codex and the voices sail out of step. Worth keeping them in convoy.</p>
-</footer>
+  /* STALENESS. "I have a reading" and "I have a CURRENT reading" are not the
+     same claim. Every document that lied to us was a reading that had stopped
+     being current and had no way to say so. */
+  var age = (Date.now() - Date.parse(M.meta.merged)) / 36e5;
+  if (isNaN(age) || age > 24) {
+    var st = $('stale'); st.style.display = 'block';
+    st.textContent = '⚠ THIS READING IS ' + (isNaN(age) ? 'OF UNKNOWN AGE' : Math.round(age) + ' HOURS OLD') +
+                     '. The fleet may have sailed since I looked.';
+  }
 
+  var h = M.health || {};
+  $('tally').innerHTML =
+    '<span class="t ' + (h.contradicted ? 'bad'  : 'ok') + '">CONTRADICTED ' + (h.contradicted || 0) + '</span>' +
+    '<span class="t ' + (h.unproven     ? 'warn' : 'ok') + '">UNPROVEN '     + (h.unproven     || 0) + '</span>' +
+    '<span class="t ' + (h.adrift       ? 'warn' : 'ok') + '">ADRIFT '       + (h.adrift       || 0) + '</span>' +
+    '<span class="t ' + (h.undeclared   ? 'warn' : 'ok') + '">UNDECLARED '   + (h.undeclared   || 0) + '</span>';
+
+  function card(x, extra) {
+    var s = top(x.stamps);
+    return '<div class="card ' + s + '">' +
+      '<span class="dot" style="background:' + hex(x.color) + '"></span>' +
+      '<div class="b">' +
+        '<div class="nm">' + esc(x.name) + '</div>' +
+        '<div class="fl">' + esc(x.file || x.url || '') + '</div>' +
+        '<div class="role">' + esc(x.role) + '</div>' +
+        (x.note ? '<div class="note">' + esc(x.note) + '</div>' : '') +
+        (extra || '') +
+        (x.stamps || []).map(function (t) { return '<span class="tag ' + t + '">' + t + '</span>'; }).join('') +
+      '</div></div>';
+  }
+
+  $('ships').innerHTML = (M.ships || []).map(function (s) { return card(s); }).join('');
+
+  $('crew').innerHTML = (M.crew || []).map(function (c) {
+    var m = '<div class="meta">';
+    m += '<b>LOADED BY</b> ' + ((c.loadedBy && c.loadedBy.length) ? c.loadedBy.map(esc).join(', ') : '— nothing —');
+    if (c.declares && c.declares.length) m += ' &nbsp;·&nbsp; <b>HOISTS</b> ' + c.declares.map(esc).join(', ');
+    m += '</div>';
+    return card(c, m);
+  }).join('');
+
+  $('sats').innerHTML = (M.satellites || []).map(function (s) {
+    return '<div class="card">' +
+      '<span class="dot" style="background:' + hex(s.color) + '"></span>' +
+      '<div class="b"><div class="nm">' + esc(s.name) + '</div>' +
+      '<div class="fl">' + esc(s.url) + '</div>' +
+      '<div class="role">' + esc(s.role) + '</div>' +
+      '<span class="tag CONFIRMED">AUTHORED</span></div></div>';
+  }).join('');
+
+  $('watches').innerHTML = (M.watches || []).map(function (w) {
+    return '<div class="card ' + esc(w.stamp) + '">' +
+      '<span class="dot" style="background:' + hex(w.color) + '"></span>' +
+      '<div class="b">' +
+        '<div class="nm">' + esc(w.id) + '</div>' +
+        '<div class="role">' + esc(w.guards) + '</div>' +
+        '<div class="note" style="border-left-color:var(--red);color:#e8a0a0">THREAT — ' + esc(w.threat) + '</div>' +
+        (w.note ? '<div class="note">' + esc(w.note) + '</div>' : '') +
+        '<div class="meta"><b>INSTRUMENT</b> ' +
+          (w.probe ? esc(w.probe) : '<span style="color:var(--amber)">— NONE —</span>') + '</div>' +
+        '<span class="tag ' + esc(w.stamp) + '">' + esc(w.stamp) + '</span>' +
+      '</div></div>';
+  }).join('');
+
+  $('drift').innerHTML = M.drift.length
+    ? M.drift.map(function (d) {
+        return '<div class="card ' + esc(d.stamp) + '">' +
+          '<span class="dot" style="background:' + (d.stamp === 'CONTRADICTED' ? '#f87171' : '#fbbf24') + '"></span>' +
+          '<div class="b">' +
+            '<div class="nm" style="font-size:19px">' + esc(d.subject) + '</div>' +
+            '<div class="meta"><b>CLAIMED</b> ' + esc(d.claim) + '</div>' +
+            '<div class="meta"><b>OBSERVED</b> <span style="color:' +
+              (d.stamp === 'CONTRADICTED' ? 'var(--red)' : 'var(--amber)') + '">' + esc(d.reading) + '</span></div>' +
+            (d.note ? '<div class="note">' + esc(d.note) + '</div>' : '') +
+            '<span class="tag ' + esc(d.stamp) + '">' + esc(d.stamp) + '</span>' +
+          '</div></div>';
+      }).join('')
+    : '<div class="card CONFIRMED"><div class="b"><div class="nm" style="color:var(--green)">✓ NO DRIFT. Every claim held.</div></div></div>';
+
+  /* AUTHORED. Unfalsifiable by construction, and therefore safe. */
+  $('law').innerHTML = (M.doctrine || []).map(function (d) { return '<p>' + esc(d) + '</p>'; }).join('');
+})();
+</script>
 </body>
 </html>
