@@ -494,7 +494,7 @@ const EDGE_XZ = { front:[0,-EDGE], right:[EDGE,0], left:[-EDGE,0], far:[0,EDGE] 
    Not because it has failed — because NOTHING IS WATCHING, and the board will
    no longer show a green light over an empty tower. */
 const SENTRIES = M.watches.map(w => {
-  const [sx,sz] = EDGE_XZ[(w.board && w.board.edge) || 'front'];
+  const [sx,sz] = EDGE_XZ[(w.board && w.board.edge)] || EDGE_XZ.front;
   const col = (w.stamp === 'CONFIRMED') ? w.color
             : (w.stamp === 'CONTRADICTED' ? RED : AMBER);
   return [w.id, sx, sz, col, w];
