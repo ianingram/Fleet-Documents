@@ -186,7 +186,7 @@
         br:{x:W-M,     y:H-M,    inward:Math.PI*5/4},
         bl:{x:M,       y:H-M,    inward:Math.PI*7/4},
       };
-      const cn = CORNERS[s.corner];
+      const cn = CORNERS[s.corner] || { x: W/2, y: 46, inward: Math.PI/2 };
       const sx = cn.x, sy = cn.y;
       // sweeping watch beam — pointed INWARD toward the fleet
       const sweep = cn.inward + Math.sin(t*0.5)*0.30;
