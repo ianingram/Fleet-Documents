@@ -447,7 +447,7 @@ for(const ship of M.ships){
 }
 
 // ================= THE CREW (pawns on row 2 = the JS files) ==================
-const CREW = M.crew.map(c => c.name);   // from the manifest
+const CREW = (M.crew || []).map(c => (c && c.name) || '?');   // from the manifest — tolerant of any reflected shape
 /* THE CREW SIT WHERE THE MANIFEST PUTS THEM.
    The old loop placed them by ARRAY INDEX on row 2 — which worked while there
    were exactly 8 of them and an 8-wide board. There are now FOURTEEN, and six
@@ -493,7 +493,7 @@ const EDGE_XZ = { front:[0,-EDGE], right:[EDGE,0], left:[-EDGE,0], far:[0,EDGE] 
 /* The sentries are now WATCHES, and a watch with no instrument burns AMBER.
    Not because it has failed — because NOTHING IS WATCHING, and the board will
    no longer show a green light over an empty tower. */
-const SENTRIES = M.watches.map(w => {
+const SENTRIES = (M.watches || []).map(w => {
   const [sx,sz] = EDGE_XZ[(w.board && w.board.edge)] || EDGE_XZ.front;
   const col = (w.stamp === 'CONFIRMED') ? w.color
             : (w.stamp === 'CONTRADICTED' ? RED : AMBER);
@@ -541,7 +541,7 @@ for(const [name,sx,sz,col,manifestEntry] of SENTRIES){
 // ================= SKY-ORBS + LASER UPLINKS (off-repo services overhead) =====
 const SKY_Y = 70;                         // V13 sky height
 // ORBS (satellites) from manifest
-const ORBS = M.satellites.map(s => [s.name || s.id, s.sky.x, s.sky.y, s.sky.z, s.color, s]);
+const ORBS = (M.satellites || []).filter(s => s && s.sky).map(s => [s.name || s.id, s.sky.x, s.sky.y, s.sky.z, s.color, s]);   // tolerant: a satellite reflected without .sky is skipped, not fatal
 const flagPos = (()=>{ const {x,z}=tileXZ(4,0); return new THREE.Vector3(x, 8, z); })();
 const orbs = [];
 for(const [name,ox,oy,oz,col,manifestEntry] of ORBS){
