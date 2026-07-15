@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Amenti · Engine Room · The Sonar</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Special+Elite&family=Rajdhani:wght@200;300;400;600&display=swap" rel="stylesheet">
 <!-- ============================================================================
      THE SONAR — the gate scope
      ----------------------------------------------------------------------------
@@ -113,9 +114,95 @@
   canvas{cursor:crosshair}
   .foot{max-width:560px;margin:26px auto 0;font-size:9px;line-height:1.8;color:var(--dim);
     letter-spacing:.06em;border-top:1px solid var(--line);padding-top:12px}
+
+/* fleet nav — matches the other Engine Room panes */
+:root{
+  --gold:#d4a017;--gold-bright:#f5c542;--gold-deep:#a87c14;
+  --neon:#00ffe0;--term:#80ffc0;--watch:#57b6ff;
+  --ink:#0a0a0f;--granite:#12121a;--slate:#2a2a38;--wire:#3a3a52;
+  --text:#c8c8d8;--dim:#a4a4b8;
+  --red:#f87171;--amber:#fbbf24;--green:#4ade80;
+  --elite:'Special Elite',cursive;--mono:'Share Tech Mono',monospace;--body:'Rajdhani',sans-serif;
+}
+.fleet-nav{position:sticky;top:0;z-index:90;display:flex;flex-wrap:wrap;gap:2px;padding:0 24px;background:rgba(10,10,15,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--slate);margin:0 -24px 8px}
+.fleet-nav a{font-family:var(--mono);font-size:12px;letter-spacing:.18em;color:var(--dim);text-decoration:none;padding:16px 15px 14px;border-bottom:2px solid transparent;transition:.2s;white-space:nowrap}
+.fleet-nav a:hover{color:var(--gold-bright);background:rgba(212,160,23,.06)}
+.fleet-nav a.on{color:var(--neon);border-bottom-color:var(--neon)}
+.fleet-nav a{font-size:11px;padding:13px 9px;letter-spacing:.08em}
+nav class="fleet-nav">
+  <a href="index.html">HARBOR</a>
+  <a href="ships-manifest.html">MANIFEST</a>
+  <a href="engine-room.html">ENGINE ROOM</a>
+  <a href="watch.html" class="on">THE WATCH</a>
+  <a href="ordnance.html">ORDNANCE BAY</a>
+  <a href="command.html">COMMAND VIEW</a>
+  <a href="ocean.html">OCEAN VIEW</a>
+</nav>
+
+<main>
+  <p class="eyebrow">The Glass Gate</p>
+  <h1>THE WATCH</h1>
+  <p class="sub">THE SENTRY CORPS · WHAT GUARDS THE FLEET</p>
+  <p class="lede">Four towers on the edges of the board. Each one names a <b>threat</b>, and each one must name
+     the <b>instrument</b> that proves it holds.<br><br>
+     A watch is <b style="color:var(--green)">green</b> here only when a <b>recent patrol looked and the ward held</b>.
+     No patrol → amber. Stale patrol → amber. A stub → amber, and it says so.</p>
+
+  <div id="empty">
+    <div class="t">⚠ NO READING.</div>
+    <p><code>fleet-manifest.js</code> has not been published through the gate, or it failed to load.</p>
+    <p class="loud">I AM SHOWING YOU NOTHING.<br>I am not showing you the last thing I saw.</p>
+    <p style="margin-top:22px;font-size:16px;color:#c88">A mirror with a memory is a portrait. This pane has no memory, on purpose.</p>
+  </div>
+
+  <div id="glass" style="display:none">
+    <div class="patrol">
+      <span><b>LAST PATROL</b> <i id="p-at">—</i></span>
+      <span><b>BY</b> <i id="p-by">—</i></span>
+      <span><b>MERGED</b> <i id="p-merged">—</i></span>
+    </div>
+    <div id="stale"></div>
+    <div id="nopatrol"></div>
+
+    <div class="tally" id="tally"></div>
+
+    <div id="watches"></div>
+
+    <div class="law">
+      <p>The probe is the instrument. The patrol record is the reading.</p>
+      <p>A probe that has never run is a prayer.</p>
+      <p>A watch that reports green with no instrument is worse than no watch at all.</p>
+      <p style="color:var(--term)">Green means “I looked, and the ward held.” Amber means “nothing is watching.”</p>
+    </div>
+  </div>
+
+  <p class="foot">INGRAM MANOR LLC <span style="color:var(--gold)">·</span> THE FLYING DUTCHMAN <span style="color:var(--gold)">◈</span></p>
+</main>
+
+<div class="mark">AMENTI<span style="color:#8a8a9e">.</span><span class="live">LIVE</span></div>
+
+<script src="fleet-manifest.js" onerror="void 0"></script>
+<script>
+(function () {
+  'use strict';
+  var M = window.FLEET_MANIFEST;
+
+  /* NO READING -> THE BOX. Never a memory. Never a guess. */
+  if (!M || !M.meta || !M.watches) { document.getElementById('empty').style.display = 'block'; return; }
 </style>
 </head>
 <body>
+<nav class="fleet-nav">
+  <a href="index.html">HARBOR</a>
+  <a href="ships-manifest.html">MANIFEST</a>
+  <a href="engine-room.html">ENGINE ROOM</a>
+  <a href="sonar.html" class="on">THE SONAR</a>
+  <a href="watch.html">THE WATCH</a>
+  <a href="ordnance.html">ORDNANCE BAY</a>
+  <a href="command.html">COMMAND VIEW</a>
+  <a href="ocean.html">OCEAN VIEW</a>
+</nav>
+
 <div class="shell">
 
   <header>
