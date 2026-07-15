@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Amenti · The Broadcast</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Special+Elite&family=Rajdhani:wght@200;300;400;600&display=swap" rel="stylesheet">
+<!-- ============================================================================
+     THE BROADCAST — the podcast archive
+     ----------------------------------------------------------------------------
+     A fleet pane (Fleet-Documents). Reads vallhalla/episodes/index.json — the
+     list the stitch step writes — and renders every edition with a player.
+     No Worker. No build. Just the index the pipeline already produces.
+
+     Each edition: a host drawn from the hall opens, walks the week, and hands
+     to that week's Atlantica writer for the reading. Listen whenever you like —
+     the editions are immutable and kept.
+     ========================================================================= -->
+<style>
+  :root{
+    --gold:#d4a017;--gold-bright:#f5c542;--gold-deep:#a87c14;
+    --neon:#00ffe0;--term:#80ffc0;--watch:#57b6ff;
+    --ink:#0a0a0f;--granite:#12121a;--slate:#2a2a38;--wire:#3a3a52;
+    --text:#c8c8d8;--dim:#a4a4b8;
+    --red:#f87171;--amber:#fbbf24;--green:#4ade80;
+    --elite:'Special Elite',cursive;--mono:'Share Tech Mono',monospace;--body:'Rajdhani',sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--ink);color:var(--text);font-family:var(--body);
+    -webkit-font-smoothing:antialiased;min-height:100%}
+  .shell{max-width:820px;margin:0 auto;padding:0 22px 80px}
+
+  header.page{text-align:center;padding:44px 0 28px;border-bottom:1px solid var(--slate)}
+  header.page .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.34em;
+    color:var(--gold);text-transform:uppercase;margin:0 0 10px}
+  header.page h1{font-family:var(--elite);font-weight:400;font-size:clamp(30px,6vw,46px);
+    letter-spacing:.04em;color:var(--text);margin:0}
+  header.page .sub{font-size:15px;color:var(--dim);max-width:52ch;margin:14px auto 0;line-height:1.6}
+
+  .status{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--dim);
+    text-align:center;padding:22px 0}
+
+  .ep{border:1px solid var(--slate);border-radius:6px;background:var(--granite);
+    margin:16px 0;overflow:hidden;transition:border-color .2s}
+  .ep:hover{border-color:var(--wire)}
+  .ep.latest{border-color:var(--gold);box-shadow:0 0 0 rgba(212,160,23,.5);animation:latest-glow 2.8s ease-in-out infinite}
+  @keyframes latest-glow{
+    0%,100%{box-shadow:0 0 6px rgba(212,160,23,.15),0 0 0 1px rgba(212,160,23,.3)}
+    50%    {box-shadow:0 0 26px rgba(212,160,23,.4),0 0 0 1px rgba(245,197,66,.7)}
+  }
+  .ep.latest .latest-tag{animation:tag-glow 2.8s ease-in-out infinite}
+  @keyframes tag-glow{0%,100%{background:var(--gold-deep)}50%{background:var(--gold-bright)}}
+  .ep .top{display:flex;align-items:baseline;justify-content:space-between;gap:12px;
+    padding:16px 20px 6px;flex-wrap:wrap}
+  .ep .wk{font-family:var(--mono);font-size:12px;letter-spacing:.16em;color:var(--gold)}
+  .ep .latest-tag{font-family:var(--mono);font-size:9px;letter-spacing:.2em;color:var(--ink);
+    background:var(--gold);padding:2px 8px;border-radius:3px;text-transform:uppercase}
+  .ep .host{padding:2px 20px 4px;font-size:20px;color:var(--text);font-weight:400}
+  .ep .line{padding:0 20px 14px;font-size:14px;color:var(--dim);line-height:1.55}
+  .ep .line b{color:var(--term);font-weight:400}
+  .ep audio{width:calc(100% - 40px);margin:0 20px 18px;display:block;filter:invert(.9) hue-rotate(180deg)}
+  .ep .meta{padding:0 20px 16px;font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--wire)}
+
+  .empty{text-align:center;padding:60px 20px;color:var(--dim)}
+  .empty .big{font-family:var(--elite);font-size:22px;color:var(--gold);margin-bottom:12px}
+  .empty p{font-size:14px;line-height:1.7;max-width:46ch;margin:8px auto}
+
+  .foot{text-align:center;margin-top:40px;padding-top:24px;border-top:1px solid var(--slate);
+    font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--wire);line-height:1.9}
+</style>
+</head>
+<body>
+<div id="fleet-nav"></div>
+<script src="fleet-nav.js"></script>
+
+<div class="shell">
+
+  <header class="page">
+    <p class="eyebrow">Amenti Studios</p>
+    <h1>THE BROADCAST</h1>
+    <p class="sub">Once a week, a voice from the hall opens the gates: introduces the interface, walks the week, and hands to that week&rsquo;s writer for the reading. Every edition is kept. Listen whenever you like.</p>
+  </header>
+
+  <div id="list"><div class="status">Reading the archive&hellip;</div></div>
+
+  <div class="foot">
+    THE BROADCAST &middot; Amenti.live &middot; Ingram Manor LLC<br>
+    The host is drawn from the hall &middot; the reading is the writer&rsquo;s own voice &middot; the editions are immutable.
+  </div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* The index the stitch step writes, in the Amenti.live project (where the
+     episodes are committed). Absolute so this pane can live in Fleet-Documents
+     and still reach the archive. */
+  var INDEX_URL = 'https://ianingram.github.io/Amenti.live/vallhalla/episodes/index.json';
+  var AUDIO_BASE = 'https://ianingram.github.io/Amenti.live/vallhalla/';
+
+  var list = document.getElementById('list');
+
+  function esc(s){ return String(s == null ? '' : s).replace(/[&<>"]/g, function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+
+  function render(episodes) {
+    if (!episodes || !episodes.length) {
+      list.innerHTML =
+        '<div class="empty"><div class="big">The hall is quiet — for now.</div>' +
+        '<p>No editions have aired yet. When the first one does, it will appear here, ' +
+        'and every one after it, kept for whenever you wish to listen.</p></div>';
+      return;
+    }
+    var html = '';
+    episodes.forEach(function (e, i) {
+      var latest = i === 0;
+      var url = AUDIO_BASE + (e.file || ('episodes/' + e.tag + '.mp3'));
+      html +=
+        '<div class="ep' + (latest ? ' latest' : '') + '">' +
+          '<div class="top">' +
+            '<span class="wk">EDITION &middot; ' + esc(e.tag) + '</span>' +
+            (latest ? '<span class="latest-tag">newest</span>' : '') +
+          '</div>' +
+          '<div class="host">' + esc(e.host || 'A voice from the hall') + ' opens the gates</div>' +
+          '<div class="line">' +
+            (e.reading_by ? 'The reading this week: <b>' + esc(e.reading_by) + '</b>.' : 'A dispatch from the hall.') +
+          '</div>' +
+          '<audio controls preload="none" src="' + esc(url) + '"></audio>' +
+          '<div class="meta">' + (e.built_at ? esc(String(e.built_at).slice(0,10)) : '') + '</div>' +
+        '</div>';
+    });
+    list.innerHTML = html;
+  }
+
+  fetch(INDEX_URL, { cache: 'no-store' })
+    .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+    .then(function (idx) { render((idx && idx.episodes) || []); })
+    .catch(function () {
+      /* honest empty state — the archive isn't reachable yet, and that's not
+         the same as "no episodes." Say so plainly. */
+      list.innerHTML =
+        '<div class="empty"><div class="big">The archive is not answering.</div>' +
+        '<p>The broadcast index could not be reached. Either no editions have ' +
+        'aired yet, or the archive is briefly unreachable. This is not an error ' +
+        'on your end.</p></div>';
+    });
+})();
+</script>
+</body>
+</html>

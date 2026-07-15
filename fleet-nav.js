@@ -31,6 +31,7 @@
     { file: 'ships-manifest.html', label: 'MANIFEST'     },
     { file: 'engine-room.html',    label: 'ENGINE ROOM'  },
     { file: 'sonar.html',          label: 'THE SONAR'    },
+    { file: 'broadcast.html',      label: 'THE BROADCAST'},
     { file: 'watch.html',          label: 'THE WATCH'    },
     { file: 'ordnance.html',       label: 'ORDNANCE BAY' },
     { file: 'command.html',        label: 'COMMAND VIEW' },
