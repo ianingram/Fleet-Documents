@@ -30,12 +30,14 @@
     { file: 'index.html',          label: 'HARBOR'       },
     { file: 'ships-manifest.html', label: 'MANIFEST'     },
     { file: 'engine-room.html',    label: 'ENGINE ROOM'  },
+    { file: 'terminal.html',       label: 'THE TERMINAL' },
     { file: 'sonar.html',          label: 'THE SONAR'    },
     { file: 'broadcast.html',      label: 'THE BROADCAST'},
     { file: 'watch.html',          label: 'THE WATCH'    },
     { file: 'ordnance.html',       label: 'ORDNANCE BAY' },
     { file: 'command.html',        label: 'COMMAND VIEW' },
     { file: 'ocean.html',          label: 'OCEAN VIEW'   },
+    { file: 'probe-corps.html',    label: 'PROBE CORPS'  },
   ];
 
   /* which page are we on? match the last path segment, default to index.html */

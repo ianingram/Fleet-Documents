@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>THE PROBE CORPS · Amenti Fleet</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Special+Elite&family=Rajdhani:wght@200;300;400;600&display=swap" rel="stylesheet">
+<!-- ============================================================================
+     probe-corps.html  ·  A PANE OF THE GLASS GATE
+     ----------------------------------------------------------------------------
+     THE STANDING REFERENCE OF THE PROBE CORPS. Doctrine, roster, and stations.
+     This pane states only what cannot be false: the doctrine (authored, from the
+     probes' own headers), the roster (the files that exist), and where they live.
+     If a line here could be wrong, it is a bug — the truth is in the probe files.
+     ============================================================================ -->
+<style>
+:root{
+  --gold:#d4a017; --gold-bright:#f5c542; --gold-deep:#a87c14;
+  --neon:#00ffe0; --term:#80ffc0;
+  --ink:#0a0a0f; --granite:#12121a; --slate:#2a2a38; --wire:#3a3a52;
+  --text:#c8c8d8; --dim:#a4a4b8;
+  --red:#f87171; --amber:#fbbf24; --green:#4ade80;
+  --elite:'Special Elite',cursive; --mono:'Share Tech Mono',monospace; --body:'Rajdhani',sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ink);color:var(--text);font-family:var(--body);font-weight:300;font-size:18px;line-height:1.7}
+main{max-width:1060px;margin:0 auto;padding:40px 24px 140px}
+.mark{position:fixed;bottom:18px;right:22px;z-index:99;opacity:.8;font-family:var(--elite);font-size:19px;letter-spacing:.14em;color:var(--gold)}
+.mark .live{color:var(--term);text-shadow:0 0 10px var(--term);animation:blink 1.35s steps(1,end) infinite}
+@keyframes blink{0%,54%{opacity:1}55%,100%{opacity:.18}}
+.eyebrow{font-family:var(--mono);font-size:13px;letter-spacing:.3em;color:var(--neon);text-transform:uppercase;margin:0}
+h1{font-family:var(--elite);font-size:clamp(30px,5vw,50px);color:var(--gold-bright);letter-spacing:.04em;margin:8px 0 4px}
+.sub{font-family:var(--body);font-style:italic;font-size:19px;color:var(--dim);max-width:64ch;margin:0 0 10px}
+h2{font-family:var(--elite);font-size:clamp(21px,3vw,29px);color:var(--gold);margin:52px 0 14px;border-bottom:1px solid var(--slate);padding-bottom:10px}
+.law{font-family:var(--mono);font-size:15px;letter-spacing:.03em;color:var(--term);text-align:center;border:1px solid var(--slate);border-radius:6px;padding:20px 24px;margin:26px 0;background:rgba(128,255,192,.04);line-height:1.75}
+code{font-family:var(--mono);font-size:.82em;color:var(--neon);background:rgba(0,255,224,.06);padding:1px 6px;border-radius:3px}
+em{color:var(--gold-bright);font-style:italic}
+.rule{border-left:3px solid var(--gold);padding:10px 0 10px 20px;margin:16px 0}
+.rule .rn{font-family:var(--mono);font-size:12px;letter-spacing:.16em;color:var(--gold-bright);text-transform:uppercase}
+.rule .born{font-family:var(--mono);font-size:13px;font-style:normal;color:var(--term);margin-top:6px}
+.where{border:1px solid var(--slate);border-radius:8px;padding:8px 22px;margin:16px 0;background:var(--granite)}
+table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px}
+th,td{text-align:left;padding:9px 11px;border-bottom:1px solid #1c1c28;vertical-align:top}
+th{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
+td.pf{white-space:nowrap}
+td.pt{font-family:var(--mono);font-size:11px;letter-spacing:.05em;color:var(--term);white-space:nowrap}
+td.pl{font-family:var(--mono);font-size:11px;color:var(--neon);white-space:nowrap}
+td.pd{color:var(--text)}
+.myth{border-left:3px solid var(--neon);padding:8px 0 8px 20px;margin:22px 0;font-style:italic;color:#a9c7cf;font-size:17px}
+@media(max-width:640px){td.pd{font-size:13px}}
+</style>
+</head>
+<body>
+<div id="fleet-nav"></div>
+
+<main>
+  <p class="eyebrow">The Fleet's Conscience · Standing Reference</p>
+  <h1>The Probe Corps</h1>
+  <p class="sub">A tactical unit of diagnostics that patrols the fleet — cross-examining every claim against the living system, mostly unnoticed. Their doctrine, their roster, their stations.</p>
+
+  <div class="law">A PROBE THAT REPORTS RED WITHOUT LOOKING IS WORSE THAN NO PROBE.<br>A LIE WITH A LIGHT ON IT.</div>
+
+  <h2>The Doctrine — three rules, each born from a lie</h2>
+  <p>The doctrine is not theory. Three earlier probes <em>lied</em>, and each lie became a law. From the head of <code>amenti-probe.js</code>:</p>
+
+  <div class="rule"><span class="rn">Rule 1 · Test with REAL DATA</span>
+  <p>Use real prose, never <code>'x'.repeat()</code>. A probe once tested the 1,100-char cap with 1,100 literal x's; the voice model couldn't speak that, returned 500, and the probe screamed "read-aloud is BROKEN — REVERT."</p>
+  <p class="born">▸ Garbage in, garbage verdict. Test with what the world actually sends.</p></div>
+
+  <div class="rule"><span class="rn">Rule 2 · ATTRIBUTE, never infer</span>
+  <p>Read the response body. Name the <em>actual</em> cause. A probe once turned every non-200 into "the cap refused it" — so a 400 caused by the probe's <em>own</em> malformed request was reported as the wall breaking conversations.</p>
+  <p class="born">▸ It was terrifying and it was false. Read the body; name the real cause.</p></div>
+
+  <div class="rule"><span class="rn">Rule 3 · The BODY always arrives — prefer it</span>
+  <p>Never let a missing signal become a false verdict. A probe once trusted a header the browser wasn't allowed to read, and reported the wall's every <em>success</em> as a <em>failure</em>.</p>
+  <p class="born">▸ A missing signal is not a red light. The body always arrives — read that.</p></div>
+
+  <p>This is the same doctrine as the <em>Glass Gate</em> — the one stamped into the engine room and the terminal: show what is real or show the empty box; never a comforting lie. The probes are that doctrine, armed and patrolling.</p>
+
+  <h2>Where they live — the stations</h2>
+  <div class="where">
+  <p><strong style="color:var(--gold-bright)">The Instrument (root):</strong> <code>amenti-probe.js</code> — shipped on every surface of the main repo. Costs nothing until called. Append <code>?probe=1</code> to any URL for an instant state read.</p>
+  <p><strong style="color:var(--gold-bright)">The Corps (probes/ folder):</strong> <code>probe.js</code> through <code>probe18.js</code>, plus the fleet probes <code>probe-watches.mjs</code> and <code>probe-ordnance.mjs</code>. Each guards one claim.</p>
+  <p><strong style="color:var(--gold-bright)">The patrol (unnoticed):</strong> <code>.github/workflows/patrol.yml</code> runs the probes automatically in CI — they walk the fleet on their own and only speak up when something has gone blind. This is why they help without being noticed.</p>
+  <p><strong style="color:var(--gold-bright)">In the panes:</strong> <code>THE WATCH</code> and <code>ORDNANCE BAY</code> are the human-facing views of what <code>probe-watches</code> and <code>probe-ordnance</code> report.</p>
+  </div>
+
+  <h2>The Roster — every probe and its post</h2>
+  <table>
+  <tr><th>File</th><th>Codename</th><th>Station</th><th>What it guards</th></tr>
+  <tr><td class="pf"><code>amenti-probe.js</code></td><td class="pt">THE INSTRUMENT</td><td class="pl">Root · every surface</td><td class="pd">The permanent diagnostic. state() free, wall() ~1¢, full() ~3¢. Never auto-runs. Append ?probe=1 to any URL for an instant state read. The doctrine's home.</td></tr>
+<tr><td class="pf"><code>probe.js</code></td><td class="pt">THE ANCHORED WINDOW</td><td class="pl">probes/</td><td class="pd">Never trust an edit you haven't run. Exercises the anchored-window logic against real input.</td></tr>
+<tr><td class="pf"><code>probe2.js</code></td><td class="pt">THE PASS</td><td class="pl">probes/</td><td class="pd">Every claim gets exercised or it isn't a claim. Tests the quiz/scoring pass end to end.</td></tr>
+<tr><td class="pf"><code>probe3.js</code></td><td class="pt">THE PHANTOM</td><td class="pl">probes/</td><td class="pd">Neutralises script-out-of-comment-text injection — the phantom that haunted an earlier build.</td></tr>
+<tr><td class="pf"><code>probe4.js</code></td><td class="pt">D1 · BARGE-IN</td><td class="pl">probes/</td><td class="pd">Simulates a real microphone: frames of PCM, some loud, some silent — does barge-in fire correctly?</td></tr>
+<tr><td class="pf"><code>probe6.js</code></td><td class="pt">D2 · THE ARREST</td><td class="pl">probes/</td><td class="pd">Tests the voice-stop for RESTRAINT as hard as for the catch. Stops when it should — and NOT when it shouldn't.</td></tr>
+<tr><td class="pf"><code>probe7.js</code></td><td class="pt">THE CACHE-KEY INVARIANT</td><td class="pl">probes/</td><td class="pd">The cache key must be exact. Guards against the wrong voice/text served from a collided key.</td></tr>
+<tr><td class="pf"><code>probe8.js</code></td><td class="pt">§11 · THE ROOM</td><td class="pl">probes/</td><td class="pd">The privacy rules, tested harder than the feature. What leaves the room, and what must never.</td></tr>
+<tr><td class="pf"><code>probe9.js</code></td><td class="pt">THRESHOLD · EAR · BRIDGE</td><td class="pl">probes/</td><td class="pd">The listen pipeline: does the ear open at the threshold, and does the bridge carry the signal?</td></tr>
+<tr><td class="pf"><code>probe10.js</code></td><td class="pt">THE WATCHLIST</td><td class="pl">probes/</td><td class="pd">The model arms the fast path; the trigger stays instant. Tests the wake/watchlist path.</td></tr>
+<tr><td class="pf"><code>probe11.mjs</code></td><td class="pt">THE DEPLOYABLE GUARD</td><td class="pl">probes/</td><td class="pd">Attacks the REAL Worker through its REAL router — not the guard in isolation, the shipped file.</td></tr>
+<tr><td class="pf"><code>probe12.js</code></td><td class="pt">DEPLOY A · THE MIC</td><td class="pl">probes/</td><td class="pd">The claim: the microphone behaves EXACTLY as it does today. Proven, not assumed.</td></tr>
+<tr><td class="pf"><code>probe13.js</code></td><td class="pt">MIC IS NOT A KEYBOARD</td><td class="pl">probes/</td><td class="pd">The figure remembers what it said aloud. Voice state is not keystroke state.</td></tr>
+<tr><td class="pf"><code>probe14.js</code></td><td class="pt">DOCTRINE · TURN · TRAP</td><td class="pl">probes/</td><td class="pd">Guards the conversation doctrine itself — the turn-taking and the traps that broke earlier turns.</td></tr>
+<tr><td class="pf"><code>probe15.js</code></td><td class="pt">TERMINAL ON THE CORE</td><td class="pl">probes/</td><td class="pd">Confirms the terminal/voice surface runs on the one engine, not a drifted copy.</td></tr>
+<tr><td class="pf"><code>probe16.js</code></td><td class="pt">HANDS-FREE</td><td class="pl">probes/</td><td class="pd">The hands-free path: continuous listen/answer without a keypress, tested for real.</td></tr>
+<tr><td class="pf"><code>probe17.js</code></td><td class="pt">DEPLOY C · ONE ENGINE</td><td class="pl">probes/</td><td class="pd">One engine, not many. Guards against surfaces drifting onto separate cores.</td></tr>
+<tr><td class="pf"><code>probe18.js</code></td><td class="pt">THE GLASS GATE</td><td class="pl">probes/</td><td class="pd">The doctrine made testable: a view shows real data or the empty box — NEVER stale, never fake.</td></tr>
+<tr><td class="pf"><code>probe-watches.mjs</code></td><td class="pt">THE WATCH PROBE</td><td class="pl">probes/ · fleet</td><td class="pd">DATA · TREASURY · HULL — one instrument, three watches. The same question in three costumes: does the world match the claim?</td></tr>
+<tr><td class="pf"><code>probe-ordnance.mjs</code></td><td class="pt">THE ORDNANCE PROBE</td><td class="pl">probes/ · fleet</td><td class="pd">What has the fleet actually FIRED? Sees the four publishing tubes (Atlantica, Usher, feed, week) that nothing could see before.</td></tr>
+</table>
+
+  <h2>The mythic telling</h2>
+  <p>The doctrine is written into the fleet's own story, in <code>library/ingram/the-siege-of-amenti.md</code>:</p>
+  <div class="myth">"...a self-audit strip that cross-examines the god-view against the public halls on every refresh: an instrument sworn to accuse itself before it will lie to its captain. The probe doctrine, hammered into furniture."</div>
+
+  <div class="law">THE PROBES ARE THE FLEET'S CONSCIENCE.<br>THEY ACCUSE THE SYSTEM BEFORE IT CAN LIE TO ITS CAPTAIN.</div>
+</main>
+
+<div class="mark">AMENTI <span class="live">●</span></div>
+
+<script src="fleet-nav.js"></script>
+</body>
+</html>
