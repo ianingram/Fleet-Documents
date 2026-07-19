@@ -86,29 +86,13 @@ td.pd{color:var(--text)}
   </div>
 
   <h2>The Roster — every probe and its post</h2>
+<p id="corps-note" class="linkback" style="font-family:var(--mono);font-size:12px;color:var(--blue)">▸ This table is <strong>read from the fleet manifest</strong>, not typed. It was typed once, and claimed twenty probes while the folder held nineteen and the scanner could see one.</p>
   <table>
   <tr><th>File</th><th>Codename</th><th>Station</th><th>What it guards</th></tr>
-  <tr><td class="pf"><code>amenti-probe.js</code></td><td class="pt">THE INSTRUMENT</td><td class="pl">Root · every surface</td><td class="pd">The permanent diagnostic. state() free, wall() ~1¢, full() ~3¢. Never auto-runs. Append ?probe=1 to any URL for an instant state read. The doctrine's home.</td></tr>
-<tr><td class="pf"><code>probe.js</code></td><td class="pt">THE ANCHORED WINDOW</td><td class="pl">probes/</td><td class="pd">Never trust an edit you haven't run. Exercises the anchored-window logic against real input.</td></tr>
-<tr><td class="pf"><code>probe2.js</code></td><td class="pt">THE PASS</td><td class="pl">probes/</td><td class="pd">Every claim gets exercised or it isn't a claim. Tests the quiz/scoring pass end to end.</td></tr>
-<tr><td class="pf"><code>probe3.js</code></td><td class="pt">THE PHANTOM</td><td class="pl">probes/</td><td class="pd">Neutralises script-out-of-comment-text injection — the phantom that haunted an earlier build.</td></tr>
-<tr><td class="pf"><code>probe4.js</code></td><td class="pt">D1 · BARGE-IN</td><td class="pl">probes/</td><td class="pd">Simulates a real microphone: frames of PCM, some loud, some silent — does barge-in fire correctly?</td></tr>
-<tr><td class="pf"><code>probe6.js</code></td><td class="pt">D2 · THE ARREST</td><td class="pl">probes/</td><td class="pd">Tests the voice-stop for RESTRAINT as hard as for the catch. Stops when it should — and NOT when it shouldn't.</td></tr>
-<tr><td class="pf"><code>probe7.js</code></td><td class="pt">THE CACHE-KEY INVARIANT</td><td class="pl">probes/</td><td class="pd">The cache key must be exact. Guards against the wrong voice/text served from a collided key.</td></tr>
-<tr><td class="pf"><code>probe8.js</code></td><td class="pt">§11 · THE ROOM</td><td class="pl">probes/</td><td class="pd">The privacy rules, tested harder than the feature. What leaves the room, and what must never.</td></tr>
-<tr><td class="pf"><code>probe9.js</code></td><td class="pt">THRESHOLD · EAR · BRIDGE</td><td class="pl">probes/</td><td class="pd">The listen pipeline: does the ear open at the threshold, and does the bridge carry the signal?</td></tr>
-<tr><td class="pf"><code>probe10.js</code></td><td class="pt">THE WATCHLIST</td><td class="pl">probes/</td><td class="pd">The model arms the fast path; the trigger stays instant. Tests the wake/watchlist path.</td></tr>
-<tr><td class="pf"><code>probe11.mjs</code></td><td class="pt">THE DEPLOYABLE GUARD</td><td class="pl">probes/</td><td class="pd">Attacks the REAL Worker through its REAL router — not the guard in isolation, the shipped file.</td></tr>
-<tr><td class="pf"><code>probe12.js</code></td><td class="pt">DEPLOY A · THE MIC</td><td class="pl">probes/</td><td class="pd">The claim: the microphone behaves EXACTLY as it does today. Proven, not assumed.</td></tr>
-<tr><td class="pf"><code>probe13.js</code></td><td class="pt">MIC IS NOT A KEYBOARD</td><td class="pl">probes/</td><td class="pd">The figure remembers what it said aloud. Voice state is not keystroke state.</td></tr>
-<tr><td class="pf"><code>probe14.js</code></td><td class="pt">DOCTRINE · TURN · TRAP</td><td class="pl">probes/</td><td class="pd">Guards the conversation doctrine itself — the turn-taking and the traps that broke earlier turns.</td></tr>
-<tr><td class="pf"><code>probe15.js</code></td><td class="pt">TERMINAL ON THE CORE</td><td class="pl">probes/</td><td class="pd">Confirms the terminal/voice surface runs on the one engine, not a drifted copy.</td></tr>
-<tr><td class="pf"><code>probe16.js</code></td><td class="pt">HANDS-FREE</td><td class="pl">probes/</td><td class="pd">The hands-free path: continuous listen/answer without a keypress, tested for real.</td></tr>
-<tr><td class="pf"><code>probe17.js</code></td><td class="pt">DEPLOY C · ONE ENGINE</td><td class="pl">probes/</td><td class="pd">One engine, not many. Guards against surfaces drifting onto separate cores.</td></tr>
-<tr><td class="pf"><code>probe18.js</code></td><td class="pt">THE GLASS GATE</td><td class="pl">probes/</td><td class="pd">The doctrine made testable: a view shows real data or the empty box — NEVER stale, never fake.</td></tr>
-<tr><td class="pf"><code>probe-watches.mjs</code></td><td class="pt">THE WATCH PROBE</td><td class="pl">probes/ · fleet</td><td class="pd">DATA · TREASURY · HULL — one instrument, three watches. The same question in three costumes: does the world match the claim?</td></tr>
-<tr><td class="pf"><code>probe-ordnance.mjs</code></td><td class="pt">THE ORDNANCE PROBE</td><td class="pl">probes/ · fleet</td><td class="pd">What has the fleet actually FIRED? Sees the four publishing tubes (Atlantica, Usher, feed, week) that nothing could see before.</td></tr>
-</table>
+  <tbody id="corps-roster">
+    <tr><td colspan="4" class="pd" style="opacity:.6">reading the manifest…</td></tr>
+  </tbody>
+  </table>
 
   <h2>The mythic telling</h2>
   <p>The doctrine is written into the fleet's own story, in <code>library/ingram/the-siege-of-amenti.md</code>:</p>
@@ -120,5 +104,71 @@ td.pd{color:var(--text)}
 <div class="mark">AMENTI <span class="live">●</span></div>
 
 <script src="fleet-nav.js"></script>
+
+<script>
+/* ===========================================================================
+   THE ROSTER READS ITSELF
+   ---------------------------------------------------------------------------
+   This table used to be twenty rows typed by hand. It could therefore claim
+   any number of probes, and did — twenty, while nineteen files sat in probes/
+   and the fleet manifest could see exactly one. The unit that exists to
+   cross-examine claims against the living system was making an unchecked one.
+
+   Now it reads fleet-structure.json, which the scan regenerates on every push
+   from the files that are actually on disk. A probe that exists is listed; a
+   probe that is listed exists.
+
+   GLASS GATE: if the manifest cannot be read, this says so. It does not fall
+   back to a remembered list, because a remembered list is how it lied before.
+   =========================================================================== */
+(function () {
+  'use strict';
+  var SRC = 'https://raw.githubusercontent.com/ianingram/Amenti.live/main/fleet-structure.json';
+  var body = document.getElementById('corps-roster');
+  var note = document.getElementById('corps-note');
+  if (!body) return;
+
+  function esc(x){ return String(x==null?'':x).replace(/[&<>"]/g,function(c){
+    return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]; }); }
+
+  function dark(msg){
+    body.innerHTML = '<tr><td colspan="4" class="pd" style="color:#ff8a80">'
+      + '<strong>THE ROSTER CANNOT BE READ.</strong><br>' + esc(msg)
+      + '<br><span style="opacity:.7">No list is shown rather than a remembered one. '
+      + 'A roster that guesses is the failure this pane exists to describe.</span></td></tr>';
+  }
+
+  fetch(SRC, { cache: 'no-store' })
+    .then(function (r) { if (!r.ok) throw new Error('manifest returned ' + r.status); return r.json(); })
+    .then(function (d) {
+      var p = d && d.probes;
+      if (!p) throw new Error('the manifest carries no probes section — the scanner has not been taught to catalogue probes/ yet');
+      if (!p.present) throw new Error(p.note || 'probes/ not found by the scanner');
+      var files = p.files || [];
+      if (!files.length) throw new Error('the scanner walked probes/ and found no probe files');
+
+      body.innerHTML = files.map(function (f) {
+        var named = !!f.title;
+        return '<tr>'
+          + '<td class="pf"><code>' + esc(f.file) + '</code></td>'
+          + '<td class="pt">' + (named ? esc(f.title)
+              : '<span style="color:#8f95ab">(codename unread)</span>') + '</td>'
+          + '<td class="pl">probes/</td>'
+          + '<td class="pd">' + (f.guards ? esc(f.guards)
+              : '<span style="opacity:.55">no description found in the header</span>') + '</td>'
+          + '</tr>';
+      }).join('');
+
+      if (note) {
+        var unread = files.filter(function (f) { return !f.title; }).length;
+        note.innerHTML = '\u25b8 <strong>' + files.length + ' probes</strong>, read from the fleet manifest '
+          + 'at ' + esc((d.meta && d.meta.generated || '').slice(0, 16).replace('T', ' ')) + ' UTC. '
+          + (unread ? unread + ' carry a header this scanner could not parse — that is the scanner '
+                    + 'admitting blindness, not a probe without a name.' : 'Every header was legible.');
+      }
+    })
+    .catch(function (e) { dark(e.message || String(e)); });
+})();
+</script>
 </body>
 </html>
