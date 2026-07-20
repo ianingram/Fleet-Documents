@@ -117,6 +117,30 @@ h2{font-family:var(--elite);font-size:clamp(21px,3vw,29px);color:var(--gold);mar
 .law p{font-family:var(--elite);font-size:20px;color:var(--gold-bright);margin:0 0 12px;line-height:1.5}
 .law p:last-child{margin-bottom:0;color:var(--term)}
 .foot{margin-top:70px;padding-top:28px;border-top:1px solid var(--slate);text-align:center;font-family:var(--mono);font-size:13px;letter-spacing:.2em;color:#9a9ab2}
+
+/* ── THE SIXTH TUBE ───────────────────────────────────────────────────────
+   Five tubes publish and are read from a manifest. This one is read from the
+   library itself, every time the pane is opened — which is the whole argument
+   of THE LEIF BRIEF. A document records what was true when written and goes
+   stale in silence. An instrument goes dark. */
+.qgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin:14px 0}
+.qcell{border:1px solid var(--line);border-radius:8px;background:#0e1319;padding:16px 12px;text-align:center}
+.qn{font-family:var(--mono);font-size:30px;color:var(--gold);line-height:1}
+.ql{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--mut);margin-top:8px}
+.qrow{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+@media(max-width:640px){.qrow{grid-template-columns:1fr}}
+.qhalf{border:1px solid var(--line);border-radius:8px;background:#0e1319;padding:14px 16px}
+.qh{font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
+.qbar{display:grid;grid-template-columns:96px 1fr 34px;align-items:center;gap:9px;margin:6px 0}
+.qbar .k{font-family:var(--mono);font-size:11px;color:var(--ink)}
+.qbar .t{height:5px;border-radius:3px;background:#1b2430;overflow:hidden}
+.qbar .t i{display:block;height:100%;background:linear-gradient(90deg,#8a6510,var(--gold))}
+.qbar .v{font-family:var(--mono);font-size:11px;color:var(--mut);text-align:right}
+.qbar.halt .t i{background:linear-gradient(90deg,#7a3a2a,#c2683f)}
+.qnote{font-family:var(--mono);font-size:11.5px;color:var(--mut);line-height:1.7;margin-top:12px}
+.voidbox{border:1px solid rgba(200,80,60,.4);border-radius:8px;background:rgba(200,80,60,.06);padding:18px 20px;margin:14px 0}
+.voidbox .t{font-family:var(--mono);font-size:13px;letter-spacing:.1em;color:#e08060;margin-bottom:6px}
+.voidbox p{margin:4px 0;font-size:15px}
 </style>
 </head>
 <body>
@@ -156,6 +180,39 @@ h2{font-family:var(--elite);font-size:clamp(21px,3vw,29px);color:var(--gold);mar
     <p class="lede" style="margin-top:-4px">Every day a daily tube should have fired. <b style="color:var(--green)">Green</b> = it did.
        <b style="color:var(--red)">Red</b> = <i>it did not, and nobody knew.</i></p>
     <div class="cal" id="cal"></div>
+
+    <h2>THE SIXTH TUBE · THE QUIZ LIBRARY</h2>
+    <p class="lede" style="margin-top:-4px">Five tubes publish. This one <b>fires rounds</b> —
+       and unlike the others it keeps a record of every target it examined and <b>refused</b>.</p>
+
+    <div id="q-dark" class="voidbox">
+      <div class="t">⚠ THE MAGAZINE CANNOT BE READ.</div>
+      <p>The quiz library did not answer. <b>I am not showing you last week's count.</b></p>
+    </div>
+
+    <div id="q-glass" style="display:none">
+      <div class="qgrid">
+        <div class="qcell"><div class="qn" id="q-live">—</div><div class="ql">Rounds live</div></div>
+        <div class="qcell"><div class="qn" id="q-fig">—</div><div class="ql">Figures</div></div>
+        <div class="qcell"><div class="qn" id="q-stack">—</div><div class="ql">Stacked</div></div>
+        <div class="qcell"><div class="qn" id="q-mag">—</div><div class="ql">In the magazine</div></div>
+      </div>
+
+      <div class="qrow">
+        <div class="qhalf">
+          <div class="qh">BY ROUND TYPE</div>
+          <div id="q-modes"></div>
+        </div>
+        <div class="qhalf">
+          <div class="qh">BY CALIBRE</div>
+          <div id="q-depths"></div>
+        </div>
+      </div>
+
+      <div class="qh" style="margin-top:22px">THE HALT LOG — WHAT THE SHIP REFUSED, AND WHY</div>
+      <div id="q-halts"></div>
+      <p class="qnote" id="q-haltnote"></p>
+    </div>
 
     <div class="law">
       <p>A schedule that nobody checks is a promise nobody keeps.</p>
@@ -238,6 +295,70 @@ h2{font-family:var(--elite);font-size:clamp(21px,3vw,29px);color:var(--gold);mar
       '<span><i style="background:rgba(248,113,113,.35);border:1px solid #7a2a2a"></i>nothing fired</span>' +
       '<span><i style="outline:2px solid #d4a017;background:transparent"></i>today</span>' +
     '</div>';
+})();
+</script>
+
+<script>
+/* THE SIXTH TUBE READS THE MAGAZINE ITSELF.
+   Not a manifest, not a published number — the library, live, every time this
+   pane is opened. When it cannot be read the pane says so and shows nothing,
+   because the alternative is a count from last week wearing today's date. */
+(function () {
+  'use strict';
+  var MINT = 'https://amenti-mint.ingram-ian.workers.dev';
+  var $ = function (id) { return document.getElementById(id); };
+  function esc(x){ return String(x==null?'':x).replace(/[&<>"]/g,function(c){
+    return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]; }); }
+
+  function bars(host, obj, labels, cls) {
+    var keys = Object.keys(obj || {});
+    if (!keys.length) { host.innerHTML = '<p class="qnote">no reading</p>'; return; }
+    var max = Math.max.apply(null, keys.map(function (k) { return obj[k]; }));
+    host.innerHTML = keys.sort(function (a, b) { return obj[b] - obj[a]; }).map(function (k) {
+      return '<div class="qbar ' + (cls || '') + '">'
+        + '<span class="k">' + esc((labels && labels[k]) || k) + '</span>'
+        + '<span class="t"><i style="width:' + Math.round(obj[k] / max * 100) + '%"></i></span>'
+        + '<span class="v">' + obj[k] + '</span></div>';
+    }).join('');
+  }
+
+  fetch(MINT + '/quiz/ordnance', { cache: 'no-store' })
+    .then(function (r) { if (!r.ok) throw new Error('http ' + r.status); return r.json(); })
+    .then(function (d) {
+      if (!d || !d.ok) throw new Error('no reading');
+      $('q-dark').style.display = 'none';
+      $('q-glass').style.display = '';
+
+      $('q-live').textContent  = d.live;
+      $('q-fig').textContent   = d.figures;
+      $('q-stack').textContent = d.stacked;
+      $('q-mag').textContent   = d.magazine ? (d.magazine.pending != null ? d.magazine.pending : d.magazine.total) : '—';
+
+      bars($('q-modes'), d.byMode, {
+        Event: 'life · record', Idea: 'life · idea',
+        Canon: 'canon · text', Source: 'source · his words' });
+      bars($('q-depths'), d.byDepth, {
+        1: 'd1 the entry', 2: 'd2 another charge', 3: 'd3 contested' });
+
+      if (d.halts && Object.keys(d.halts).length) {
+        bars($('q-halts'), d.halts, null, 'halt');
+        var n = Object.keys(d.halts).reduce(function (a, k) { return a + d.halts[k]; }, 0);
+        $('q-haltnote').innerHTML = n + ' figure' + (n === 1 ? '' : 's')
+          + ' examined and refused. Every one is a finding, not a failure — and after a few '
+          + 'hundred rows this list stops describing the engine and starts describing the roster.';
+      } else if (d.halts) {
+        $('q-halts').innerHTML = '';
+        $('q-haltnote').textContent = 'Nothing has been refused yet. The log fills as the patrol walks.';
+      } else {
+        $('q-halts').innerHTML = '';
+        $('q-haltnote').textContent = 'The queue could not be read, so the halt log is unknown — '
+          + 'which is not the same as empty.';
+      }
+    })
+    .catch(function () {
+      $('q-glass').style.display = 'none';
+      $('q-dark').style.display = '';
+    });
 })();
 </script>
 </body>
