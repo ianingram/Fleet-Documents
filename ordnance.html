@@ -141,6 +141,19 @@ h2{font-family:var(--elite);font-size:clamp(21px,3vw,29px);color:var(--gold);mar
 .voidbox{border:1px solid rgba(200,80,60,.4);border-radius:8px;background:rgba(200,80,60,.06);padding:18px 20px;margin:14px 0}
 .voidbox .t{font-family:var(--mono);font-size:13px;letter-spacing:.1em;color:#e08060;margin-bottom:6px}
 .voidbox p{margin:4px 0;font-size:15px}
+
+/* the calendar reading — the only part of this pane that looks FORWARD */
+.qcal{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;
+  border:1px solid var(--line);border-radius:8px;background:#0e1319;padding:14px 16px;margin-top:4px}
+.qcal-next{font-family:var(--mono);font-size:12px;color:var(--ink)}
+.qcal-next b{color:var(--gold)}
+.qcal-when{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--mut)}
+.qcal-gate{text-align:right}
+.qcal-pct{font-family:var(--mono);font-size:22px;color:var(--gold)}
+.qcal-lab{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--mut)}
+.qcal-bar{grid-column:1/-1;height:4px;background:#1b2430;border-radius:2px;overflow:hidden;margin-top:4px}
+.qcal-bar i{display:block;height:100%;background:linear-gradient(90deg,#8a6510,var(--gold))}
+.qcal-bar.ready i{background:linear-gradient(90deg,#2f6b4c,#57c98a)}
 </style>
 </head>
 <body>
@@ -208,6 +221,10 @@ h2{font-family:var(--elite);font-size:clamp(21px,3vw,29px);color:var(--gold);mar
           <div id="q-depths"></div>
         </div>
       </div>
+
+      <div class="qh" style="margin-top:22px">THE CALENDAR — WHAT THE SHIP IS FIRING AT</div>
+      <div id="q-cal"></div>
+      <p class="qnote" id="q-calnote"></p>
 
       <div class="qh" style="margin-top:22px">THE HALT LOG — WHAT THE SHIP REFUSED, AND WHY</div>
       <div id="q-halts"></div>
@@ -339,6 +356,45 @@ h2{font-family:var(--elite);font-size:clamp(21px,3vw,29px);color:var(--gold);mar
         Canon: 'canon · text', Source: 'source · his words' });
       bars($('q-depths'), d.byDepth, {
         1: 'd1 the entry', 2: 'd2 another charge', 3: 'd3 contested' });
+
+      /* THE CALENDAR. null means the table could not be read, which is NOT the
+         same as an empty calendar — and a pane that showed 0 for both would be
+         telling one truth and one lie with the same number. */
+      var MON = ['','January','February','March','April','May','June','July',
+                 'August','September','October','November','December'];
+      if (d.calendar) {
+        var c = d.calendar;
+        var n = c.next;
+        $('q-cal').innerHTML =
+            '<div class="qcal">'
+          +   '<div>'
+          +     '<div class="qcal-next">' + (n
+                  ? 'Next &#183; <b>' + esc(n.title) + '</b> &#183; ' + esc(n.figure)
+                  : 'Nothing scheduled yet.') + '</div>'
+          +     '<div class="qcal-when">' + (n
+                  ? (MON[n.month] || '') + ' ' + (n.day || '') + ' &#183; '
+                    + esc(n.kind) + ' &#183; ' + (n.cited ? 'cited' : 'offered')
+                  : 'the table is there and waiting') + '</div>'
+          +   '</div>'
+          +   '<div class="qcal-gate"><div class="qcal-pct">' + c.pct + '%</div>'
+          +     '<div class="qcal-lab">' + c.weeksCovered + ' of 52 weeks</div></div>'
+          +   '<div class="qcal-bar' + (c.readyToLaunch ? ' ready' : '') + '">'
+          +     '<i style="width:' + Math.max(2, c.pct) + '%"></i></div>'
+          + '</div>';
+        var kinds = Object.keys(c.byKind || {}).map(function (k) {
+          return c.byKind[k] + ' ' + k; }).join(' \u00b7 ');
+        $('q-calnote').innerHTML = c.entries + ' entr' + (c.entries === 1 ? 'y' : 'ies')
+          + (kinds ? ' &#183; ' + esc(kinds) : '') + '.<br>'
+          + (c.readyToLaunch
+              ? 'Coverage is sufficient. Most weeks of the year have something in them.'
+              : '<b>Not ready to launch.</b> A calendar needs about forty of fifty-two weeks '
+                + 'covered before it stops advertising its gaps &#8212; below that it is worse '
+                + 'than none. Anniversaries fill as the patrol runs; occasions are written by hand.');
+      } else {
+        $('q-cal').innerHTML = '';
+        $('q-calnote').innerHTML = 'The calendar table could not be read, so what is ahead is '
+          + '<b>unknown</b> &#8212; which is not the same as empty.';
+      }
 
       if (d.halts && Object.keys(d.halts).length) {
         bars($('q-halts'), d.halts, null, 'halt');
