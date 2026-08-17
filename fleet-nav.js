@@ -42,6 +42,10 @@
        a room, a face and a docket, naming what each gate refuses. Isaac Newton
        is the worked example. */
     { file: 'onboarding.html',     label: 'ONBOARDING'   },
+    /* 17 Aug 2026 — the fourteenth. Reads WORKERS.json, pulled from
+       Cloudflare's API by mirror.yml and carried here by the Glass Gate.
+       Crons, bindings, and the names of every secret a restore would need. */
+    { file: 'workers.html',        label: 'WORKERS'      },
   ];
   /* which page are we on? match the last path segment, default to index.html */
   const here = (location.pathname.split('/').pop() || 'index.html').toLowerCase()
