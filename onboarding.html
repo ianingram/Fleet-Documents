@@ -1,0 +1,409 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Onboarding of a Soul · Amenti</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="amenti.css">
+<style>
+:root{
+  --gold:#d4a017;--gold-b:#f5c542;--neon:#00ffe0;--term:#57c98a;--violet:#c4a5ff;
+  --tblue:#57b6ff;--amber:#fbbf24;--red:#f87171;
+  --ink:#08090e;--granite:#11131c;--slate:#232838;--wire:#343b52;
+  --text:#c8ccdc;--dim:#8f95ab;
+  --mono:'Share Tech Mono',monospace;--body:'Rajdhani',sans-serif;
+  --disp:'Amenti Display','Special Elite',serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--ink)}
+body{font-family:var(--body);font-weight:300;font-size:18px;line-height:1.62;color:var(--text);
+  padding:0 0 90px;background-image:radial-gradient(ellipse at 50% -8%,rgba(212,160,23,.10),transparent 60%)}
+main{max-width:1120px;margin:0 auto;padding:26px 30px 0}
+
+.stamp{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:8px 18px;
+  padding:0 2px 12px;border-bottom:1px solid var(--slate);
+  font-family:var(--disp);font-size:14px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim)}
+.stamp .doc{color:var(--gold)}.stamp .sep{opacity:.35;margin:0 5px}
+.stamp .sm{flex-basis:100%;order:3;color:var(--gold);opacity:.75}
+@media(min-width:760px){.stamp .sm{flex-basis:auto;order:0}}
+
+header{padding:34px 0 6px}
+.eyebrow{font-family:var(--disp);font-size:15px;letter-spacing:.26em;text-transform:uppercase;color:var(--neon);margin:0 0 14px}
+h1{font-family:var(--disp);font-size:clamp(32px,5.4vw,54px);color:var(--gold-b);line-height:1.02;margin:0;
+  text-shadow:0 0 34px rgba(245,197,66,.24)}
+h1 .the{display:block;font-size:.28em;letter-spacing:.32em;color:var(--gold);opacity:.85;text-shadow:none;margin-bottom:.06em}
+.tag{font-family:var(--disp);font-size:clamp(16px,2.1vw,21px);color:#e6e9f2;letter-spacing:.18em;text-transform:uppercase;margin:14px 0 0}
+.rule{width:170px;height:1px;margin:22px 0 26px;background:linear-gradient(90deg,var(--gold),transparent)}
+
+h2{font-family:var(--disp);font-size:clamp(23px,3vw,31px);letter-spacing:.06em;color:var(--gold);
+  margin:52px 0 14px;padding-bottom:10px;border-bottom:1px solid var(--slate)}
+h2 .n{font-family:var(--mono);font-size:15px;letter-spacing:.2em;color:var(--violet);margin-right:14px;vertical-align:middle}
+h3{font-family:var(--mono);font-size:14px;letter-spacing:.18em;text-transform:uppercase;color:var(--tblue);margin:30px 0 10px}
+p{max-width:82ch;margin:12px 0}
+em{color:var(--gold-b);font-style:italic}
+b{font-weight:600;color:#e6e9f2}
+code{font-family:var(--mono);font-size:15px;color:var(--neon);background:rgba(0,255,224,.07);padding:1px 6px;border-radius:3px}
+pre{background:#0d1018;border:1px solid var(--slate);border-radius:8px;padding:16px 18px;overflow-x:auto;
+  font-family:var(--mono);font-size:14.5px;line-height:1.7;color:#d3dcf0}
+pre code{background:none;padding:0;color:inherit;font-size:inherit}
+pre .c{color:var(--dim)}
+pre .g{color:var(--gold-b)}
+pre .b{color:var(--tblue)}
+pre .r{color:var(--red)}
+pre .v{color:var(--violet)}
+
+svg.fig{width:100%;height:auto;display:block;margin:22px 0 6px;border:1px solid var(--slate);
+  border-radius:8px;background:#0a0d13;padding:10px}
+.cap{font-family:var(--mono);font-size:13px;letter-spacing:.1em;color:var(--dim);text-align:center;margin:0 0 24px}
+
+table{width:100%;border-collapse:collapse;margin:18px 0;border:1px solid var(--slate)}
+th{font-family:var(--disp);font-size:14px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);
+  text-align:left;padding:10px 13px;background:#0d0f17;border-bottom:1px solid var(--slate)}
+td{padding:10px 13px;font-size:16px;border-bottom:1px solid #171d29;vertical-align:top}
+tr:last-child td{border-bottom:none}
+td.m{font-family:var(--mono);font-size:14px}
+td.g{font-family:var(--mono);font-size:14px;color:var(--gold-b);white-space:nowrap}
+td.v{font-family:var(--mono);font-size:14px;color:var(--violet);white-space:nowrap}
+td.ok{color:var(--term)}td.opt{color:var(--dim)}td.no{color:var(--red)}
+
+.gate{border:1px solid var(--wire);border-radius:8px;background:#0c0e15;padding:16px 20px;margin:18px 0}
+.gate .gk{font-family:var(--mono);font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:var(--amber)}
+.gate .gv{margin-top:6px;font-size:17px;max-width:82ch}
+.gate.ok{border-color:rgba(87,201,138,.4)}.gate.ok .gk{color:var(--term)}
+.gate.no{border-color:rgba(248,113,113,.4)}.gate.no .gk{color:var(--red)}
+
+.law{font-family:var(--disp);font-size:clamp(16px,2vw,20px);letter-spacing:.05em;line-height:1.85;
+  text-align:center;color:var(--gold-b);border:1px solid rgba(245,197,66,.30);border-radius:6px;
+  background:rgba(245,197,66,.05);padding:18px 22px;margin:32px 0}
+.law.blue{color:var(--tblue);border-color:rgba(87,182,255,.30);background:rgba(87,182,255,.05)}
+
+.foot{font-family:var(--disp);font-size:14px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);
+  text-align:center;line-height:2;border-top:1px solid var(--slate);margin-top:54px;padding-top:22px}
+@media(max-width:640px){main{padding:20px 16px 0}body{font-size:17px}table{display:block;overflow-x:auto}}
+</style>
+</head>
+<body>
+<div id="fleet-nav"></div>
+<script src="fleet-nav.js"></script>
+<main>
+
+<div class="stamp">
+  <div><span class="doc">Wireframe</span><span class="sep">·</span><span>Onboarding</span></div>
+  <div class="sm">Ingram Manor LLC</div>
+  <div>17 August 2026</div>
+</div>
+
+<header>
+  <p class="eyebrow">One soul, blank to aboard</p>
+  <h1><span class="the">The</span>Onboarding of a Soul</h1>
+  <p class="tag">Isaac Newton, traced through every gate</p>
+  <div class="rule"></div>
+  <p>A name arrives from nowhere and ends up with a key, a row, a room, a face,
+  a voice, and a place on the docket. <b>Eight gates, and each one refuses
+  something.</b> This traces one figure through all of them and says, at each
+  stop, what would happen if the step were skipped.</p>
+</header>
+
+<h2><span class="n">·</span>The whole passage</h2>
+
+<svg class="fig" viewBox="0 0 1040 640" xmlns="http://www.w3.org/2000/svg" role="img"
+aria-label="The eight gates of onboarding, from blank to aboard">
+  <text x="520" y="30" text-anchor="middle" fill="#f5c542" font-family="Share Tech Mono" font-size="18" letter-spacing="3">EIGHT GATES</text>
+
+  <!-- lane labels -->
+  <text x="20" y="72" fill="#8f95ab" font-family="Share Tech Mono" font-size="14">AMENTI · persists</text>
+  <text x="20" y="330" fill="#c4a5ff" font-family="Share Tech Mono" font-size="14">HADES · runs</text>
+  <text x="20" y="560" fill="#00ffe0" font-family="Share Tech Mono" font-size="14">VALHALLA · out</text>
+  <line x1="20" y1="82" x2="1020" y2="82" stroke="#232838"/>
+  <line x1="20" y1="340" x2="1020" y2="340" stroke="#232838"/>
+  <line x1="20" y1="570" x2="1020" y2="570" stroke="#232838"/>
+
+  <!-- gate boxes: AMENTI lane -->
+  <g font-family="Share Tech Mono" font-size="15">
+    <rect x="30" y="100" width="150" height="86" rx="7" fill="#151109" stroke="#d4a017" stroke-width="1.6"/>
+    <text x="42" y="124" fill="#f5c542">1 · THE NAME</text>
+    <text x="42" y="146" fill="#c8ccdc" font-family="Rajdhani" font-size="16">Isaac Newton</text>
+    <text x="42" y="168" fill="#8f95ab" font-family="Rajdhani" font-size="15">nothing yet exists</text>
+
+    <rect x="205" y="100" width="150" height="86" rx="7" fill="#151109" stroke="#d4a017" stroke-width="1.6"/>
+    <text x="217" y="124" fill="#f5c542">2 · THE KEY</text>
+    <text x="217" y="146" fill="#57b6ff" font-family="Share Tech Mono" font-size="13">isaac-newton</text>
+    <text x="217" y="168" fill="#8f95ab" font-family="Rajdhani" font-size="15">one slug rule</text>
+
+    <rect x="380" y="100" width="150" height="86" rx="7" fill="#151109" stroke="#d4a017" stroke-width="2.2"/>
+    <text x="392" y="124" fill="#f5c542">3 · THE ROW</text>
+    <text x="392" y="146" fill="#57b6ff" font-family="Share Tech Mono" font-size="13">names.csv</text>
+    <text x="392" y="168" fill="#8f95ab" font-family="Rajdhani" font-size="15">now he exists</text>
+
+    <rect x="555" y="100" width="150" height="86" rx="7" fill="#151109" stroke="#d4a017" stroke-width="1.6"/>
+    <text x="567" y="124" fill="#f5c542">4 · THE ROOM</text>
+    <text x="567" y="146" fill="#57b6ff" font-family="Share Tech Mono" font-size="13">library/</text>
+    <text x="567" y="168" fill="#8f95ab" font-family="Rajdhani" font-size="15">sources + problems</text>
+
+    <rect x="730" y="100" width="150" height="86" rx="7" fill="#151109" stroke="#d4a017" stroke-width="1.6"/>
+    <text x="742" y="124" fill="#f5c542">5 · THE FACE</text>
+    <text x="742" y="146" fill="#57b6ff" font-family="Share Tech Mono" font-size="13">img/ · 3 plates</text>
+    <text x="742" y="168" fill="#8f95ab" font-family="Rajdhani" font-size="15">ingest.py</text>
+
+    <rect x="890" y="100" width="120" height="86" rx="7" fill="#151109" stroke="#d4a017" stroke-width="1.6"/>
+    <text x="902" y="124" fill="#f5c542">6 · SCENES</text>
+    <text x="902" y="146" fill="#57b6ff" font-family="Share Tech Mono" font-size="13">img/scene/</text>
+    <text x="902" y="168" fill="#8f95ab" font-family="Rajdhani" font-size="15">optional</text>
+  </g>
+
+  <!-- arrows across the top lane -->
+  <g stroke="#d4a017" stroke-width="1.8" fill="#d4a017">
+    <line x1="180" y1="143" x2="199" y2="143"/><polygon points="205,143 195,138 195,148"/>
+    <line x1="355" y1="143" x2="374" y2="143"/><polygon points="380,143 370,138 370,148"/>
+    <line x1="530" y1="143" x2="549" y2="143"/><polygon points="555,143 545,138 545,148"/>
+    <line x1="705" y1="143" x2="724" y2="143"/><polygon points="730,143 720,138 720,148"/>
+    <line x1="880" y1="143" x2="884" y2="143"/><polygon points="890,143 880,138 880,148"/>
+  </g>
+
+  <!-- registers, written by instruments -->
+  <g font-family="Share Tech Mono" font-size="14">
+    <rect x="380" y="216" width="330" height="52" rx="6" fill="#0c0e15" stroke="#343b52"/>
+    <text x="396" y="238" fill="#57c98a">tools/plates.js  →  img/PLATES.json</text>
+    <text x="396" y="258" fill="#8f95ab" font-family="Rajdhani" font-size="15">walks img/ on every push · writes itself</text>
+    <line x1="545" y1="186" x2="545" y2="212" stroke="#57c98a" stroke-width="1.6"/>
+    <polygon points="545,216 540,206 550,206" fill="#57c98a"/>
+    <line x1="805" y1="186" x2="700" y2="214" stroke="#57c98a" stroke-width="1.6"/>
+    <polygon points="695,216 705,208 707,218" fill="#57c98a"/>
+  </g>
+
+  <!-- HADES lane -->
+  <g font-family="Share Tech Mono" font-size="15">
+    <rect x="30" y="360" width="200" height="80" rx="7" fill="#100d18" stroke="#c4a5ff" stroke-width="1.6"/>
+    <text x="44" y="384" fill="#c4a5ff">7 · THE VOICE</text>
+    <text x="44" y="406" fill="#c8ccdc" font-family="Rajdhani" font-size="16">TTS archive · read-aloud</text>
+    <text x="44" y="426" fill="#8f95ab" font-family="Rajdhani" font-size="15">Dialect + Voice columns</text>
+
+    <rect x="260" y="360" width="200" height="80" rx="7" fill="#100d18" stroke="#c4a5ff" stroke-width="1.6"/>
+    <text x="274" y="384" fill="#c4a5ff">8 · THE DOCKET</text>
+    <text x="274" y="406" fill="#c8ccdc" font-family="Rajdhani" font-size="16">a case, if he has one</text>
+    <text x="274" y="426" fill="#8f95ab" font-family="Rajdhani" font-size="15">locator, never a verb</text>
+
+    <rect x="490" y="360" width="200" height="80" rx="7" fill="#100d18" stroke="#c4a5ff" stroke-width="1.6"/>
+    <text x="504" y="384" fill="#c4a5ff">THE CAST</text>
+    <text x="504" y="406" fill="#c8ccdc" font-family="Rajdhani" font-size="16">eligible for a byline</text>
+    <text x="504" y="426" fill="#8f95ab" font-family="Rajdhani" font-size="15">unless DENY or staff</text>
+
+    <rect x="720" y="360" width="290" height="80" rx="7" fill="#100d18" stroke="#c4a5ff" stroke-width="1.6"/>
+    <text x="734" y="384" fill="#c4a5ff">THE PROXY reads the roster</text>
+    <text x="734" y="406" fill="#c8ccdc" font-family="Rajdhani" font-size="16">raw.githubusercontent · names.csv</text>
+    <text x="734" y="426" fill="#8f95ab" font-family="Rajdhani" font-size="15">cacheTtl 3600 — the commit is the publish</text>
+  </g>
+
+  <!-- from AMENTI down into HADES -->
+  <line x1="455" y1="268" x2="455" y2="356" stroke="#c4a5ff" stroke-width="1.6" stroke-dasharray="5 5"/>
+  <polygon points="455,360 450,350 460,350" fill="#c4a5ff"/>
+  <text x="466" y="316" fill="#8f95ab" font-family="Rajdhani" font-size="15">the edge reads; it keeps nothing</text>
+
+  <!-- VALHALLA -->
+  <g font-family="Share Tech Mono" font-size="15">
+    <rect x="260" y="588" width="430" height="42" rx="7" fill="#08161a" stroke="#00ffe0" stroke-width="1.6"/>
+    <text x="276" y="614" fill="#00ffe0">HE FILES COPY · the Dispatch · the herald mails it</text>
+  </g>
+  <line x1="475" y1="440" x2="475" y2="584" stroke="#00ffe0" stroke-width="1.6"/>
+  <polygon points="475,588 470,578 480,578" fill="#00ffe0"/>
+  <text x="488" y="520" fill="#8f95ab" font-family="Rajdhani" font-size="15">one direction · nothing comes back</text>
+</svg>
+<p class="cap">Plate — eight gates across the three keys. Gate 3 is the only one that decides whether he exists.</p>
+
+<h2><span class="n">1</span>The name</h2>
+
+<p>Isaac Newton, and nothing else. No key, no row, no room. <b>At this point the
+system does not know him and would not say so</b> — a figure who is absent
+generates no error anywhere, because absence is the default state of every name
+that has ever existed.</p>
+
+<div class="gate">
+  <div class="gk">What this gate refuses</div>
+  <div class="gv">Nothing. This is the only stage with no gate, and that is why
+  nothing can be checked yet.</div>
+</div>
+
+<h2><span class="n">2</span>The key</h2>
+
+<p>The name is reduced to a key, and <em>every surface must reduce it the same
+way</em>. That rule was unwritten until 17 August and three separate incidents
+trace back to its absence — <code>wd-gann</code> drifting by one character,
+<code>einstein-albert</code> by word order, and <code>gw-winter</code>, which
+was not a figure at all.</p>
+
+<pre><code><span class="c"># the one slug rule — tools/plates.js and ingest.py both carry it</span>
+"Isaac Newton"  →  lowercase          →  isaac newton
+                →  strip . ' ’        →  isaac newton
+                →  non-alnum → hyphen →  <span class="g">isaac-newton</span></code></pre>
+
+<div class="gate">
+  <div class="gk">The one that bites</div>
+  <div class="gv">The proxy derives its own key at <code>amenti-proxy-worker.js:468</code>
+  as <code>name.toLowerCase().trim()</code> — <b>a lowercased full name with the
+  space still in it</b>: <code>isaac newton</code>. Plates, scenes and rooms use
+  the hyphen. Both conventions are live. Any check that compares them without
+  slugging both sides cannot match, and one of them recently reported that it
+  had.</div>
+</div>
+
+<h2><span class="n">3</span>The row — where he begins to exist</h2>
+
+<p>One line in <code>names.csv</code>, in the repo, under version control. The
+columns are read at <code>amenti-proxy-worker.js:464</code>, and every one is
+identity or craft.</p>
+
+<pre><code><span class="c">Full Name,Title,Biography,Gender,Dialect,Voice,Region,Location</span>
+<span class="g">Isaac Newton</span>,Natural Philosopher,"Woolsthorpe 1642 - London 1727. <span class="c">…</span>",
+  Male,<span class="b">English (Lincolnshire)</span>,<span class="b">measured, precise</span>,Europe,England</code></pre>
+
+<div class="gate ok">
+  <div class="gk">Now he exists</div>
+  <div class="gv">This is the whole of it. Ammit is the roster — in it he has a
+  voice, a card, a room, a byline; out of it he does not exist here. <b>The
+  roster answers one question and no others.</b></div>
+</div>
+
+<div class="gate no">
+  <div class="gk">What the row may never carry</div>
+  <div class="gv">No score, rank, grade, tier or verdict column. Being on the
+  list is not approval and being off it is not damnation — the list says who is
+  here, the scales say what they did. Keeping them apart is what stops the
+  roster becoming a moral register.</div>
+</div>
+
+<p><b>The commit is the publish.</b> The proxy fetches the CSV from
+<code>raw.githubusercontent.com/ianingram/Amenti.live/main/names.csv</code> with
+a one-hour cache. Newton is live an hour after the commit, with no separate
+publish step to forget.</p>
+
+<h2><span class="n">4</span>The room</h2>
+
+<p><code>library/isaac-newton/</code> plus its catalog. Primary sources, and each
+one named with its problems — the discipline that separates this from a fantasy
+about a magic library.</p>
+
+<pre><code>library/isaac-newton.json          <span class="c">← the catalog. WITHOUT THIS THE ROOM 404s.</span>
+library/isaac-newton/
+    principia-book-iii.md          <span class="c">Motte 1729 translation — 18th c. English</span>
+    opticks-query-31.md
+    letter-to-hooke-1675.md        <span class="c">the "shoulders of giants" letter</span>
+    NOTES.md                       <span class="c">what is disputed, what is later attribution</span></code></pre>
+
+<div class="gate no">
+  <div class="gk">The failure this gate has already produced</div>
+  <div class="gv"><code>einstein-albert</code> held ten ingested texts, a full
+  manifest and a README documenting its own carve-outs — <b>and no catalog
+  JSON</b>. <code>library.js</code> 404'd and the room was unreachable.
+  Everything a room needs except the one file that makes it resolvable. A
+  convention is only a convention if something breaks when it is not
+  followed.</div>
+</div>
+
+<h2><span class="n">5</span>The face</h2>
+
+<p>Three required plates, one command each. <code>ingest.py</code> crops,
+resizes, measures saturation, computes the grade, stamps provenance and rewrites
+<code>grades.css</code> — so no HTML is ever edited to add a figure.</p>
+
+<pre><code>python3 ingest.py raw.jpg isaac-newton card
+python3 ingest.py raw.jpg isaac-newton terminal
+
+  → <span class="g">img/isaac-newton-card.jpg</span>       the face. roster, dispatch, atlantica
+  → <span class="g">img/isaac-newton-thumb.jpg</span>      lists, related, search
+  → <span class="g">img/isaac-newton-terminal.jpg</span>   behind the chat stream — and the codex
+
+<span class="c">There is no codex variant. The codex reuses terminal. A register that
+measured against a fourth invented variant once reported 0 of 51.</span></code></pre>
+
+<h2><span class="n">6</span>The scenes — optional, and never a gap</h2>
+
+<p>A plate is a figure. A scene is a <em>moment that figure was in</em>. Newton
+under the tree at Woolsthorpe; the plague year; the Mint.</p>
+
+<pre><code>python3 ingest.py raw.jpg isaac-newton scene --tag woolsthorpe-orchard
+
+  → <span class="g">img/scene/isaac-newton--woolsthorpe-orchard.jpg</span>
+       <span class="v">owner</span>          checked against names.csv — REFUSES if unknown
+       <span class="b">tag</span>            free text — nothing says what right is
+       <span class="c">no grade</span>       the rendering surface owns that, and none has claimed it</code></pre>
+
+<div class="law blue">A FIGURE KEY CAN BE WRONG — THE ROSTER SAYS WHAT RIGHT IS.<br>
+A SCENE TAG COULD NOT BE WRONG, BECAUSE NOTHING SAID WHAT RIGHT WAS.<br>
+AUTHORITY IS WHAT MAKES ERROR POSSIBLE.</div>
+
+<p><b>Newton need not be in the frame.</b> An orchard, a fallen apple, low
+October light — still his scene. Ownership is editorial, not photographic.</p>
+
+<h2><span class="n">7</span>The voice</h2>
+
+<p>The <code>Dialect</code> and <code>Voice</code> columns compose the TTS
+profile. Nothing extra is written; the row already carried it. Read-aloud is the
+one place in the system where a living person gives something to the
+record — every spell in the Book of the Dead is spoken for the dead.</p>
+
+<h2><span class="n">8</span>The docket, and the two things that can silence him</h2>
+
+<p>A case is filed as a <b>locator</b>, never a sentence.</p>
+
+<pre><code>newton-calculus-priority · Newton and the Calculus · <span class="c">EARLY MODERN · 1699 ·</span>
+    <span class="c">Discovery &amp; Credit · Genius &amp; Its Cost</span>
+
+<span class="r">NOT</span> "Newton used the Royal Society to crush Leibniz."   <span class="c">← a verb. an advocate.</span>
+<span class="r">NOT</span> "Newton defended his rightful priority."           <span class="c">← also true. opposite side.</span></code></pre>
+
+<table>
+  <thead><tr><th>State</th><th>What it means for Newton</th><th>Where</th></tr></thead>
+  <tbody>
+    <tr><td class="ok">ABOARD</td><td>row, room, plates, voice, byline, docket</td><td class="m">names.csv</td></tr>
+    <tr><td class="v">SILENCED</td><td>on the roster, barred from a byline. Can be weighed; does not file copy</td><td class="m">DENY</td></tr>
+    <tr><td class="v">COURT STAFF</td><td>never takes a byline — a rota rule, not a judgement</td><td class="m">COURT_STAFF</td></tr>
+    <tr><td class="no">ABSENT</td><td>no card, no room, no voice, no case. Not punishment — outside the boundary</td><td class="m">not in the CSV</td></tr>
+  </tbody>
+</table>
+
+<h2><span class="n">·</span>What each register says about him</h2>
+
+<table>
+  <thead><tr><th>Register</th><th>Written by</th><th>Newton appears as</th></tr></thead>
+  <tbody>
+    <tr><td class="g">names.csv</td><td class="m">the captain, by hand</td><td>one row — the only hand-written authority</td></tr>
+    <tr><td class="g">img/PLATES.json</td><td class="m">tools/plates.js</td><td>a key with three variants, complete</td></tr>
+    <tr><td class="g">img/MANIFEST.json</td><td class="m">the Python pipeline</td><td>seeds and crop notes, per image</td></tr>
+    <tr><td class="g">library/…json</td><td class="m">the captain, by hand</td><td>a catalog with source notes</td></tr>
+    <tr><td class="g">/hall</td><td class="m">the mint</td><td>a case on the docket, if he has one</td></tr>
+    <tr><td class="g">bell_log</td><td class="m">the mint, on every wake</td><td>nothing, until someone votes on him</td></tr>
+  </tbody>
+</table>
+
+<div class="law">A THING THAT EXISTS IN ONE PLACE, IN PLAIN TEXT,<br>
+UNDER VERSION CONTROL, IS A THING THAT SURVIVES.</div>
+
+<h2><span class="n">·</span>The order, and what breaks if it is wrong</h2>
+
+<table>
+  <thead><tr><th>#</th><th>Step</th><th>Skip it and…</th></tr></thead>
+  <tbody>
+    <tr><td class="v">1</td><td>slug the key</td><td class="no">every later step disagrees about who he is</td></tr>
+    <tr><td class="v">2</td><td>the row in names.csv</td><td class="no">he does not exist; nothing else resolves</td></tr>
+    <tr><td class="v">3</td><td>the catalog JSON</td><td class="no">the room 404s while looking complete</td></tr>
+    <tr><td class="v">4</td><td>the texts and their problems</td><td class="no">a source presented as though it had none</td></tr>
+    <tr><td class="v">5</td><td>card · thumb · terminal</td><td class="opt">the register reports the gap. Honest, and fixable.</td></tr>
+    <tr><td class="v">6</td><td>scenes</td><td class="ok">nothing. Absence is never a gap.</td></tr>
+    <tr><td class="v">7</td><td>a case</td><td class="ok">nothing. Not every figure is on the docket.</td></tr>
+  </tbody>
+</table>
+
+<p><b>Only steps 1 to 4 are load-bearing.</b> Everything after is reported
+rather than required — and the difference between a gap the register names and a
+gap it cannot see is the whole reason the registers exist.</p>
+
+<p class="foot">
+  Amenti Fleet<br>
+  Ingram Manor LLC<br>
+  Wireframe · The Onboarding of a Soul · 17 August 2026
+</p>
+
+</main>
+</body>
+</html>
