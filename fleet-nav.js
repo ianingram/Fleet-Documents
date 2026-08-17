@@ -3,25 +3,20 @@
    ----------------------------------------------------------------------------
    Every pane in the fleet loads this ONE file. The navigation bar is built from
    the PANES list below — it is not copied into any page.
-
        TO ADD A PANE:      add one line to PANES. Every page updates.
        TO RENAME / REORDER: edit PANES. One file. Never eight.
        TO REMOVE A PANE:    delete its line.
-
    This is the fleet's oldest law applied to navigation: ONE SOURCE OF TRUTH,
    and every surface is a VIEW of it — never a copy. The captain edits one file,
    not the whole fleet.
-
    Each page needs only, in its <body>:
        <div id="fleet-nav"></div>
        <script src="fleet-nav.js"></script>
-
    The current page highlights itself automatically (matched by filename), so
    there is no per-page "on" class to maintain either.
    ========================================================================== */
 (function () {
   'use strict';
-
   /* ── THE REGISTRY ── the single list of every pane in the fleet ──────────
      file  : the page's filename
      label : what shows in the nav bar
@@ -38,12 +33,15 @@
     { file: 'command.html',        label: 'COMMAND VIEW' },
     { file: 'ocean.html',          label: 'OCEAN VIEW'   },
     { file: 'probe-corps.html',    label: 'PROBE CORPS'  },
+    /* 16 Aug 2026 — the twelfth pane. Reads img/PLATES.json, which the plate
+       register writes by walking img/ and the Glass Gate copies into the
+       mirror. Art placement, the naming grammar, and what the register can
+       and cannot judge. */
+    { file: 'plate-deck.html',     label: 'PLATE DECK'   },
   ];
-
   /* which page are we on? match the last path segment, default to index.html */
   const here = (location.pathname.split('/').pop() || 'index.html').toLowerCase()
                || 'index.html';
-
   /* build the nav */
   const nav = document.createElement('nav');
   nav.className = 'fleet-nav';
@@ -54,7 +52,6 @@
     if (p.file.toLowerCase() === here) a.className = 'on';
     nav.appendChild(a);
   });
-
   /* inject the nav's CSS ONCE, so a page needs no nav styling of its own.
      Uses the fleet's :root vars when present; falls back to literals so the
      bar still looks right on a page that hasn't defined them. */
@@ -72,7 +69,6 @@
       '.fleet-nav a.on{color:var(--neon,#00ffe0);border-bottom-color:var(--neon,#00ffe0)}';
     document.head.appendChild(css);
   }
-
   /* place it: into #fleet-nav if the page provides that mount point, else at the
      very top of <body> so even a page that forgot the div still gets the nav. */
   function mount() {
