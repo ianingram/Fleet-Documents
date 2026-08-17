@@ -1,182 +1,538 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>THE HARBOR · Amenti Fleet Documents</title>
-<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Special+Elite&family=Rajdhani:wght@200;300;400;600&display=swap" rel="stylesheet">
-<!-- ============================================================================
-     index.html  ·  THE HARBOR
-     ----------------------------------------------------------------------------
-     The way in. Every pane, one click away.
-
-     This page states NO FACTS about the fleet except the health tally, which it
-     reads from fleet-manifest.js. If there is no reading, it says so — and the
-     links still work, because you must always be able to navigate away from a
-     broken mirror.
-     ============================================================================ -->
+<meta name="robots" content="noindex,nofollow">
+<title>AMENTI · Operator Hub</title>
 <style>
-:root{
-  --gold:#d4a017;--gold-bright:#f5c542;--gold-deep:#a87c14;
-  --neon:#00ffe0;--term:#80ffc0;
-  --ink:#0a0a0f;--granite:#12121a;--slate:#2a2a38;--wire:#3a3a52;
-  --text:#c8c8d8;--dim:#a4a4b8;
-  --red:#f87171;--amber:#fbbf24;--green:#4ade80;
-  --elite:'Special Elite',cursive;--mono:'Share Tech Mono',monospace;--body:'Rajdhani',sans-serif;
-}
-*{box-sizing:border-box}
-body{margin:0;background:radial-gradient(ellipse at 50% 0%,#16161f 0%,var(--ink) 70%);
-  color:var(--text);font-family:var(--body);font-weight:300;font-size:18px;line-height:1.7;min-height:100vh}
-main{max-width:1000px;margin:0 auto;padding:70px 24px 120px}
+  :root{--bg:#04060e;--panel:#0a1020;--edge:rgba(90,150,220,.35);--ink:#dce8f5;
+    --dim:#7f93ad;--accent:#9adcff;--gold:#f5d76e;--green:#57ff9a;--red:#f87171;}
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);
+    font:14px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace}
+  /* GATE (shared styling for both prompts) */
+  .gate{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;
+    background:radial-gradient(circle at 50% 40%,#0b1424,#04060e)}
+  #starchart{position:absolute;inset:0;width:100%;height:100%;z-index:0;opacity:1}
+  .gate .bridge{position:relative;z-index:1}
+  .gate .box{width:min(420px,90vw);padding:32px;background:var(--panel);border:1px solid var(--edge);
+    border-radius:14px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.6)}
+  .gate h1{font-size:18px;letter-spacing:.18em;margin:0 0 4px}
+  .gate .sub{color:var(--dim);font-size:12px;margin-bottom:22px;line-height:1.5}
+  .gate input{width:100%;padding:12px 14px;background:#060b16;border:1px solid var(--edge);
+    border-radius:8px;color:var(--ink);font:14px ui-monospace,monospace;text-align:center;letter-spacing:.2em}
+  .gate button.go{margin-top:14px;width:100%;padding:12px;border:0;border-radius:8px;cursor:pointer;
+    background:linear-gradient(180deg,#2a6fb0,#1d5087);color:#fff;font:600 13px ui-monospace,monospace;
+    letter-spacing:.12em;text-transform:uppercase}
+  .gate .err{color:#ff9a9a;font-size:12px;margin-top:12px;min-height:16px}
+  .gate .note{color:var(--dim);font-size:10px;margin-top:18px;line-height:1.5}
+  .gate.heavy .box{border-color:rgba(240,180,80,.5)}
+  .gate.heavy h1{color:var(--gold)}
 
-.mark{position:fixed;top:20px;left:24px;font-family:var(--elite);font-size:19px;letter-spacing:.14em;color:var(--gold)}
-.mark .live{color:var(--term);text-shadow:0 0 10px var(--term);animation:blink 1.35s steps(1,end) infinite}
-@keyframes blink{0%,54%{opacity:1}55%,100%{opacity:.18}}
+  /* ===== FLEET OPERATIONS BRIDGE ===== */
+  .bridge{width:min(1080px,96vw);display:flex;flex-direction:column;gap:14px;
+    font-family:ui-monospace,monospace}
+  .strip{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 14px;
+    background:linear-gradient(180deg,rgba(14,26,48,.6),rgba(8,16,32,.6));
+    border:1px solid var(--edge);border-radius:10px}
+  .strip .pill{display:inline-flex;align-items:center;gap:7px;font-size:10px;letter-spacing:.14em;
+    color:var(--dim);padding:4px 10px;border:1px solid rgba(90,150,220,.2);border-radius:20px}
+  .dot{width:7px;height:7px;border-radius:50%;display:inline-block}
+  .dot.g{background:var(--green);box-shadow:0 0 8px var(--green);animation:blink 2.2s infinite}
+  .dot.a{background:var(--gold);box-shadow:0 0 8px var(--gold);animation:blink 1.3s infinite}
+  /* THE RED LAMP HAD NO CSS. The reading script sets `dot r` on NO READING and
+     on CONTRADICTED, and nothing in this stylesheet ever defined it — so the
+     alarm state rendered as a grey dot indistinguishable from an unset one.
+     A lamp that cannot show red is not a lamp. */
+  .dot.r{background:var(--red);box-shadow:0 0 8px var(--red);animation:blink .9s infinite}
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
+  .strip .clock{margin-left:auto;font-size:12px;letter-spacing:.2em;color:var(--accent)}
 
-.eyebrow{font-family:var(--mono);font-size:13px;letter-spacing:.34em;color:var(--neon);text-transform:uppercase;text-align:center;margin:0}
-h1{font-family:var(--elite);font-size:clamp(36px,7vw,66px);color:var(--gold-bright);letter-spacing:.04em;text-align:center;margin:12px 0 8px;text-shadow:0 0 40px rgba(212,160,23,.3)}
-.sub{font-family:var(--elite);font-size:clamp(15px,2.2vw,20px);letter-spacing:.2em;color:var(--gold-deep);text-align:center;margin:0 0 28px}
-.law{max-width:640px;margin:0 auto 12px;text-align:center;color:var(--dim);font-size:19px;line-height:1.6}
-.law b{color:var(--gold-light,#f0c040);font-weight:400}
+  .deck{display:grid;grid-template-columns:230px 1fr 230px;gap:14px}
+  .panel{background:linear-gradient(180deg,rgba(12,22,42,.5),rgba(7,13,26,.5));
+    border:1px solid var(--edge);border-radius:12px;padding:16px}
+  .phead{font-size:10px;letter-spacing:.2em;color:var(--accent);margin-bottom:12px;
+    padding-bottom:6px;border-bottom:1px solid rgba(90,150,220,.18)}
+  .watch{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:9px 0;font-size:10px;letter-spacing:.1em;color:var(--dim)}
+  .watch .bar{flex:1;height:5px;background:rgba(90,150,220,.15);border-radius:3px;overflow:hidden;max-width:96px}
+  .watch .bar b{display:block;height:100%;background:var(--blue);border-radius:3px}
+  .sw{display:flex;align-items:center;justify-content:space-between;margin:10px 0;font-size:10px;letter-spacing:.1em;color:var(--dim);cursor:default}
+  .tg{width:30px;height:15px;border-radius:10px;background:rgba(90,150,220,.2);position:relative;transition:.2s}
+  .tg::after{content:'';position:absolute;top:2px;left:2px;width:11px;height:11px;border-radius:50%;background:var(--dim);transition:.2s}
+  .tg.on{background:rgba(87,255,154,.3)}
+  .tg.on::after{left:17px;background:var(--green);box-shadow:0 0 6px var(--green)}
 
-/* health strip — the ONLY fact on this page, and it is read, not typed */
-.health{display:flex;justify-content:center;flex-wrap:wrap;gap:10px;margin:34px 0 8px}
-.h{padding:9px 18px;border:1px solid var(--wire);border-radius:22px;font-family:var(--mono);font-size:13px;letter-spacing:.12em}
-.h.bad{border-color:#7a2a2a;color:var(--red);background:rgba(248,113,113,.06)}
-.h.warn{border-color:#7a5a1a;color:var(--amber);background:rgba(251,191,36,.05)}
-.h.ok{border-color:#2f7a52;color:var(--green);background:rgba(74,222,128,.05)}
-#noread{display:none;text-align:center;margin:34px auto;max-width:620px;padding:20px 24px;border:1px solid var(--red);border-radius:6px;background:rgba(248,113,113,.07);color:#e8b0b0}
-#noread b{display:block;font-family:var(--elite);font-size:21px;color:var(--red);margin-bottom:8px}
-#stamp{text-align:center;font-family:var(--mono);font-size:13px;color:#9a9ab2;letter-spacing:.14em;margin:0 0 40px}
+  .core{background:radial-gradient(circle at 50% 30%,rgba(20,40,72,.45),rgba(6,12,24,.6));
+    border:1px solid rgba(120,180,255,.35);border-radius:14px;padding:30px 26px;text-align:center;
+    display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .core .crest{font-size:30px;color:var(--gold);text-shadow:0 0 20px rgba(245,215,110,.5);margin-bottom:6px}
+  .core h1{margin:0;font-size:30px;letter-spacing:.14em;color:#fff;font-weight:700}
+  .core h1 span{color:var(--accent)}
+  .core .subttl{font-size:12px;letter-spacing:.42em;color:var(--accent);margin:6px 0 20px}
+  .core .authline{font-size:10px;letter-spacing:.3em;color:var(--dim);margin-bottom:12px}
+  .core input{width:100%;max-width:280px;padding:13px 14px;background:#060b16;
+    border:1px solid rgba(120,180,255,.4);border-radius:8px;color:var(--accent);
+    font:15px ui-monospace,monospace;text-align:center;letter-spacing:.35em}
+  .core input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 16px rgba(90,220,255,.25)}
+  .core .go{margin-top:14px;width:100%;max-width:280px;padding:12px;border:0;border-radius:8px;cursor:pointer;
+    background:linear-gradient(180deg,#2a6fb0,#1d5087);color:#fff;font:700 13px ui-monospace,monospace;
+    letter-spacing:.18em}
+  .core .go:hover{background:linear-gradient(180deg,#3282cc,#245fa0)}
+  .core .err{color:#ff9a9a;font-size:11px;margin-top:10px;min-height:14px}
+  .core .note{color:var(--dim);font-size:9px;line-height:1.6;margin-top:16px;max-width:280px}
+  /* the open-gate warning. Shown by script if HUB_HASH is ever a placeholder again. */
+  .core .opengate{display:none;margin-top:14px;max-width:280px;padding:10px 12px;border:1px solid var(--red);
+    border-radius:6px;background:rgba(248,113,113,.08);color:#ffbdbd;font-size:10px;line-height:1.6;letter-spacing:.06em}
 
-/* the panes */
-.panes{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-top:16px}
-a.pane{display:block;text-decoration:none;padding:26px 26px 24px;border:1px solid var(--slate);border-radius:8px;
-  background:var(--granite);transition:.22s;position:relative;overflow:hidden}
-a.pane:hover{border-color:var(--gold);background:#16161f;transform:translateY(-2px)}
-a.pane .n{font-family:var(--mono);font-size:12px;letter-spacing:.28em;color:var(--neon);text-transform:uppercase}
-a.pane .t{font-family:var(--elite);font-size:26px;color:var(--gold-bright);margin:8px 0 8px;line-height:1.15}
-a.pane .d{color:var(--dim);font-size:17px;line-height:1.55}
-a.pane.soon{opacity:.45}
-a.pane.soon .t{color:var(--dim)}
-.tagsoon{position:absolute;top:14px;right:16px;font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--dim);border:1px solid var(--wire);border-radius:3px;padding:2px 7px}
+  .radar{position:relative;width:100%;aspect-ratio:1;border-radius:50%;
+    background:radial-gradient(circle,rgba(20,50,40,.4),rgba(6,14,20,.6));
+    border:1px solid rgba(87,255,154,.25);overflow:hidden}
+  .radar::before,.radar::after{content:'';position:absolute;inset:0;border-radius:50%;border:1px solid rgba(87,255,154,.12);margin:22%}
+  .radar::after{margin:38%}
+  .radar .sweep{position:absolute;top:50%;left:50%;width:50%;height:2px;transform-origin:left center;
+    background:linear-gradient(90deg,rgba(87,255,154,.8),transparent);animation:spin 3.5s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .radar .blip{position:absolute;width:6px;height:6px;border-radius:50%;background:var(--green);
+    box-shadow:0 0 8px var(--green);animation:blink 1.8s infinite}
+  .ro{display:flex;justify-content:space-between;font-size:10px;letter-spacing:.08em;color:var(--dim);margin:7px 0}
+  .ro b{color:var(--ink);font-weight:600}
 
-.foot{margin-top:80px;padding-top:28px;border-top:1px solid var(--slate);text-align:center;font-family:var(--mono);font-size:13px;letter-spacing:.2em;color:#9a9ab2}
+  .rail{display:flex;align-items:center;justify-content:center;gap:12px;padding:8px;
+    background:rgba(8,16,32,.5);border:1px solid var(--edge);border-radius:10px}
+  .lamp{width:8px;height:8px;border-radius:50%;background:rgba(90,150,220,.3)}
+  .lamp.g{background:var(--green);box-shadow:0 0 6px var(--green)}
+  .lamp.a{background:var(--gold);box-shadow:0 0 6px var(--gold)}
+  .railtxt{font-size:9px;letter-spacing:.24em;color:var(--dim)}
+
+  @media(max-width:820px){ .deck{grid-template-columns:1fr} .panel{display:none} }
+  /* SHELL */
+  #shell{display:none;height:100%;flex-direction:column}
+  header{display:flex;align-items:center;gap:18px;padding:0 18px;height:52px;background:var(--panel);
+    border-bottom:1px solid var(--edge)}
+  header .brand{font-weight:700;letter-spacing:.16em;color:var(--accent);font-size:14px}
+  header .brand small{color:var(--dim);font-weight:400;letter-spacing:.1em;margin-left:8px}
+  nav{display:flex;gap:2px;margin-left:8px}
+  nav button{background:transparent;border:0;border-bottom:2px solid transparent;color:var(--dim);
+    padding:8px 18px;cursor:pointer;font:600 12px ui-monospace,monospace;letter-spacing:.14em;text-transform:uppercase}
+  nav button:hover{color:var(--ink)}
+  nav button.active{color:var(--accent);border-bottom-color:var(--accent)}
+  nav button .lock{font-size:9px;opacity:.6;margin-left:6px}
+  header .spacer{flex:1}
+  header .lockbtn{background:transparent;border:1px solid var(--edge);color:var(--dim);padding:6px 12px;
+    border-radius:6px;cursor:pointer;font:11px ui-monospace,monospace;letter-spacing:.1em}
+  main{flex:1;position:relative;overflow:hidden}
+  .tab{position:absolute;inset:0;display:none;overflow:auto}
+  .tab.active{display:block}
+  .eng{padding:32px;max-width:900px;margin:0 auto}
+  .eng h2{color:var(--accent);letter-spacing:.1em;font-size:16px;border-bottom:1px solid var(--edge);padding-bottom:10px}
+  .eng .doc{display:flex;align-items:center;gap:14px;padding:16px;margin:12px 0;background:var(--panel);
+    border:1px solid var(--edge);border-radius:10px;text-decoration:none;color:var(--ink)}
+  .eng .doc:hover{border-color:var(--accent)}
+  .eng .doc .ic{font-size:22px}
+  .eng .doc .t{font-weight:700}
+  .eng .doc .d{color:var(--dim);font-size:12px}
+  .fleet{padding:32px;max-width:900px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .fleet a{display:block;padding:22px;background:var(--panel);border:1px solid var(--edge);border-radius:12px;
+    text-decoration:none;color:var(--ink)}
+  .fleet a:hover{border-color:var(--accent)}
+  .fleet .t{font-weight:700;font-size:15px;margin-bottom:6px}
+  .fleet .d{color:var(--dim);font-size:12px}
+  .admin-note{padding:32px;max-width:720px;margin:0 auto;color:var(--dim)}
+  .admin-note a{color:var(--gold)}
 </style>
+<!-- ══ THE READING ══════════════════════════════════════════════════════════
+     The bridge now reads fleet-manifest.js — published through the gate by the
+     ship itself, on every commit.
+
+     EVERY NUMBER AND EVERY LAMP BELOW WAS TYPED BY HAND until tonight:
+
+         FLEET  8 vessels          the manifest says 7
+         CREW   8 files            the manifest says 14
+         DATA VAULT SEALED         A GREEN LIGHT WITH NOTHING BEHIND IT.
+
+     That last one is the exact lie the whole Glass Gate was built to kill — and
+     it was sitting on the front door of the operations bridge. It happened to be
+     TRUE. Nobody had ever checked. Tonight a probe finally asked the anon key for
+     the subscriber table three times and got nothing, three times.
+
+     Now the bridge shows what was MEASURED. If the manifest is absent, it says
+     so — it does not draw four green lamps and let you assume.
+     ═══════════════════════════════════════════════════════════════════════════ -->
+<script src="https://ianingram.github.io/Fleet-Documents/fleet-manifest.js" onerror="void 0"></script>
 </head>
 <body>
 
-<div class="mark">AMENTI<span style="color:#8a8a9e">.</span><span class="live">LIVE</span></div>
+<!-- ===== GATE B: the FLEET OPERATIONS BRIDGE (console landing) ===== -->
+<div class="gate" id="gateHub"><canvas id="starchart"></canvas>
+  <div class="bridge">
+    <!-- top status strip -->
+    <div class="strip">
+      <span class="pill"><i class="dot g"></i> SYSTEMS NOMINAL</span>
+      <span class="pill" id="pill-hull"><i class="dot" id="dot-hull"></i> <span id="txt-hull">HULL · —</span></span>
+      <span class="pill" id="pill-data"><i class="dot" id="dot-data"></i> <span id="txt-data">DATA · —</span></span>
+      <span class="pill" id="pill-cost"><i class="dot" id="dot-cost"></i> <span id="txt-cost">COST · —</span></span>
+      <span class="pill"><i class="dot g"></i> STARDUST ENGINE · ACTIVE</span>
+      <span class="clock" id="clock">--:--:--</span>
+    </div>
 
-<main>
-  <p class="eyebrow">Ingram Manor LLC · The Flying Dutchman</p>
-  <h1>THE HARBOR</h1>
-  <p class="sub">FLEET DOCUMENTS</p>
+    <div class="deck">
+      <!-- LEFT panel: the four watches -->
+      <aside class="panel">
+        <div class="phead">SENTRY CORPS</div>
+        <div class="watch" id="w-treasury"><span>TREASURY</span><i class="bar"><b id="bar-treasury" style="width:0%"></b></i><em id="st-treasury">—</em></div>
+        <div class="watch" id="w-cost"><span>COST</span><i class="bar"><b id="bar-cost" style="width:0%"></b></i><em id="st-cost">—</em></div>
+        <div class="watch" id="w-data"><span>DATA</span><i class="bar"><b id="bar-data" style="width:0%"></b></i><em id="st-data">—</em></div>
+        <div class="watch" id="w-hull"><span>HULL</span><i class="bar"><b id="bar-hull" style="width:0%"></b></i><em id="st-hull">—</em></div>
+        <div class="phead" style="margin-top:16px">TOGGLES</div>
+        <label class="sw"><span>Nav Lights</span><i class="tg on"></i></label>
+        <label class="sw"><span>Reflector</span><i class="tg on"></i></label>
+        <label class="sw"><span>Silent Run</span><i class="tg"></i></label>
+      </aside>
 
-  <p class="law">
-    <b>The truth lives in the ship. These documents are a reflection of it.</b><br>
-    Every pane here reads one file, published by the fleet itself.<br>
-    None of them knows anything. None of them can lie to you on purpose.
-  </p>
+      <!-- CENTER: authorize access terminal -->
+      <div class="core">
+        <div class="crest"><svg width="46" height="40" viewBox="0 0 46 40">
+       <polygon points="23,3 43,37 3,37" fill="none" stroke="#f5d76e" stroke-width="2"/>
+       <line x1="23" y1="3" x2="23" y2="37" stroke="#f5d76e" stroke-width="1" opacity="0.5"/>
+       <line x1="12" y1="37" x2="23" y2="14" stroke="#f5d76e" stroke-width="1" opacity="0.35"/>
+       <line x1="34" y1="37" x2="23" y2="14" stroke="#f5d76e" stroke-width="1" opacity="0.35"/>
+     </svg></div>
+        <h1>AMENTI<span>.LIVE</span></h1>
+        <div class="subttl">FLEET OPERATIONS BRIDGE</div>
+        <div class="authline">AUTHORIZE BRIDGE ACCESS</div>
+        <input id="passHub" type="password" autocomplete="off" placeholder="• • • • • • • •" autofocus>
+        <button class="go" id="unlockHub">▸ ENGAGE</button>
+        <div class="err" id="errHub"></div>
+        <div class="opengate" id="opengate">⚠ THE GATE IS OPEN. HUB_HASH has been reset to a
+          placeholder. Whatever is checking passphrases is not checking this one. This notice
+          exists so the state cannot be silent.</div>
+        <div class="note">Restricted console. Fleet displays &amp; technical briefs.
+          The Admin console holds its own key.</div>
+      </div>
 
-  <div class="health" id="health"></div>
-  <p id="stamp"></p>
+      <!-- RIGHT panel: radar + readouts -->
+      <aside class="panel">
+        <div class="phead">HARBOR SCAN</div>
+        <div class="radar"><i class="sweep"></i><i class="blip" style="top:30%;left:60%"></i>
+          <i class="blip" style="top:64%;left:40%"></i><i class="blip" style="top:48%;left:72%"></i></div>
+        <div class="phead" style="margin-top:14px">READOUTS</div>
+        <div class="ro"><span>FLEET</span><b id="ro-fleet">— reading —</b></div>
+        <div class="ro"><span>CREW</span><b id="ro-crew">— reading —</b></div>
+        <div class="ro"><span>SATELLITES</span><b id="ro-sats">— reading —</b></div>
+        <div class="ro"><span>DOMAIN</span><b>amenti.ai</b></div>
+      </aside>
+    </div>
 
-  <div id="noread">
-    <b>⚠ NO READING</b>
-    fleet-manifest.js has not been published through the gate.
-    The panes will show you nothing — <i>not the last thing they saw.</i>
+    <!-- bottom console rail -->
+    <div class="rail">
+      <span class="lamp"></span><span class="lamp a"></span><span class="lamp g"></span>
+      <span class="railtxt">BRIDGE CONSOLE · INGRAM MANOR LLC · c2026</span>
+      <span class="lamp g"></span><span class="lamp"></span>
+    </div>
   </div>
+</div>
 
-  <div class="panes">
-    <a class="pane" href="ships-manifest.html">
-      <div class="n">Pane I</div>
-      <div class="t">The Ship's Manifest</div>
-      <div class="d">The fleet <b>by ship</b>. Every vessel, every hand below deck, and where the claims and the ship disagree.</div>
-    </a>
+<!-- ===== SHELL ===== -->
+<div id="shell">
+  <header>
+    <div class="brand">AMENTI <small>· Operator Hub</small></div>
+    <nav>
+      <button data-tab="fleet" class="active">Fleet</button>
+      <button data-tab="eng">Engineering</button>
+      <button data-tab="admin">Admin</button>
+    </nav>
+    <div class="spacer"></div>
+    <button class="lockbtn" id="lock">Lock All</button>
+  </header>
+  <main>
+    <!-- ══ THE FLEET TAB ═════════════════════════════════════════════════════
+         THREE CARDS WERE MALFORMED. The Harbor, the Engine Room and the Watch
+         each put their TITLE as bare text before the .t div, then used .t for
+         the description and .d for a leftover line belonging to Ships Manifest:
 
-    <a class="pane" href="engine-room.html">
-      <div class="n">Pane II</div>
-      <div class="t">The Engine Room</div>
-      <div class="d">The fleet <b>by capability</b>. The chain, the invariants, the guards — and the probe that holds each one.</div>
-    </a>
-  
-      <a class="pane" href="terminal.html">
-        <div class="n">The Terminal</div>
-        <div class="t">The Terminal</div>
-        <div class="d">The <b>emerald economy</b>, live. Circulating tokens over time, mint and burn, the weekly pool — real vitals in the language of a trading terminal. No fake prices; the glass shows the reading or the empty box.</div>
-      </a>
+             <a ...>⚓ The Harbor<div class="t">The way in…</div>
+               <div class="d">The readable roster — every ship and what it carries.</div></a>
 
-    <a class="pane" href="sonar.html">
-      <div class="n">The Sonar</div>
-      <div class="t">The Sonar</div>
-      <div class="d">The <b>gate scope</b>. Who has reached the admin gate, from what bearing, and whether anyone on the glass is <b>not the captain</b>. A tripwire, not a traffic monitor.</div>
-    </a>
+         So three panes claimed to be the ships manifest, in bold, on the bridge.
+         A copy-paste that propagated — the same species as every entry in the
+         list at the top of scan.yml: TRUE WHEN WRITTEN, of a different card.
+         Repaired here to match the three that were correct.
+         ═══════════════════════════════════════════════════════════════════ -->
+    <section class="tab active" data-tab="fleet">
+      <div class="fleet">
+        <a href="https://ianingram.github.io/Fleet-Documents/command.html" target="_blank" rel="noopener">
+          <div class="t">◈ Fleet Command (3D)</div>
+          <div class="d">The living org chart — ships, crew, watches, satellites, data flows. Hover any actor.</div></a>
+        <a href="https://ianingram.github.io/Fleet-Documents/ocean.html" target="_blank" rel="noopener">
+          <div class="t">⊹ Bird's-eye (2D)</div>
+          <div class="d">Top-down: the fleet at anchor, the Sentry Corps in the corners.</div></a>
+        <a href="https://ianingram.github.io/Fleet-Documents/ships-manifest.html" target="_blank" rel="noopener">
+          <div class="t">⚓ Ships Manifest</div>
+          <div class="d">The readable roster — every ship and what it carries.</div></a>
+        <a href="https://ianingram.github.io/Fleet-Documents/index.html" target="_blank" rel="noopener">
+          <div class="t">⚓ The Harbor</div>
+          <div class="d">The way in. Every pane, and the fleet's health at a glance.</div></a>
+        <a href="https://ianingram.github.io/Fleet-Documents/engine-room.html" target="_blank" rel="noopener">
+          <div class="t">⚙ The Engine Room</div>
+          <div class="d">The fleet by CAPABILITY — the chain, the invariants, and the probe that holds each.</div></a>
+        <a href="https://ianingram.github.io/Fleet-Documents/watch.html" target="_blank" rel="noopener">
+          <div class="t">◉ The Watch</div>
+          <div class="d">The Sentry Corps. What guards the fleet — and whether anything is actually watching.</div></a>
+        <a href="https://ianingram.github.io/Fleet-Documents/plate-deck.html" target="_blank" rel="noopener">
+          <div class="t">▤ The Plate Deck</div>
+          <div class="d">Art placement. Where every image goes and how it is named — figures, and the scenes that belong to them. Reads PLATES.json; states nothing.</div></a>
+        <a href="https://ianingram.github.io/Fleet-Documents/onboarding.html" target="_blank" rel="noopener">
+          <div class="t">⚑ The Onboarding</div>
+          <div class="d">One soul from a bare name to a row, a room, a face and a docket — and what each of the eight gates refuses. Isaac Newton, traced.</div></a>
+      </div>
+    </section>
+    <section class="tab" data-tab="eng">
+      <div class="eng">
+        <h2>Technical Briefs</h2>
+        <a class="doc" href="https://ianingram.github.io/Amenti-Technical-Briefs/Amenti-Investor-Prospectus.html" target="_blank" rel="noopener"><span class="ic">📈</span>
+          <span><span class="t">Investor Prospectus</span><br><span class="d">The business case — vision, model, and opportunity.</span></span></a>
+        <a class="doc" href="https://ianingram.github.io/Amenti-Technical-Briefs/Amenti_Ascension.html" target="_blank" rel="noopener"><span class="ic">🌌</span>
+          <span><span class="t">Amenti Ascension</span></span></a>
+        <a class="doc" href="https://ianingram.github.io/Amenti-Technical-Briefs/Amenti_Field_Journal_II.html" target="_blank" rel="noopener"><span class="ic">📔</span>
+          <span><span class="t">Field Journal II</span></span></a>
+        <a class="doc" href="https://ianingram.github.io/Amenti-Technical-Briefs/Amenti_Studios.html" target="_blank" rel="noopener"><span class="ic">🎬</span>
+          <span><span class="t">Amenti Studios</span></span></a>
+        <a class="doc" href="https://ianingram.github.io/Amenti-Technical-Briefs/Amenti_The_Voice_That_Carries.html" target="_blank" rel="noopener"><span class="ic">🔊</span>
+          <span><span class="t">The Voice That Carries</span></span></a>
+        <a class="doc" href="https://ianingram.github.io/Amenti-Technical-Briefs/Helix_Upgrade.html" target="_blank" rel="noopener"><span class="ic">🧬</span>
+          <span><span class="t">Helix Upgrade</span></span></a>
+        <a class="doc" href="https://ianingram.github.io/Amenti-Technical-Briefs/The%20Siege.html" target="_blank" rel="noopener"><span class="ic">🏰</span>
+          <span><span class="t">The Siege</span></span></a>
+        <a class="doc" href="https://ianingram.github.io/Amenti-Technical-Briefs/The_Black_Hole.html" target="_blank" rel="noopener"><span class="ic">⚫</span>
+          <span><span class="t">The Black Hole</span></span></a>
+      </div>
+    </section>
+    <section class="tab" data-tab="admin">
+      <div class="admin-note">
+        <h2 style="color:var(--gold)">Admin · Operator's Glass</h2>
+        <p>The live operator console — verdicts, ledger, moderation queue, self-audit.</p>
+        <p><a href="glass-gate.html" target="_blank" rel="noopener">→ Open the Glass Gate</a></p>
+        <p style="font-size:12px">Opens in a new tab with its own isolated session and its own live-data secret.</p>
+      </div>
+    </section>
+  </main>
+</div>
 
-    <a class="pane" href="broadcast.html">
-      <div class="n">The Broadcast</div>
-      <div class="t">The Broadcast</div>
-      <div class="d">The <b>weekly podcast</b>. A voice from the hall opens the gates, walks the week, and hands to the writer for the reading. Every edition kept &mdash; listen whenever.</div>
-    </a>
-
-    <a class="pane" href="watch.html">
-      <div class="n">Pane III</div>
-      <div class="t">The Watch</div>
-      <div class="d">The <b>Sentry Corps</b>. What guards the fleet, what it guards against — and whether anything is actually watching.</div>
-    </a>
-
-    <a class="pane" href="ordnance.html">
-      <div class="n">Pane IV</div>
-      <div class="t">The Ordnance Bay</div>
-      <div class="d">What the fleet has <b>fired</b>, what is <b>loaded</b>, and what was <b>missed</b>. A schedule nobody checks is a promise nobody keeps.</div>
-    </a>
-
-    <a class="pane" href="command.html">
-      <div class="n">Pane IV</div>
-      <div class="t">The Command View</div>
-      <div class="d">The board. Eight by eight, in three dimensions.</div>
-    </a>
-
-    <a class="pane" href="ocean.html">
-      <div class="n">Pane V</div>
-      <div class="t">The Ocean View</div>
-      <div class="d">The bird's-eye. The whole harbour at a glance.</div>
-    </a>
-  
-      <a class="pane" href="probe-corps.html">
-        <div class="n">The Corps</div>
-        <div class="t">The Probe Corps</div>
-        <div class="d">The fleet's <b>conscience</b>. The doctrine, the roster of every probe, and where they stand watch — the unit that accuses the system before it can lie to its captain.</div>
-      </a>
-  </div>
-
-  <p class="foot">THE GLASS GATE <span style="color:var(--gold)">·</span> ONE DIRECTION <span style="color:var(--gold)">◈</span></p>
-</main>
-
-<script src="fleet-manifest.js" onerror="void 0"></script>
 <script>
+// ================= TWO SEPARATE PASSWORDS =================
+// Gate B (hub): Fleet + Engineering.   Gate A (admin): the Admin tab.
+// Set each to the SHA-256 of your chosen passphrase (see instructions below).
+//
+// ── THE GATE WAS OPEN UNTIL 17 AUGUST 2026 ────────────────────────────────
+// HUB_HASH sat at its placeholder and unlockHub() carried a development
+// bypass:  || HUB_HASH.startsWith('REPLACE')
+// While that was true, ANY passphrase opened the bridge. Not a weak gate — no
+// gate. It was put there so the console could be built before a passphrase
+// existed, and its removal was left to memory.
+//
+// The DATA VAULT SEALED lamp again, one floor down: a control that LOOKED like
+// it was holding and had never once been asked to. The difference is that lamp
+// happened to be telling the truth.
+//
+// Both halves are now done — the hash is set and the bypass is deleted. Do not
+// reintroduce a startsWith() escape here. If a future build needs an open gate,
+// give it a NAMED constant that the page can see and announce, so the state is
+// never silent again.
+//
+// AND KNOW WHAT THIS GATE IS. It hides a LINK LIST in a page whose source
+// anyone can read; it is a doorplate, not a lock. Nothing behind it is
+// protected by it — the panes are separately reachable on github.io, and the
+// Admin console holds its own key. True is better than assumed.
+const HUB_HASH   = 'a247262288836e2fe3f0e15dfd66a31c40b62c173d66d774b7bf5ad278911b0b';
+const HUB_KEY='amenti-hub-unlocked';
+
+async function sha256(s){
+  const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));
+  return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('');
+}
+const $=id=>document.getElementById(id);
+function showShell(){ $('gateHub').style.display='none'; $('shell').style.display='flex'; }
+
+/* SAY IT OUT LOUD. An open gate that looks shut is the fault; an open gate that
+   announces itself is a decision. Kept after the fix as a TRIPWIRE: if HUB_HASH
+   is ever blanked or re-placeholdered, the page says so on its own face. */
+if (HUB_HASH.startsWith('REPLACE')) {
+  var og = document.getElementById('opengate');
+  if (og) og.style.display = 'block';
+  console.warn('AMENTI HUB: HUB_HASH is a placeholder. No passphrase can match it — the gate is either open or unopenable.');
+}
+
+// ---- star-chart backdrop (constellations + nautical rhumb lines) ----
+(function(){
+  const cv = document.getElementById('starchart');
+  if(!cv) return;
+  const x = cv.getContext('2d');
+  let W,H,stars,constellations;
+  function seed(){
+    W = cv.width = innerWidth; H = cv.height = innerHeight;
+    cv.style.width = innerWidth+'px'; cv.style.height = innerHeight+'px';
+    stars = [];
+    for(let i=0;i<190;i++) stars.push({x:Math.random()*W,y:Math.random()*H,
+      r:Math.random()*1.4+.3, tw:Math.random()*Math.PI*2});
+    // a few "constellations" = clusters of connected bright stars
+    constellations = [];
+    for(let c=0;c<7;c++){
+      const cx=Math.random()*W, cy=Math.random()*H, n=3+((Math.random()*3)|0), pts=[];
+      for(let k=0;k<n;k++) pts.push({x:cx+(Math.random()-.5)*160, y:cy+(Math.random()-.5)*120});
+      constellations.push(pts);
+    }
+  }
+  seed(); addEventListener('resize', seed);
+  let t=0;
+  function draw(){
+    t+=0.01;
+    x.clearRect(0,0,W,H);
+    // rhumb lines from two compass points (nautical chart look)
+    const roses=[[W*0.18,H*0.72],[W*0.82,H*0.28]];
+    x.lineWidth=1;
+    for(const [rx,ry] of roses){
+      for(let a=0;a<32;a++){
+        const ang=a*Math.PI/16;
+        x.strokeStyle='rgba(90,150,220,0.10)';
+        x.beginPath(); x.moveTo(rx,ry);
+        x.lineTo(rx+Math.cos(ang)*Math.max(W,H), ry+Math.sin(ang)*Math.max(W,H));
+        x.stroke();
+      }
+      // compass ring
+      x.strokeStyle='rgba(90,150,220,0.10)';
+      x.beginPath(); x.arc(rx,ry,60,0,7); x.stroke();
+      x.beginPath(); x.arc(rx,ry,90,0,7); x.stroke();
+    }
+    // constellation lines
+    x.strokeStyle='rgba(120,190,255,0.28)'; x.lineWidth=1;
+    for(const pts of constellations){
+      x.beginPath();
+      for(let i=0;i<pts.length;i++){ i?x.lineTo(pts[i].x,pts[i].y):x.moveTo(pts[i].x,pts[i].y); }
+      x.stroke();
+      for(const p of pts){ x.fillStyle='rgba(154,220,255,.7)'; x.beginPath(); x.arc(p.x,p.y,1.8,0,7); x.fill(); }
+    }
+    // twinkling star field
+    for(const s of stars){
+      const a=0.35+0.4*Math.sin(t*2+s.tw);
+      x.fillStyle='rgba(210,228,255,'+(a*1.15)+')';
+      x.beginPath(); x.arc(s.x,s.y,s.r,0,7); x.fill();
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ---- live bridge clock ----
+setInterval(()=>{ const c=document.getElementById('clock'); if(c) c.textContent=new Date().toISOString().slice(11,19)+' UTC'; },1000);
+
+// ---- Gate B: hub ----
+async function unlockHub(){
+  const h=await sha256($('passHub').value);
+  if(h===HUB_HASH){
+    sessionStorage.setItem(HUB_KEY,'1'); showShell();
+  } else $('errHub').textContent='Incorrect hub passphrase.';
+}
+$('unlockHub').onclick=unlockHub;
+$('passHub').addEventListener('keydown',e=>{if(e.key==='Enter')unlockHub();});
+if(sessionStorage.getItem(HUB_KEY)==='1') showShell();
+
+$('lock').onclick=()=>{ sessionStorage.removeItem(HUB_KEY); location.reload(); };
+
+// ---- Tabs (Admin tab triggers Gate A if not unlocked) ----
+function activateTab(tab){
+  document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
+  document.querySelectorAll('.tab').forEach(s=>s.classList.toggle('active',s.dataset.tab===tab));
+}
+document.querySelectorAll('nav button').forEach(btn=>{
+  btn.addEventListener('click',()=>{ activateTab(btn.dataset.tab); });
+});
+</script>
+
+<script>
+/* ══ THE BRIDGE READS THE FLEET ═══════════════════════════════════════════════
+   This script states NO FACTS. Every number and every lamp comes from
+   fleet-manifest.js — written by the ship, published through the gate.
+
+   IF THERE IS NO READING, THE BRIDGE SAYS SO. It does not draw four green lamps
+   and let you assume. That is what it did before tonight, and it is exactly the
+   thing the Glass Gate exists to kill:
+
+       "DATA VAULT SEALED"  — a green light with nothing behind it, on the front
+                              door of the operations bridge, for months.
+
+   It happened to be TRUE. Nobody had ever checked.
+   ═══════════════════════════════════════════════════════════════════════════ */
 (function () {
   'use strict';
   var M = window.FLEET_MANIFEST;
   var $ = function (id) { return document.getElementById(id); };
+  var set = function (id, t) { var e = $(id); if (e) e.textContent = t; };
 
-  /* No reading -> say so. The LINKS still work: you must always be able to
-     navigate away from a broken mirror. */
-  if (!M || !M.health || !M.meta) { $('noread').style.display = 'block'; return; }
+  /* NO READING -> SAY SO. Never a memory. */
+  if (!M || !M.watches || !M.ships) {
+    set('ro-fleet', 'NO READING');
+    set('ro-crew',  'NO READING');
+    set('ro-sats',  'NO READING');
+    ['hull','data','cost'].forEach(function (k) {
+      var d = $('dot-' + k); if (d) d.className = 'dot r';
+      set('txt-' + k, k.toUpperCase() + ' · NO READING');
+    });
+    ['treasury','cost','data','hull'].forEach(function (k) {
+      var b = $('bar-' + k); if (b) { b.style.width = '100%'; b.style.background = '#f87171'; }
+      set('st-' + k, 'NO READING');
+    });
+    return;
+  }
 
-  var h = M.health;
-  var cell = function (n, l, warn) {
-    return '<span class="h ' + (n ? (warn ? 'warn' : 'bad') : 'ok') + '">' + l + ' ' + n + '</span>';
-  };
-  $('health').innerHTML =
-    cell(h.contradicted || 0, 'CONTRADICTED', false) +
-    cell(h.unproven     || 0, 'UNPROVEN',     true)  +
-    cell(h.adrift       || 0, 'ADRIFT',       true)  +
-    cell(h.undeclared   || 0, 'UNDECLARED',   true);
+  /* ── the readouts. Counted, not typed. ── */
+  set('ro-fleet', M.ships.length + ' vessels');
+  set('ro-crew',  M.crew.length  + ' files');
+  set('ro-sats',  (M.satellites || []).length + ' online');
 
-  var age = (Date.now() - Date.parse(M.meta.merged)) / 36e5;
-  $('stamp').textContent = 'READING TAKEN ' + (M.meta.reading || '—').replace('T', ' ').slice(0, 19) +
-    (isNaN(age) ? '' : (age > 24 ? '  ·  ⚠ ' + Math.round(age) + ' HOURS OLD' : '  ·  CURRENT'));
+  /* ── the Sentry Corps. A lamp is green ONLY if a recent patrol looked. ── */
+  var byId = {};
+  M.watches.forEach(function (w) { byId[w.id] = w; });
+
+  var LAMP = { CONFIRMED: 'g', UNPROVEN: 'a', CONTRADICTED: 'r' };
+  var WORD = { CONFIRMED: 'PROVEN', UNPROVEN: 'UNWATCHED', CONTRADICTED: 'BREACHED' };
+  var PCT  = { CONFIRMED: 100, UNPROVEN: 35, CONTRADICTED: 100 };
+  var COL  = { CONFIRMED: '#2bff77', UNPROVEN: '#fbbf24', CONTRADICTED: '#f87171' };
+
+  [['hull','HULL WATCH'],['data','DATA WATCH'],['cost','COST WATCH'],['treasury','TREASURY WATCH']]
+  .forEach(function (p) {
+    var key = p[0], w = byId[p[1]];
+    var st = w ? w.stamp : 'UNPROVEN';
+
+    var dot = $('dot-' + key);
+    if (dot) dot.className = 'dot ' + LAMP[st];
+    set('txt-' + key, p[1].replace(' WATCH', '') + ' · ' + WORD[st]);
+
+    var bar = $('bar-' + key);
+    if (bar) { bar.style.width = PCT[st] + '%'; bar.style.background = COL[st]; }
+    set('st-' + key, WORD[st]);
+
+    /* the patrol's own words, on hover — what it actually SAW */
+    var row = $('w-' + key);
+    if (row && w) {
+      row.title = w.patrol
+        ? 'PATROL ' + String(w.patrol.at).slice(0, 16).replace('T', ' ') + ' — ' + w.patrol.note
+        : 'NO PATROL HAS MADE THE ROUNDS. This watch is not failing — it is UNWATCHED.';
+    }
+  });
+
+  /* ── the top status strip. It said SYSTEMS NOMINAL regardless. ── */
+  var bad = M.health ? (M.health.contradicted || 0) : 0;
+  var un  = M.health ? (M.health.unproven || 0) : 0;
+  var strip = document.querySelector('.pill');
+  if (strip && strip.firstChild) {
+    var line = bad ? 'FLEET CONTRADICTS ITSELF · ' + bad
+             : (un ? un + ' WATCH' + (un > 1 ? 'ES' : '') + ' UNWATCHED'
+                   : 'ALL CLAIMS HELD');
+    var d0 = strip.querySelector('.dot');
+    if (d0) d0.className = 'dot ' + (bad ? 'r' : (un ? 'a' : 'g'));
+    strip.innerHTML = (d0 ? d0.outerHTML : '') + ' ' + line;
+  }
 })();
 </script>
 </body>
