@@ -41,15 +41,19 @@
   --violet:#c4a5ff; --tblue:#57b6ff; --amber:#fbbf24; --red:#f87171;
   --ink:#08090e; --granite:#11131c; --slate:#232838; --wire:#343b52;
   --text:#c8ccdc; --dim:#8f95ab;
+  --gold-bright:#f5c542; --gold-light:#f0c040;
   --mono:'Share Tech Mono',monospace; --body:'Rajdhani',sans-serif;
+  /* --disp is declared by amenti.css, which also loads the face. This local
+     copy is a FALLBACK ONLY — if amenti.css fails to load, the pane still
+     renders rather than falling back to a browser default serif. */
   --disp:'Amenti Display','Special Elite',serif;
 }
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--ink)}
 body{font-family:var(--body);font-weight:300;font-size:18px;line-height:1.62;color:var(--text);
-  padding:34px 30px 90px;
+  padding:0 0 90px;
   background-image:radial-gradient(ellipse at 50% -8%,rgba(212,160,23,.10),transparent 60%)}
-main{max-width:1120px;margin:0 auto}
+main{max-width:1120px;margin:0 auto;padding:26px 30px 0}
 
 .stamp{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:8px 18px;
   padding:0 2px 12px;border-bottom:1px solid var(--slate);
@@ -150,7 +154,7 @@ td.ok{color:var(--term)} td.req{color:var(--gold-b)} td.opt{color:var(--dim)}
   text-align:center;line-height:2;border-top:1px solid var(--slate);margin-top:54px;padding-top:22px}
 
 @media(max-width:640px){
-  body{padding:26px 16px 64px;font-size:17px}
+  main{padding:20px 16px 0}body{font-size:17px;padding-bottom:64px}
   table{display:block;overflow-x:auto}
   .gline{line-height:2.9}
   .bar{grid-template-columns:80px 1fr 62px;gap:10px}
@@ -158,6 +162,8 @@ td.ok{color:var(--term)} td.req{color:var(--gold-b)} td.opt{color:var(--dim)}
 </style>
 </head>
 <body>
+<div id="fleet-nav"></div>
+<script src="fleet-nav.js"></script>
 <main>
 
 <div class="stamp">
