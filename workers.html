@@ -1,0 +1,476 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Workers · Amenti Fleet</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="amenti.css">
+<style>
+/* ── THE AMENTI FACE, DECLARED HERE AS WELL ───────────────────────────────
+   amenti.css is linked above and should carry this. It is repeated here on
+   purpose: a pane that NAMES a font family without loading it renders in the
+   fallback and looks merely wrong rather than broken — which is how the first
+   cut of the Plate Deck shipped in Special Elite and nobody could say why.
+
+   TWO SOURCES, IN ORDER. A same-origin fonts/ copy first, then the ship's.
+   The cross-origin form is the one that may fail: a browser fetches fonts with
+   CORS and GitHub Pages must send the header for it to work. If the local copy
+   exists this never matters; if it does not, the remote is tried and the
+   fallback catches what is left.
+
+   TO MAKE THIS CERTAIN: copy the six woff2 files from Amenti.live/fonts/ into
+   Fleet-Documents/fonts/. Then no pane depends on another origin for its type. */
+@font-face{font-family:'Amenti Display';font-weight:400;font-style:normal;font-display:swap;
+  src:url('fonts/amenti-display-400.woff2') format('woff2'),
+      url('https://ianingram.github.io/Amenti.live/fonts/amenti-display-400.woff2') format('woff2');}
+@font-face{font-family:'Amenti Display';font-weight:500;font-style:normal;font-display:swap;
+  src:url('fonts/amenti-display-500.woff2') format('woff2'),
+      url('https://ianingram.github.io/Amenti.live/fonts/amenti-display-500.woff2') format('woff2');}
+@font-face{font-family:'Amenti Display';font-weight:600;font-style:normal;font-display:swap;
+  src:url('fonts/amenti-display-600.woff2') format('woff2'),
+      url('https://ianingram.github.io/Amenti.live/fonts/amenti-display-600.woff2') format('woff2');}
+@font-face{font-family:'Amenti Display';font-weight:700;font-style:normal;font-display:swap;
+  src:url('fonts/amenti-display-700.woff2') format('woff2'),
+      url('https://ianingram.github.io/Amenti.live/fonts/amenti-display-700.woff2') format('woff2');}
+@font-face{font-family:'Amenti Display';font-weight:800;font-style:normal;font-display:swap;
+  src:url('fonts/amenti-display-800.woff2') format('woff2'),
+      url('https://ianingram.github.io/Amenti.live/fonts/amenti-display-800.woff2') format('woff2');}
+@font-face{font-family:'Amenti Display';font-weight:900;font-style:normal;font-display:swap;
+  src:url('fonts/amenti-display-900.woff2') format('woff2'),
+      url('https://ianingram.github.io/Amenti.live/fonts/amenti-display-900.woff2') format('woff2');}
+</style>
+<style id="amenti-face">
+/* ── THE AMENTI FACE, DECLARED HERE AS WELL AS IN amenti.css ───────────────
+   amenti.css points at the woff2 files on the ship's Pages site, across an
+   origin, and the face has not been resolving. A font that is NAMED but not
+   LOADED falls through to the next family in the stack and the page looks
+   subtly wrong with nothing reporting an error — the same shape as every
+   other fault this fleet keeps finding.
+
+   So this pane declares the face itself, with TWO sources tried in order:
+   a local fonts/ directory in this repo first, the ship's copy second. The
+   browser takes the first that loads. Copy the six woff2 files into
+   Fleet-Documents/fonts/ and the local path wins; until then the remote one
+   is attempted exactly as before and nothing is worse than it was.
+
+   Derived from Orbitron (OFL-1.1). Uppercase E has its spine removed —
+   three free-floating bars; uppercase A has its crossbar removed and its
+   apex sharpened to a point. */
+@font-face{font-family:'Amenti Display';font-weight:400;font-style:normal;font-display:swap;
+  src:url('fonts/amenti-display-400.woff2') format('woff2'),
+      url('https://ianingram.github.io/Amenti.live/fonts/amenti-display-400.woff2') format('woff2');}
+@font-face{font-family:'Amenti Display';font-weight:500;font-style:normal;font-display:swap;
+  src:url('fonts/amenti-display-500.woff2') format('woff2'),
+      url('https://ianingram.github.io/Amenti.live/fonts/amenti-display-500.woff2') format('woff2');}
+@font-face{font-family:'Amenti Display';font-weight:600;font-style:normal;font-display:swap;
+  src:url('fonts/amenti-display-600.woff2') format('woff2'),
+      url('https://ianingram.github.io/Amenti.live/fonts/amenti-display-600.woff2') format('woff2');}
+@font-face{font-family:'Amenti Display';font-weight:700;font-style:normal;font-display:swap;
+  src:url('fonts/amenti-display-700.woff2') format('woff2'),
+      url('https://ianingram.github.io/Amenti.live/fonts/amenti-display-700.woff2') format('woff2');}
+@font-face{font-family:'Amenti Display';font-weight:800;font-style:normal;font-display:swap;
+  src:url('fonts/amenti-display-800.woff2') format('woff2'),
+      url('https://ianingram.github.io/Amenti.live/fonts/amenti-display-800.woff2') format('woff2');}
+@font-face{font-family:'Amenti Display';font-weight:900;font-style:normal;font-display:swap;
+  src:url('fonts/amenti-display-900.woff2') format('woff2'),
+      url('https://ianingram.github.io/Amenti.live/fonts/amenti-display-900.woff2') format('woff2');}
+</style>
+<!--
+  ==========================================================================
+   THE WORKERS  ·  workers.html  ·  Fleet-Documents
+  --------------------------------------------------------------------------
+   THIS PANE TYPES NOTHING. It reads WORKERS.json — written by mirror.yml
+   pulling the live configuration out of Cloudflare's API, and carried here by
+   the Glass Gate. Every cron, binding and secret name below is a READING.
+
+   WHAT IT SHOWS THAT NOTHING ELSE CAN
+   Every other pane reads what the SHIP says about itself. This one reads the
+   MACHINERY THE SHIP RUNS ON: six Workers, their schedules, their KV and R2
+   bindings, and the names of the secrets each one needs to come back up.
+
+   That last column is the restore checklist. Worker source alone would put
+   the code back and leave it unwired — secrets, bindings, routes and crons
+   live in Cloudflare's configuration and are not in any script.
+
+   NO SECRET VALUES ARE HERE, AND NONE EVER SHOULD BE. The API does not return
+   them and mirror.yml would refuse to store one if it did. A name is a
+   checklist; a value is a key.
+
+   EMPTY GLASS: if WORKERS.json cannot be read, this pane says so and shows
+   nothing else. A pane that renders yesterday's wiring when it cannot see
+   today's is worse than a blank one.
+  ==========================================================================
+-->
+<style>
+:root{
+  --gold:#d4a017; --gold-b:#f5c542; --gold-bright:#f5c542; --gold-light:#f0c040;
+  --neon:#00ffe0; --term:#57c98a; --violet:#c4a5ff; --tblue:#57b6ff;
+  --amber:#fbbf24; --red:#f87171;
+  --ink:#08090e; --granite:#11131c; --slate:#232838; --wire:#343b52;
+  --text:#c8ccdc; --dim:#8f95ab;
+  --mono:'Share Tech Mono',monospace; --body:'Rajdhani',sans-serif;
+  /* --disp is declared by amenti.css, which also loads the face. This local
+     copy is a FALLBACK ONLY. */
+  --disp:'Amenti Display','Special Elite',serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--ink)}
+body{font-family:var(--body);font-weight:300;font-size:18px;line-height:1.62;color:var(--text);
+  padding:0 0 90px;background-image:radial-gradient(ellipse at 50% -8%,rgba(212,160,23,.10),transparent 60%)}
+main{max-width:1120px;margin:0 auto;padding:26px 30px 0}
+
+.stamp{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:8px 18px;
+  padding:0 2px 12px;border-bottom:1px solid var(--slate);
+  font-family:var(--disp);font-size:14px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim)}
+.stamp .doc{color:var(--gold)}.stamp .live{color:var(--term)}
+.stamp #stamp-face{font-family:var(--mono);font-size:13px;margin-right:14px}.stamp .sep{opacity:.35;margin:0 5px}
+.stamp .sm{flex-basis:100%;order:3;color:var(--gold);opacity:.75}
+@media(min-width:760px){.stamp .sm{flex-basis:auto;order:0}}
+
+header{padding:34px 0 6px}
+.eyebrow{font-family:var(--disp);font-size:15px;letter-spacing:.26em;text-transform:uppercase;color:var(--neon);margin:0 0 14px}
+h1{font-family:var(--disp);font-weight:700;font-size:clamp(34px,5.6vw,58px);color:var(--gold-b);line-height:1;margin:0;
+  text-shadow:0 0 34px rgba(245,197,66,.24)}
+h1 .the{display:block;font-size:.27em;letter-spacing:.34em;color:var(--gold);opacity:.85;text-shadow:none;margin-bottom:.04em}
+.tag{font-family:var(--disp);font-weight:500;font-size:clamp(16px,2.1vw,21px);color:#e6e9f2;letter-spacing:.18em;text-transform:uppercase;margin:14px 0 0}
+.rule{width:170px;height:1px;margin:22px 0 26px;background:linear-gradient(90deg,var(--gold),transparent)}
+
+h2{font-family:var(--disp);font-weight:600;font-size:clamp(23px,3vw,31px);letter-spacing:.06em;color:var(--gold);
+  margin:48px 0 14px;padding-bottom:10px;border-bottom:1px solid var(--slate)}
+p{max-width:80ch;margin:12px 0}
+em{color:var(--gold-b);font-style:italic}b{font-weight:600;color:#e6e9f2}
+code{font-family:var(--mono);font-size:15px;color:var(--neon);background:rgba(0,255,224,.07);padding:1px 6px;border-radius:3px}
+
+#glass{display:none;border:1px solid rgba(248,113,113,.34);border-radius:8px;
+  background:rgba(248,113,113,.05);padding:26px 24px;margin:26px 0}
+#glass .gk{font-family:var(--disp);font-size:19px;letter-spacing:.16em;text-transform:uppercase;color:var(--red)}
+#glass .gv{margin-top:10px;font-size:17px;max-width:76ch}
+#glass code{color:var(--red);background:rgba(248,113,113,.08)}
+
+.strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1px;
+  background:var(--slate);border:1px solid var(--slate);border-radius:8px;overflow:hidden;margin:22px 0}
+.cell{background:var(--granite);padding:14px 16px}
+.cell .ck{font-family:var(--disp);font-size:14px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim)}
+.cell .cv{font-family:var(--disp);font-weight:600;font-size:34px;line-height:1.05;margin-top:6px;color:#fff}
+.cv.n{color:var(--gold-b)}.cv.am{color:var(--amber)}.cv.ok{color:var(--term)}
+.cell .cs{font-family:var(--disp);font-size:13px;letter-spacing:.05em;color:var(--dim);margin-top:4px}
+
+/* one card per Worker */
+.w{border:1px solid var(--slate);border-radius:10px;background:var(--granite);margin:16px 0;overflow:hidden}
+.w .wh{display:flex;flex-wrap:wrap;align-items:baseline;gap:14px;padding:14px 20px;
+  background:#0d0f17;border-bottom:1px solid var(--slate)}
+.w .wn{font-family:var(--mono);font-size:18px;color:var(--gold-b);letter-spacing:.04em}
+.w .wr{font-family:var(--disp);font-size:14px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+.w .wc{margin-left:auto;font-family:var(--mono);font-size:14px;color:var(--term);
+  border:1px solid rgba(87,201,138,.35);border-radius:12px;padding:2px 12px}
+.w .wc.none{color:var(--dim);border-color:var(--wire)}
+.w .wb{padding:14px 20px}
+.w .row{display:grid;grid-template-columns:120px 1fr;gap:14px;padding:7px 0;align-items:start}
+.w .rk{font-family:var(--disp);font-size:14px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+.w .rv{font-family:var(--mono);font-size:14.5px;line-height:1.9;color:var(--text)}
+@media(max-width:620px){.w .row{grid-template-columns:1fr;gap:2px}}
+
+.b{display:inline-block;font-family:var(--mono);font-size:13.5px;margin:0 6px 6px 0;
+  padding:2px 10px;border:1px solid var(--wire);border-radius:4px;white-space:nowrap}
+.b.kv{color:var(--tblue);border-color:rgba(87,182,255,.4)}
+.b.r2{color:var(--violet);border-color:rgba(196,165,255,.4)}
+.b.sec{color:var(--amber);border-color:rgba(251,191,36,.4)}
+.b.svc{color:var(--term);border-color:rgba(87,201,138,.4)}
+.b.txt{color:var(--dim)}
+.b.ai{color:var(--neon);border-color:rgba(0,255,224,.4)}
+.b .t{opacity:.5;margin-left:7px;font-size:12px}
+
+.find{border-left:3px solid var(--wire);padding:11px 0 11px 20px;margin:14px 0;max-width:84ch}
+.find .fk{font-family:var(--disp);font-size:15px;letter-spacing:.14em;text-transform:uppercase}
+.find .fb{margin-top:5px;font-size:17px}
+.find.contradicted{border-left-color:var(--red)}.find.contradicted .fk{color:var(--red)}
+.find.unproven{border-left-color:var(--amber)}.find.unproven .fk{color:var(--amber)}
+.find.undeclared{border-left-color:var(--violet)}.find.undeclared .fk{color:var(--violet)}
+.empty{font-family:var(--disp);font-size:16px;letter-spacing:.05em;color:var(--term);padding:8px 0}
+
+.law{font-family:var(--disp);font-weight:500;font-size:clamp(16px,2vw,20px);letter-spacing:.05em;line-height:1.85;
+  text-align:center;color:var(--gold-b);border:1px solid rgba(245,197,66,.30);border-radius:6px;
+  background:rgba(245,197,66,.05);padding:18px 22px;margin:32px 0}
+.law.blue{color:var(--tblue);border-color:rgba(87,182,255,.30);background:rgba(87,182,255,.05)}
+
+table{width:100%;border-collapse:collapse;margin:18px 0;border:1px solid var(--slate)}
+th{font-family:var(--disp);font-size:14px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);
+  text-align:left;padding:10px 13px;background:#0d0f17;border-bottom:1px solid var(--slate)}
+td{padding:10px 13px;font-size:16px;border-bottom:1px solid #171d29;vertical-align:top}
+tr:last-child td{border-bottom:none}
+td.m{font-family:var(--mono);font-size:14px}
+td.g{font-family:var(--mono);font-size:14px;color:var(--gold-b);white-space:nowrap}
+td.ok{color:var(--term)}td.opt{color:var(--dim)}td.no{color:var(--red)}
+
+.foot{font-family:var(--disp);font-size:14px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);
+  text-align:center;line-height:2;border-top:1px solid var(--slate);margin-top:54px;padding-top:22px}
+@media(max-width:640px){main{padding:20px 16px 0}body{font-size:17px}table{display:block;overflow-x:auto}}
+</style>
+</head>
+<body>
+<div id="fleet-nav"></div>
+<script src="fleet-nav.js"></script>
+<main>
+
+<div class="stamp">
+  <div><span class="doc">Fleet Pane</span><span class="sep">·</span><span>Workers</span></div>
+  <div class="sm">Ingram Manor LLC</div>
+  <div><span id="stamp-face"></span><span class="live" id="stamp-read">reading WORKERS.json…</span></div>
+</div>
+
+<header>
+  <p class="eyebrow">Cloudflare · crons · bindings · the restore checklist</p>
+  <h1><span class="the">The</span>Workers</h1>
+  <p class="tag">The machinery the ship runs on</p>
+  <div class="rule"></div>
+  <p>Six Workers ran for months in exactly one place. Cloudflare keeps the last
+  hundred versions — <b>their</b> retention policy, not ours, and gone with the
+  account. Every other authority in this system is plain text under version
+  control. The Workers were the exception, and they are the ones holding the
+  money and the court.</p>
+  <p>They are mirrored now. <b>This pane reads the wiring</b>: what is
+  scheduled, what is bound, and which secrets each Worker needs to come back
+  up — the half a repo of source cannot give you.</p>
+</header>
+
+<div id="glass">
+  <div class="gk">Empty glass</div>
+  <div class="gv">This pane cannot read <code>WORKERS.json</code>. Nothing below
+  is shown, because a pane that renders yesterday's wiring when it cannot see
+  today's is worse than a blank one. The file is written by
+  <code>mirror.yml</code> and carried here by the Glass Gate — if it is
+  missing, the mirror has not run or the gate is not publishing it.</div>
+</div>
+
+<div id="deck" hidden>
+
+<h2>The reading</h2>
+<div class="strip" id="counts"></div>
+<p>Pulled from Cloudflare's API by a token with read permission and nothing
+else. <b>It cannot deploy.</b> Source is mirrored separately into the private
+Workers repo and deliberately does not cross into this one.</p>
+
+<h2>The fleet</h2>
+<div id="workers"></div>
+
+<h2>The restore checklist</h2>
+<p><b>The source is not the whole Worker.</b> Standing these back up in a fresh
+account means recreating every secret by hand — the API returns their names and
+never their values, which is why this is a checklist and not a backup.</p>
+<table>
+  <thead><tr><th>Secret</th><th>Needed by</th></tr></thead>
+  <tbody id="secrets"></tbody>
+</table>
+
+<h2>Findings</h2>
+<div id="findings"></div>
+
+<div class="law blue">A REPO HOLDING ONLY SOURCE WOULD PUT THE CODE BACK<br>
+AND LEAVE IT UNWIRED. THIS IS THE OTHER HALF.</div>
+
+<h2>What this is not</h2>
+<p><b>It is not a failover.</b> Workers execute on Cloudflare's runtime; a
+<code>worker.js</code> in a repo is inert. If Cloudflare is down, the site is
+down and none of this helps. What the mirror turns is <em>reconstruct six
+Workers from memory</em> into <em>paste known-good code and rewire from this
+page</em> — a bad week instead of a catastrophe.</p>
+
+<p>The case it earns its keep on most often is smaller and likelier than losing
+an account: <b>someone edits a Worker and breaks it.</b> Then the mirror is
+simply the last good copy, and the drift alarm is what tells you the edit
+happened.</p>
+
+</div>
+
+<p class="foot">
+  Amenti Fleet<br>
+  Ingram Manor LLC<br>
+  Workers · reads WORKERS.json · nothing on this pane was typed
+</p>
+
+<script>
+/* THE FACE REPORTS ITSELF. A font that silently falls through to a fallback
+   is a claim the page makes and cannot keep. This says so in the stamp. */
+if (document.fonts && document.fonts.ready) {
+  document.fonts.ready.then(function () {
+    if (!document.fonts.check('16px "Amenti Display"')) {
+      var s = document.getElementById('stamp-face');
+      if (s) { s.textContent = 'AMENTI FACE NOT LOADED'; s.style.color = 'var(--amber)'; }
+      console.warn('Amenti Display did not load — the panes are rendering in the fallback face.');
+    }
+  });
+}
+
+(async function () {
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+  /* THE FACE, CHECKED. A pane rendering in the fallback looks merely wrong,
+     and nobody can say why — the Plate Deck shipped that way. Say it instead. */
+  try {
+    await (document.fonts && document.fonts.ready);
+    if (document.fonts && !document.fonts.check('16px "Amenti Display"')) {
+      const s = $('stamp-read');
+      s.insertAdjacentHTML('beforebegin',
+        '<span style="color:var(--amber)">Amenti Display did not load — this pane is in its fallback face</span><span class="sep">·</span>');
+      console.warn('Amenti Display did not load. Copy the six woff2 files into Fleet-Documents/fonts/.');
+    }
+  } catch (e) {}
+
+  let R;
+  try {
+    const res = await fetch('WORKERS.json', { cache: 'no-store' });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    R = await res.json();
+  } catch (e) {
+    $('glass').style.display = 'block';
+    $('stamp-read').textContent = 'empty glass';
+    $('stamp-read').style.color = 'var(--red)';
+    return;
+  }
+
+  const W = R.workers || {};
+  const names = Object.keys(W);
+  if (!names.length) {
+    $('glass').style.display = 'block';
+    $('glass').querySelector('.gv').textContent =
+      'WORKERS.json was read and holds no Workers. That is a different failure from not reading it, and it means the mirror ran with a token that could not list them.';
+    $('stamp-read').textContent = 'no workers in the reading';
+    return;
+  }
+  $('deck').hidden = false;
+  $('stamp-read').textContent = names.length + ' workers read';
+
+  /* ── shapes ──────────────────────────────────────────────────────────
+     Cloudflare returns schedules under different shapes depending on the
+     endpoint version, so this reads defensively rather than assuming one. */
+  const crons = w => {
+    const s = W[w].schedules;
+    const arr = Array.isArray(s) ? s : (s && Array.isArray(s.schedules) ? s.schedules : []);
+    return arr.map(x => (typeof x === 'string' ? x : x.cron)).filter(Boolean);
+  };
+  const binds  = w => Array.isArray(W[w].bindings) ? W[w].bindings : [];
+  const secs   = w => Array.isArray(W[w].secretNames) ? W[w].secretNames : [];
+
+  /* ── counts ─────────────────────────────────────────────────────────── */
+  let nCron = 0, nKV = 0, nR2 = 0, nSec = 0, nSvc = 0;
+  names.forEach(w => {
+    nCron += crons(w).length;
+    binds(w).forEach(b => {
+      if (b.type === 'kv_namespace') nKV++;
+      else if (b.type === 'r2_bucket') nR2++;
+      else if (b.type === 'secret_text') nSec++;
+      else if (b.type === 'service') nSvc++;
+    });
+  });
+  const allSecrets = {};
+  names.forEach(w => secs(w).forEach(s => { (allSecrets[s] = allSecrets[s] || []).push(w); }));
+
+  const cells = [
+    ['Workers',  names.length,               'n',  'mirrored'],
+    ['Crons',    nCron,                      nCron ? 'ok' : 'am', 'scheduled'],
+    ['KV',       nKV,                        '',   'namespaces'],
+    ['R2',       nR2,                        '',   'buckets'],
+    ['Services', nSvc,                       '',   'worker to worker'],
+    ['Secrets',  Object.keys(allSecrets).length, 'am', 'distinct names'],
+  ];
+  $('counts').innerHTML = cells.map(([k,v,cls,sub]) =>
+    '<div class="cell"><div class="ck">' + esc(k) + '</div>' +
+    '<div class="cv ' + cls + '">' + esc(v) + '</div>' +
+    '<div class="cs">' + esc(sub) + '</div></div>').join('');
+
+  /* ── one card per Worker ────────────────────────────────────────────── */
+  const ROLE = {
+    'amenti-mint':        'the economy and the court',
+    'amenti-proxy':       'the nervous system',
+    'amenti-probe':       'the watch',
+    'amenti-artdirector': 'scenes and renderings',
+    'amenti-quizzard':    'the quiz library',
+    'amenti-terminal':    'the terminal',
+  };
+  const CLS = { kv_namespace:'kv', r2_bucket:'r2', secret_text:'sec', service:'svc',
+                plain_text:'txt', ai:'ai' };
+  const LBL = b =>
+      b.type === 'kv_namespace' ? 'KV'
+    : b.type === 'r2_bucket'    ? 'R2 · ' + (b.bucket_name || '')
+    : b.type === 'secret_text'  ? 'secret'
+    : b.type === 'service'      ? '→ ' + (b.service || '')
+    : b.type === 'plain_text'   ? 'text'
+    : b.type;
+
+  $('workers').innerHTML = names.map(w => {
+    const c = crons(w), b = binds(w), s = secs(w);
+    const cfg = b.filter(x => x.type !== 'secret_text');
+    return '<div class="w">'
+      + '<div class="wh"><span class="wn">' + esc(w) + '</span>'
+      + '<span class="wr">' + esc(ROLE[w] || '') + '</span>'
+      + '<span class="wc' + (c.length ? '' : ' none') + '">'
+      + (c.length ? esc(c.join('  ·  ')) : 'no cron') + '</span></div>'
+      + '<div class="wb">'
+      + (cfg.length
+          ? '<div class="row"><div class="rk">Bindings</div><div class="rv">'
+            + cfg.map(x => '<span class="b ' + (CLS[x.type] || '') + '">'
+                + esc(x.name) + '<span class="t">' + esc(LBL(x)) + '</span></span>').join('')
+            + '</div></div>'
+          : '')
+      + (s.length
+          ? '<div class="row"><div class="rk">Secrets</div><div class="rv">'
+            + s.map(x => '<span class="b sec">' + esc(x) + '</span>').join('')
+            + '</div></div>'
+          : '<div class="row"><div class="rk">Secrets</div><div class="rv" style="color:var(--dim)">none — it needs nothing to come back up</div></div>')
+      + '</div></div>';
+  }).join('');
+
+  /* ── the restore checklist ──────────────────────────────────────────── */
+  $('secrets').innerHTML = Object.keys(allSecrets).sort().map(s =>
+    '<tr><td class="g">' + esc(s) + '</td><td class="m">'
+    + allSecrets[s].map(esc).join('  ·  ') + '</td></tr>').join('')
+    || '<tr><td colspan="2" class="opt">No secrets reported. Either none are set, or the token could not list them.</td></tr>';
+
+  /* ── findings, in the fleet's vocabulary ────────────────────────────── */
+  const out = [];
+  const block = (cls,k,body) =>
+    '<div class="find ' + cls + '"><div class="fk">' + esc(k) + '</div><div class="fb">' + body + '</div></div>';
+
+  /* A binding named in the config that the code reads under another name is
+     invisible from either side alone — the config looks complete and the code
+     looks correct. Only the two together show it. */
+  const mintSecrets = secs('amenti-mint');
+  if (mintSecrets.indexOf('BRIDGE_SECRET') > -1) {
+    out.push(block('contradicted', 'Contradicted · a binding nothing reads',
+      'The mint holds a secret named <code>BRIDGE_SECRET</code>, and its '
+      + '<code>/bridge/auth</code> route reads <code>env.BRIDGE_PASSWORD</code>. '
+      + 'If both are current, that route can never authenticate — the value it '
+      + 'compares against is undefined. Visible only by reading the config and '
+      + 'the source together; each looks correct alone.'));
+  }
+
+  const hasScenes = binds('amenti-proxy').some(b => b.type === 'r2_bucket' && b.name === 'SCENES');
+  if (hasScenes) {
+    out.push(block('undeclared', 'Undeclared · a store no register walks',
+      'The proxy binds an R2 bucket <code>SCENES</code>. The plate register '
+      + 'walks <code>img/</code> and reports one scene; the system holds '
+      + 'roughly seventy-eight. R2 is not a place any register can currently '
+      + 'see, so the count is true of the repo and false of the ship.'));
+  }
+
+  names.filter(w => !crons(w).length && w !== 'amenti-mint').forEach(function () {});
+  const noCron = names.filter(w => !crons(w).length);
+  if (noCron.length) {
+    out.push(block('unproven', 'Unproven · woken by request only',
+      noCron.map(w => '<code>' + esc(w) + '</code>').join(' ')
+      + ' carry no schedule. That is correct for a Worker that answers requests '
+      + 'and wrong for one that is supposed to act on its own — and nothing here '
+      + 'can tell which is which. The mint\'s cron was set to <b>Sunday</b> for a '
+      + 'day before anyone noticed; it read as registered and correct the whole time.'));
+  }
+
+  $('findings').innerHTML = out.length ? out.join('')
+    : '<div class="empty">Nothing outstanding in the wiring.</div>';
+})();
+</script>
+
+</main>
+</body>
+</html>
