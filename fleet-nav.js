@@ -38,6 +38,10 @@
        mirror. Art placement, the naming grammar, and what the register can
        and cannot judge. */
     { file: 'plate-deck.html',     label: 'PLATE DECK'   },
+    /* 17 Aug 2026 — the thirteenth. Traces one soul from a bare name to a row,
+       a room, a face and a docket, naming what each gate refuses. Isaac Newton
+       is the worked example. */
+    { file: 'onboarding.html',     label: 'ONBOARDING'   },
   ];
   /* which page are we on? match the last path segment, default to index.html */
   const here = (location.pathname.split('/').pop() || 'index.html').toLowerCase()
