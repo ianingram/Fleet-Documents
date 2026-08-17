@@ -1,0 +1,398 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Plate Deck · Amenti Fleet</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet">
+<!-- THE AMENTI FACE. Declared in amenti.css as an @font-face with the woff2
+     embedded. Naming a family without loading it is a CLAIM, not a font — this
+     pane named it and fell through to Special Elite for its first cut. -->
+<link rel="stylesheet" href="amenti.css">
+<!--
+  ==========================================================================
+   THE PLATE DECK  ·  panes/plate-deck.html  ·  Fleet-Documents
+  --------------------------------------------------------------------------
+   THIS PANE TYPES NOTHING. It reads PLATES.json, which the plate register
+   wrote by walking img/ in the commit that changed it, and which the Glass
+   Gate copied here. Every count below is a READING.
+
+   The law from fleet-manifest.js governs:
+     "The truth lives in the ship. The documents are a reflection.
+      You cannot correct a ship by painting the mirror."
+     "If a pane disagrees with this file, the pane is broken."
+
+   THE ONLY THING STATED RATHER THAN READ is the grammar — and even that is
+   pulled from PLATES.json's own `sceneGrammar` block when present, because a
+   rule restated by hand is a claim, and claims rot.
+
+   EMPTY GLASS: if PLATES.json cannot be fetched, this pane says so plainly
+   and shows nothing else. A pane that renders yesterday's numbers when it
+   cannot see today's is worse than a pane that is blank.
+
+   VOCABULARY is the fleet's, not this pane's: CONTRADICTED, UNPROVEN,
+   UNDECLARED. A reader moving between panes should not learn a second
+   dictionary.
+  ==========================================================================
+-->
+<style>
+:root{
+  --gold:#d4a017; --gold-b:#f5c542; --neon:#00ffe0; --term:#57c98a;
+  --violet:#c4a5ff; --tblue:#57b6ff; --amber:#fbbf24; --red:#f87171;
+  --ink:#08090e; --granite:#11131c; --slate:#232838; --wire:#343b52;
+  --text:#c8ccdc; --dim:#8f95ab;
+  --mono:'Share Tech Mono',monospace; --body:'Rajdhani',sans-serif;
+  --disp:'Amenti Display','Special Elite',serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--ink)}
+body{font-family:var(--body);font-weight:300;font-size:18px;line-height:1.62;color:var(--text);
+  padding:34px 30px 90px;
+  background-image:radial-gradient(ellipse at 50% -8%,rgba(212,160,23,.10),transparent 60%)}
+main{max-width:1120px;margin:0 auto}
+
+.stamp{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:8px 18px;
+  padding:0 2px 12px;border-bottom:1px solid var(--slate);
+  font-family:var(--disp);font-size:14px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim)}
+.stamp .doc{color:var(--gold)}
+.stamp .live{color:var(--term)}
+.stamp .sm{flex-basis:100%;order:3;color:var(--gold);opacity:.75}
+@media(min-width:760px){.stamp .sm{flex-basis:auto;order:0}}
+.stamp .sep{opacity:.35;margin:0 5px}
+
+header{padding:34px 0 6px}
+.eyebrow{font-family:var(--disp);font-size:15px;letter-spacing:.26em;text-transform:uppercase;
+  color:var(--neon);margin:0 0 14px}
+h1{font-family:var(--disp);font-size:clamp(34px,5.6vw,58px);color:var(--gold-b);line-height:1;
+  margin:0;text-shadow:0 0 34px rgba(245,197,66,.24)}
+h1 .the{display:block;font-size:.27em;letter-spacing:.34em;color:var(--gold);opacity:.85;
+  text-shadow:none;margin-bottom:.04em}
+.tag{font-family:var(--disp);font-size:clamp(16px,2.1vw,21px);color:#e6e9f2;letter-spacing:.18em;
+  text-transform:uppercase;margin:14px 0 0}
+.rule{width:170px;height:1px;margin:22px 0 26px;background:linear-gradient(90deg,var(--gold),transparent)}
+
+h2{font-family:var(--disp);font-size:clamp(23px,3vw,31px);letter-spacing:.06em;
+  color:var(--gold);margin:50px 0 14px;padding-bottom:10px;border-bottom:1px solid var(--slate)}
+p{max-width:80ch;margin:12px 0}
+em{color:var(--gold-b);font-style:italic}
+b{font-weight:600;color:#e6e9f2}
+code{font-family:var(--mono);font-size:15px;color:var(--neon);
+  background:rgba(0,255,224,.07);padding:1px 6px;border-radius:3px}
+
+/* ── EMPTY GLASS ───────────────────────────────────────────────────────── */
+#glass{display:none;border:1px solid rgba(248,113,113,.34);border-radius:8px;
+  background:rgba(248,113,113,.05);padding:26px 24px;margin:26px 0}
+#glass .gk{font-family:var(--disp);font-size:19px;letter-spacing:.16em;text-transform:uppercase;color:var(--red)}
+#glass .gv{margin-top:10px;font-size:17px;max-width:76ch}
+#glass code{color:var(--red);background:rgba(248,113,113,.08)}
+
+/* ── THE GRAMMAR: a parsed filename ────────────────────────────────────── */
+.grammar{border:1px solid var(--slate);border-radius:10px;background:var(--granite);
+  padding:26px 24px 20px;margin:26px 0;overflow-x:auto}
+.gline{font-family:var(--mono);font-size:clamp(14px,2vw,22px);white-space:nowrap;line-height:2.5}
+.gseg{position:relative;padding:3px 2px;border-bottom:2px solid transparent}
+.gseg .lab{position:absolute;left:0;top:calc(100% + 7px);font-size:12px;letter-spacing:.14em;
+  text-transform:uppercase;white-space:nowrap}
+.g-dir{color:var(--dim)}
+.g-own{color:var(--gold-b);border-bottom-color:var(--gold)} .g-own .lab{color:var(--gold)}
+.g-sep{color:var(--red);font-weight:700} .g-sep .lab{color:var(--red)}
+.g-tag{color:var(--tblue);border-bottom-color:var(--tblue)} .g-tag .lab{color:var(--tblue)}
+.g-var{color:var(--violet);border-bottom-color:var(--violet)} .g-var .lab{color:var(--violet)}
+.gnote{font-family:var(--mono);font-size:13px;color:var(--dim);margin-top:46px;line-height:1.95}
+.gnote b{color:var(--text)}
+
+/* ── HUD COUNTS ────────────────────────────────────────────────────────── */
+.strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1px;
+  background:var(--slate);border:1px solid var(--slate);border-radius:8px;overflow:hidden;margin:22px 0}
+.cell{background:var(--granite);padding:14px 16px}
+.cell .ck{font-family:var(--disp);font-size:14px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim)}
+.cell .cv{font-family:var(--disp);font-size:34px;line-height:1.05;margin-top:6px;color:#fff}
+.cv.n{color:var(--gold-b)} .cv.am{color:var(--amber)} .cv.ok{color:var(--term)} .cv.bad{color:var(--red)}
+.cell .cs{font-family:var(--disp);font-size:13px;letter-spacing:.05em;color:var(--dim);margin-top:4px}
+
+/* ── BARS ──────────────────────────────────────────────────────────────── */
+.bars{border:1px solid var(--slate);border-radius:8px;background:var(--granite);padding:18px 22px;margin:20px 0}
+.bar{display:grid;grid-template-columns:96px 1fr 74px;align-items:center;gap:14px;padding:7px 0}
+.bar .bl{font-family:var(--disp);font-size:16px;letter-spacing:.04em;color:var(--gold-b)}
+.bar .bl.opt{color:var(--dim)}
+.bar .bt{height:9px;background:#0a0c12;border:1px solid var(--wire);border-radius:5px;overflow:hidden}
+.bar .bf{height:100%;background:linear-gradient(90deg,rgba(212,160,23,.5),var(--gold-b));border-radius:4px}
+.bar .bf.opt{background:linear-gradient(90deg,rgba(143,149,171,.3),var(--dim))}
+.bar .bn{font-family:var(--disp);font-size:16px;color:var(--text);text-align:right}
+
+table{width:100%;border-collapse:collapse;margin:18px 0;border:1px solid var(--slate)}
+th{font-family:var(--disp);font-size:14px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);
+  text-align:left;padding:10px 13px;background:#0d0f17;border-bottom:1px solid var(--slate)}
+td{padding:10px 13px;font-size:16px;border-bottom:1px solid #171d29;vertical-align:top}
+tr:last-child td{border-bottom:none}
+td.m{font-family:var(--mono);font-size:14px}
+td.g{font-family:var(--mono);font-size:14px;color:var(--gold-b);white-space:nowrap}
+td.v{font-family:var(--mono);font-size:14px;color:var(--violet);white-space:nowrap}
+td.b{font-family:var(--mono);font-size:14px;color:var(--tblue)}
+td.ok{color:var(--term)} td.req{color:var(--gold-b)} td.opt{color:var(--dim)}
+
+/* ── FINDINGS, in the fleet's vocabulary ───────────────────────────────── */
+.find{border-left:3px solid var(--wire);padding:11px 0 11px 20px;margin:14px 0;max-width:84ch}
+.find .fk{font-family:var(--disp);font-size:15px;letter-spacing:.14em;text-transform:uppercase}
+.find .fb{margin-top:5px;font-size:17px}
+.find.contradicted{border-left-color:var(--red)} .find.contradicted .fk{color:var(--red)}
+.find.unproven{border-left-color:var(--amber)} .find.unproven .fk{color:var(--amber)}
+.find.undeclared{border-left-color:var(--violet)} .find.undeclared .fk{color:var(--violet)}
+.find.accepted{border-left-color:var(--term)} .find.accepted .fk{color:var(--term)}
+.empty{font-family:var(--disp);font-size:16px;letter-spacing:.05em;color:var(--term);padding:8px 0}
+
+.law{font-family:var(--disp);font-size:clamp(16px,2vw,20px);letter-spacing:.05em;line-height:1.85;text-align:center;color:var(--gold-b);
+  border:1px solid rgba(245,197,66,.30);border-radius:6px;background:rgba(245,197,66,.05);
+  padding:18px 22px;margin:32px 0}
+.law.blue{color:var(--tblue);border-color:rgba(87,182,255,.30);background:rgba(87,182,255,.05)}
+
+.foot{font-family:var(--disp);font-size:14px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);
+  text-align:center;line-height:2;border-top:1px solid var(--slate);margin-top:54px;padding-top:22px}
+
+@media(max-width:640px){
+  body{padding:26px 16px 64px;font-size:17px}
+  table{display:block;overflow-x:auto}
+  .gline{line-height:2.9}
+  .bar{grid-template-columns:80px 1fr 62px;gap:10px}
+}
+</style>
+</head>
+<body>
+<main>
+
+<div class="stamp">
+  <div class="sl"><span class="doc">Fleet Pane</span><span class="sep">·</span><span>Plate Deck</span></div>
+  <div class="sm">Ingram Manor LLC</div>
+  <div><span class="live" id="stamp-read">reading PLATES.json…</span></div>
+</div>
+
+<header>
+  <p class="eyebrow">Art placement · naming · surfaces</p>
+  <h1><span class="the">The</span>Plate Deck</h1>
+  <p class="tag">Where every image goes, and how it is named</p>
+  <div class="rule"></div>
+  <p>A plate is a <b>figure</b>. A scene is a <b>moment that figure was in</b>. The register
+  could describe the first and had no word for the second, so a file called
+  <code>gw-winter</code> was filed as a man named <em>gw</em> missing his terminal plate. He was
+  George Washington at Valley Forge.</p>
+</header>
+
+<div id="glass">
+  <div class="gk">Empty glass</div>
+  <div class="gv">This pane cannot read <code>PLATES.json</code>. Nothing below is shown,
+  because a pane that renders yesterday's numbers when it cannot see today's is worse than a
+  blank one. The register is copied here by the Glass Gate on every push to
+  <code>Amenti.live</code> — if it is missing, the gate did not run or the copy step is not
+  publishing it.</div>
+</div>
+
+<div id="deck" hidden>
+
+<h2>The grammar</h2>
+
+<div class="grammar">
+  <div class="gline">
+    <span class="gseg g-dir">img/</span><span class="gseg g-own">george-washington<span class="lab">owner · a roster key</span></span><span class="gseg g-var">-card<span class="lab">variant</span></span><span class="gseg g-dir">.jpg</span>
+  </div>
+  <div class="gline" style="margin-top:36px">
+    <span class="gseg g-dir">img/scene/</span><span class="gseg g-own">george-washington<span class="lab">owner</span></span><span class="gseg g-sep">--<span class="lab">the split</span></span><span class="gseg g-tag">valley-forge<span class="lab">moment · free text</span></span><span class="gseg g-var">-thumb<span class="lab">variant, optional</span></span><span class="gseg g-dir">.jpg</span>
+  </div>
+  <p class="gnote" id="gnote">
+    The <b>subdirectory</b> keeps a scene out of the plate grammar, which would otherwise read
+    <code>gw-winter-card.jpg</code> as owner <code>gw</code>, variant <code>winter</code>.<br>
+    The <b>double hyphen</b> splits owner from moment — a single one cannot, because nearly
+    every roster key already contains a hyphen.<br>
+    A bare <code>owner--tag.jpg</code> with no variant is the <b>lead</b>, and is the common case.
+  </p>
+</div>
+
+<div class="law blue">A FIGURE KEY CAN BE WRONG — THE ROSTER SAYS WHAT RIGHT IS.<br>
+A SCENE TAG COULD NOT BE WRONG, BECAUSE NOTHING SAID WHAT RIGHT WAS.<br>
+AUTHORITY IS WHAT MAKES ERROR POSSIBLE.</div>
+
+<h2>The reading</h2>
+<div class="strip" id="counts"></div>
+<p id="readline"></p>
+
+<h2>Coverage by variant</h2>
+<div class="bars" id="bars"></div>
+
+<h2>The surfaces</h2>
+<table>
+  <thead><tr><th>Variant</th><th>Where it renders</th><th>Required</th></tr></thead>
+  <tbody id="surfaces"></tbody>
+</table>
+<p><b>There is no <code>codex</code> variant and there was never meant to be one.</b> An earlier
+register listed it as a required fourth and duly reported <em>0 of 51</em> — a gap that existed
+only because the checker had invented the thing it was checking for. The codex reuses
+<code>-terminal</code>.</p>
+
+<h2>Scenes on the register</h2>
+<table>
+  <thead><tr><th>Owner</th><th>Moment</th><th>Files</th></tr></thead>
+  <tbody id="scenes"></tbody>
+</table>
+
+<h2>Findings</h2>
+<div id="findings"></div>
+
+<h2>What the register refuses to judge</h2>
+<table>
+  <thead><tr><th>Checked</th><th>Against what</th><th>Fails the build</th></tr></thead>
+  <tbody>
+    <tr><td>the owner is a real figure</td><td class="m" id="auth">names.csv</td><td class="ok">yes</td></tr>
+    <tr><td>the filename splits on <code>--</code></td><td class="m">the grammar</td><td class="ok">yes</td></tr>
+    <tr><td>a figure holds every required variant</td><td class="m">the variant table</td><td class="ok">yes</td></tr>
+    <tr><td class="opt">the tag names the right moment</td><td class="m opt">nothing — free text</td><td class="opt">never</td></tr>
+    <tr><td class="opt">the figure is in the frame</td><td class="m opt">nothing — and nothing could</td><td class="opt">never</td></tr>
+    <tr><td class="opt">a figure has any scenes at all</td><td class="m opt">absence is normal</td><td class="opt">never</td></tr>
+  </tbody>
+</table>
+
+<p><b>A scene does not need its figure in the frame.</b> Valley Forge without Washington in it
+is still his scene; the empty Senate after Caesar leaves is still his. Ownership is
+<em>editorial</em> — the figure whose story the image serves — and depiction has nothing to do
+with it. Nothing here inspects the picture, because nothing could.</p>
+
+<div class="law">A REGISTER THAT REPORTS WHAT CANNOT BE ACTED ON<br>
+TEACHES ITS READER TO STOP READING IT.</div>
+
+</div>
+
+<p class="foot">
+  Amenti Fleet<br>
+  Ingram Manor LLC<br>
+  Plate Deck · reads img/PLATES.json · nothing on this pane was typed<br>
+  <span id="footread"></span>
+</p>
+
+<script>
+(async function () {
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+  let R;
+  try {
+    const res = await fetch('PLATES.json', { cache: 'no-store' });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    R = await res.json();
+  } catch (e) {
+    $('glass').style.display = 'block';
+    $('stamp-read').textContent = 'empty glass';
+    $('stamp-read').style.color = 'var(--red)';
+    $('footread').textContent = 'the register could not be read';
+    return;
+  }
+
+  $('deck').hidden = false;
+
+  const T = R.totals || {};
+  const G = R.gaps || {};
+  const when = R.generated ? new Date(R.generated) : null;
+  const stamp = when ? when.toISOString().replace('T',' ').slice(0,16) + ' UTC' : 'unknown';
+  $('stamp-read').textContent = 'read ' + stamp;
+  $('footread').textContent = 'register generated ' + stamp + ' by ' + (R.generator || 'unknown');
+
+  /* the grammar, from the register's own declaration where it publishes one */
+  if (R.sceneGrammar && R.sceneGrammar.path) {
+    $('gnote').insertAdjacentHTML('afterbegin',
+      'The register declares this path itself: <code>' + esc(R.sceneGrammar.path) + '</code><br><br>');
+  }
+
+  /* ── counts ─────────────────────────────────────────────────────────── */
+  const incomplete = (T.keys || 0) - (T.complete || 0);
+  const cells = [
+    ['Figures',   T.keys,        'n',  'plate keys'],
+    ['Complete',  T.complete,    incomplete ? 'am' : 'ok', 'all required variants'],
+    ['Plate files', T.plates,    '',   (G.notPlates ? G.notPlates.length : 0) + ' ignored'],
+    ['Scenes',    T.scenes,      'n',  (T.sceneFiles || 0) + ' files · ' + (T.figuresWithScenes || 0) + ' figures'],
+    ['Roster',    T.rosterKnown != null ? T.rosterKnown : '—', T.rosterKnown != null ? '' : 'am',
+                  T.rosterKnown != null ? 'owners checked' : 'names.csv not read'],
+    ['Provenance', T.provenanced, 'am', 'of ' + ((T.plates || 0) + (T.sceneFiles || 0))],
+  ];
+  $('counts').innerHTML = cells.map(([k, v, cls, sub]) =>
+    '<div class="cell"><div class="ck">' + esc(k) + '</div>' +
+    '<div class="cv ' + cls + '">' + esc(v == null ? '—' : v) + '</div>' +
+    '<div class="cs">' + esc(sub) + '</div></div>').join('');
+
+  $('readline').innerHTML = 'The register walks <code>img/</code> on every push and writes '
+    + 'itself. It reads <code>img/MANIFEST.json</code> for provenance and <b>never writes '
+    + 'it</b> — that file is a write target for six Python tools and holds seeds and crop '
+    + 'notes that exist nowhere else.';
+
+  if (T.rosterKnown != null) $('auth').textContent = 'names.csv · ' + T.rosterKnown + ' keys';
+
+  /* ── coverage bars ──────────────────────────────────────────────────── */
+  const V = R.variants || {};
+  const bv = T.byVariant || {};
+  const total = T.keys || 1;
+  $('bars').innerHTML = Object.keys(V).map(v => {
+    const n = bv[v] || 0, pct = Math.round(n / total * 100), req = V[v].required;
+    return '<div class="bar">'
+      + '<div class="bl' + (req ? '' : ' opt') + '">' + esc(v) + '</div>'
+      + '<div class="bt"><div class="bf' + (req ? '' : ' opt') + '" style="width:' + pct + '%"></div></div>'
+      + '<div class="bn">' + n + ' / ' + total + '</div></div>';
+  }).join('');
+
+  /* ── surfaces ───────────────────────────────────────────────────────── */
+  $('surfaces').innerHTML = Object.keys(V).map(v =>
+    '<tr><td class="g">-' + esc(v) + '</td><td>' + esc(V[v].note || '') + '</td>'
+    + '<td class="' + (V[v].required ? 'req' : 'opt') + '">' + (V[v].required ? 'yes' : 'no')
+    + '</td></tr>').join('')
+    + (R.sceneGrammar ? (R.sceneGrammar.variants || []).concat(['lead']).map(sv =>
+        '<tr><td class="v">scene · ' + esc(sv) + '</td>'
+        + '<td>article hero, dispatch card, list</td><td class="opt">no</td></tr>').join('') : '');
+
+  /* ── scenes ─────────────────────────────────────────────────────────── */
+  const S = R.scenes || {};
+  const owners = Object.keys(S).sort();
+  $('scenes').innerHTML = owners.length
+    ? owners.flatMap(o => Object.keys(S[o]).sort().map(t => {
+        const files = Object.keys(S[o][t].files || {}).sort();
+        return '<tr><td class="g">' + esc(o) + '</td><td class="b">' + esc(t) + '</td>'
+             + '<td class="m">' + files.map(esc).join(' · ') + '</td></tr>';
+      })).join('')
+    : '<tr><td colspan="3" class="m opt">No scenes on the register. '
+      + 'That is a state, not a fault — absence is never a gap.</td></tr>';
+
+  /* ── findings, in the fleet's vocabulary ────────────────────────────── */
+  const out = [];
+  const block = (cls, k, body) =>
+    '<div class="find ' + cls + '"><div class="fk">' + esc(k) + '</div>'
+    + '<div class="fb">' + body + '</div></div>';
+
+  (G.scenesWithoutFigure || []).forEach(s => out.push(block('contradicted',
+    'Contradicted · scene, no figure',
+    '<code>' + esc(s.file) + '</code> claims owner <b>' + esc(s.owner) + '</b>, who holds no '
+    + 'plates and is not on the roster. Either the owner is misspelled or the figure was '
+    + 'never onboarded.')));
+
+  (G.scenesMalformed || []).forEach(f => out.push(block('contradicted',
+    'Contradicted · scene, malformed',
+    '<code>' + esc(f) + '</code> carries no <code>--</code>, so owner and moment cannot be '
+    + 'separated. A malformed file never said who it belonged to — a different repair from '
+    + 'an orphan, whose owner is merely missing.')));
+
+  const mv = (G.missingByVariant || {});
+  Object.keys(mv).forEach(v => out.push(block('unproven',
+    'Unproven · no ' + v,
+    mv[v].length + ' figure' + (mv[v].length === 1 ? '' : 's') + ' without a <code>-' + esc(v)
+    + '</code> plate: ' + mv[v].map(k => '<code>' + esc(k) + '</code>').join(' '))));
+
+  (G.unaccepted || []).forEach(k => out.push(block('undeclared',
+    'Undeclared · unreconciled key',
+    '<code>' + esc(k) + '</code> appears on one side of the room/plate reconciliation and not '
+    + 'the other, and no ruling has been recorded for it.')));
+
+  (G.accepted || []).forEach(a => out.push(block('accepted',
+    'Accepted · ' + (a.on || ''),
+    '<code>' + esc(a.key) + '</code> — ' + esc(a.note || ''))));
+
+  $('findings').innerHTML = out.length ? out.join('')
+    : '<div class="empty">Nothing outstanding. Every key reconciles and every scene has an owner.</div>';
+})();
+</script>
+
+</main>
+</body>
+</html>
