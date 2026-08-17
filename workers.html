@@ -148,6 +148,13 @@ code{font-family:var(--mono);font-size:15px;color:var(--neon);background:rgba(0,
 #glass .gv{margin-top:10px;font-size:17px;max-width:76ch}
 #glass code{color:var(--red);background:rgba(248,113,113,.08)}
 
+svg.fig{width:100%;height:auto;display:block;margin:22px 0 6px;border:1px solid var(--slate);
+  border-radius:8px;background:#0a0d13;padding:10px}
+.cap{font-family:var(--mono);font-size:13px;letter-spacing:.1em;color:var(--dim);text-align:center;margin:0 0 24px}
+.reach{border:1px solid var(--wire);border-radius:8px;background:#0c0e15;padding:14px 18px;margin:12px 0}
+.reach .rn{font-family:var(--mono);font-size:15px;color:var(--gold-b)}
+.reach .rl{margin-top:8px}
+.reach .none{font-family:var(--disp);font-size:15px;color:var(--dim);margin-top:6px}
 .strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1px;
   background:var(--slate);border:1px solid var(--slate);border-radius:8px;overflow:hidden;margin:22px 0}
 .cell{background:var(--granite);padding:14px 16px}
@@ -253,6 +260,179 @@ Workers repo and deliberately does not cross into this one.</p>
 
 <h2>The fleet</h2>
 <div id="workers"></div>
+
+<h2>How a page is made</h2>
+
+<p>A reader opens a surface and gets HTML. Nothing about that is obvious, because
+<b>the page they receive did not exist as a file anywhere.</b> It was assembled
+at the edge, in a few hundred milliseconds, out of three things that live in
+three different places and refuse three different failures.</p>
+
+<svg class="fig" viewBox="0 0 1060 720" xmlns="http://www.w3.org/2000/svg" role="img"
+aria-label="How a static repo and edge compute produce a page">
+  <text x="530" y="28" text-anchor="middle" fill="#f5c542" font-family="Share Tech Mono"
+        font-size="17" letter-spacing="3">FROM A FLAT FILE TO A PAGE</text>
+
+  <!-- ── AMENTI lane ── -->
+  <line x1="24" y1="52" x2="1036" y2="52" stroke="#232838"/>
+  <text x="30" y="72" fill="#d4a017" font-family="Share Tech Mono" font-size="14">AMENTI · persists · refuses LOSS</text>
+
+  <g font-family="Share Tech Mono" font-size="13.5">
+    <rect x="30" y="86" width="188" height="72" rx="6" fill="#151109" stroke="#d4a017" stroke-width="1.5"/>
+    <text x="44" y="108" fill="#f5c542">names.csv</text>
+    <text x="44" y="128" fill="#8f95ab" font-family="Rajdhani" font-size="15">1,016 souls · the roster</text>
+    <text x="44" y="147" fill="#8f95ab" font-family="Rajdhani" font-size="15">raw.githubusercontent</text>
+
+    <rect x="234" y="86" width="188" height="72" rx="6" fill="#151109" stroke="#d4a017" stroke-width="1.5"/>
+    <text x="248" y="108" fill="#f5c542">library/</text>
+    <text x="248" y="128" fill="#8f95ab" font-family="Rajdhani" font-size="15">50 rooms · 567 works</text>
+    <text x="248" y="147" fill="#8f95ab" font-family="Rajdhani" font-size="15">flat files, by convention</text>
+
+    <rect x="438" y="86" width="188" height="72" rx="6" fill="#151109" stroke="#d4a017" stroke-width="1.5"/>
+    <text x="452" y="108" fill="#f5c542">img/ · PLATES.json</text>
+    <text x="452" y="128" fill="#8f95ab" font-family="Rajdhani" font-size="15">50 figures · 1 scene</text>
+    <text x="452" y="147" fill="#8f95ab" font-family="Rajdhani" font-size="15">no map — probed by name</text>
+
+    <rect x="642" y="86" width="188" height="72" rx="6" fill="#151109" stroke="#d4a017" stroke-width="1.5"/>
+    <text x="656" y="108" fill="#f5c542">Page1.html</text>
+    <text x="656" y="128" fill="#8f95ab" font-family="Rajdhani" font-size="15">the shell · GitHub Pages</text>
+    <text x="656" y="147" fill="#8f95ab" font-family="Rajdhani" font-size="15">markup, no content</text>
+
+    <rect x="846" y="86" width="188" height="72" rx="6" fill="#151109" stroke="#d4a017" stroke-width="1.5"/>
+    <text x="860" y="108" fill="#f5c542">spec/spells.json</text>
+    <text x="860" y="128" fill="#8f95ab" font-family="Rajdhani" font-size="15">21 rules the code</text>
+    <text x="860" y="147" fill="#8f95ab" font-family="Rajdhani" font-size="15">was built to satisfy</text>
+  </g>
+
+  <text x="530" y="182" text-anchor="middle" fill="#8f95ab" font-family="Rajdhani" font-size="16">
+    plain text · one place each · under version control · nothing here executes</text>
+
+  <!-- ── HADES lane ── -->
+  <line x1="24" y1="204" x2="1036" y2="204" stroke="#232838"/>
+  <text x="30" y="224" fill="#c4a5ff" font-family="Share Tech Mono" font-size="14">HADES · runs · refuses MEMORY</text>
+
+  <!-- proxy -->
+  <rect x="60" y="242" width="420" height="196" rx="8" fill="#100d18" stroke="#c4a5ff" stroke-width="2"/>
+  <text x="78" y="268" fill="#c4a5ff" font-family="Share Tech Mono" font-size="17">amenti-proxy</text>
+  <text x="78" y="288" fill="#8f95ab" font-family="Rajdhani" font-size="15">the nervous system · no cron · woken by request</text>
+  <g font-family="Share Tech Mono" font-size="13">
+    <text x="78" y="316" fill="#00ffe0">/feed  /article  /week  /speak  /listen</text>
+    <text x="78" y="336" fill="#00ffe0">/scene  /atlantica/daily  /atlantica/next</text>
+  </g>
+  <g font-family="Share Tech Mono" font-size="12.5">
+    <rect x="78" y="352" width="118" height="26" rx="4" fill="none" stroke="rgba(87,182,255,.4)"/>
+    <text x="88" y="370" fill="#57b6ff">ARTICLES · KV</text>
+    <rect x="206" y="352" width="104" height="26" rx="4" fill="none" stroke="rgba(196,165,255,.4)"/>
+    <text x="216" y="370" fill="#c4a5ff">AUDIO · R2</text>
+    <rect x="320" y="352" width="112" height="26" rx="4" fill="none" stroke="rgba(196,165,255,.4)"/>
+    <text x="330" y="370" fill="#c4a5ff">SCENES · R2</text>
+    <rect x="78" y="388" width="150" height="26" rx="4" fill="none" stroke="rgba(0,255,224,.4)"/>
+    <text x="88" y="406" fill="#00ffe0">ANTHROPIC · writes</text>
+    <rect x="238" y="388" width="194" height="26" rx="4" fill="none" stroke="rgba(87,201,138,.4)"/>
+    <text x="248" y="406" fill="#57c98a">MINT_SVC → amenti-mint</text>
+  </g>
+
+  <!-- mint -->
+  <rect x="576" y="242" width="424" height="196" rx="8" fill="#100d18" stroke="#c4a5ff" stroke-width="2"/>
+  <text x="594" y="268" fill="#c4a5ff" font-family="Share Tech Mono" font-size="17">amenti-mint</text>
+  <text x="594" y="288" fill="#8f95ab" font-family="Rajdhani" font-size="15">the economy and the court · cron 0 0 * * mon</text>
+  <g font-family="Share Tech Mono" font-size="13">
+    <text x="594" y="316" fill="#00ffe0">/hall  /quiz/*  /pool/leaderboard</text>
+    <text x="594" y="336" fill="#00ffe0">/readaloud/*  /arguments/*  /characters</text>
+  </g>
+  <g font-family="Share Tech Mono" font-size="12.5">
+    <rect x="594" y="352" width="188" height="26" rx="4" fill="none" stroke="rgba(251,191,36,.4)"/>
+    <text x="604" y="370" fill="#fbbf24">SUPABASE_SECRET</text>
+    <rect x="792" y="352" width="196" height="26" rx="4" fill="none" stroke="rgba(251,191,36,.4)"/>
+    <text x="802" y="370" fill="#fbbf24">ADMIN · BRIDGE</text>
+    <rect x="594" y="388" width="394" height="26" rx="4" fill="none" stroke="rgba(87,201,138,.4)"/>
+    <text x="604" y="406" fill="#57c98a">topics · arguments · verdicts · sittings · bell_log · ledger</text>
+  </g>
+
+  <!-- worker to worker -->
+  <line x1="480" y1="401" x2="570" y2="401" stroke="#57c98a" stroke-width="2"/>
+  <polygon points="576,401 566,396 566,406" fill="#57c98a"/>
+
+  <!-- repo reads down into hades -->
+  <g stroke="#d4a017" stroke-width="1.6" stroke-dasharray="5 5">
+    <line x1="124" y1="158" x2="150" y2="238"/>
+    <line x1="328" y1="158" x2="230" y2="238"/>
+    <line x1="532" y1="158" x2="300" y2="238"/>
+  </g>
+  <polygon points="152,242 142,234 152,232" fill="#d4a017"/>
+  <text x="352" y="228" fill="#8f95ab" font-family="Rajdhani" font-size="15">read at request time · cached 1h · never written back</text>
+
+  <!-- ── the surfaces ── -->
+  <line x1="24" y1="466" x2="1036" y2="466" stroke="#232838"/>
+  <text x="30" y="486" fill="#00ffe0" font-family="Share Tech Mono" font-size="14">THE SURFACES · what the reader receives</text>
+
+  <g font-family="Share Tech Mono" font-size="14">
+    <rect x="60" y="504" width="200" height="58" rx="6" fill="#08161a" stroke="#00ffe0" stroke-width="1.5"/>
+    <text x="76" y="528" fill="#00ffe0">The Terminal</text>
+    <text x="76" y="548" fill="#8f95ab" font-family="Rajdhani" font-size="15">figure speaks · TTS</text>
+
+    <rect x="276" y="504" width="200" height="58" rx="6" fill="#08161a" stroke="#00ffe0" stroke-width="1.5"/>
+    <text x="292" y="528" fill="#00ffe0">The Dispatch</text>
+    <text x="292" y="548" fill="#8f95ab" font-family="Rajdhani" font-size="15">the week, assembled</text>
+
+    <rect x="492" y="504" width="200" height="58" rx="6" fill="#08161a" stroke="#00ffe0" stroke-width="1.5"/>
+    <text x="508" y="528" fill="#00ffe0">Atlantica</text>
+    <text x="508" y="548" fill="#8f95ab" font-family="Rajdhani" font-size="15">essays · room quotes</text>
+
+    <rect x="708" y="504" width="200" height="58" rx="6" fill="#08161a" stroke="#00ffe0" stroke-width="1.5"/>
+    <text x="724" y="528" fill="#00ffe0">The Court</text>
+    <text x="724" y="548" fill="#8f95ab" font-family="Rajdhani" font-size="15">docket · verdicts</text>
+  </g>
+
+  <g stroke="#00ffe0" stroke-width="1.6">
+    <line x1="200" y1="438" x2="160" y2="500"/><polygon points="158,504 158,492 168,498" fill="#00ffe0"/>
+    <line x1="300" y1="438" x2="376" y2="500"/><polygon points="378,504 368,498 378,492" fill="#00ffe0"/>
+    <line x1="420" y1="438" x2="592" y2="500"/><polygon points="594,504 584,498 592,490" fill="#00ffe0"/>
+    <line x1="760" y1="438" x2="808" y2="500"/><polygon points="810,504 800,498 808,490" fill="#00ffe0"/>
+  </g>
+
+  <!-- ── VALHALLA ── -->
+  <line x1="24" y1="590" x2="1036" y2="590" stroke="#232838"/>
+  <text x="30" y="610" fill="#57c98a" font-family="Share Tech Mono" font-size="14">VALHALLA · out · refuses RETURN</text>
+  <rect x="276" y="626" width="416" height="52" rx="7" fill="#0a1512" stroke="#57c98a" stroke-width="1.6"/>
+  <text x="296" y="648" fill="#57c98a" font-family="Share Tech Mono" font-size="15">the herald · assemble.js → HTML → an inbox</text>
+  <text x="296" y="668" fill="#8f95ab" font-family="Rajdhani" font-size="15">no write path back into the register, and it must not acquire one</text>
+  <line x1="484" y1="562" x2="484" y2="622" stroke="#57c98a" stroke-width="1.6"/>
+  <polygon points="484,626 478,614 490,614" fill="#57c98a"/>
+  <text x="704" y="656" fill="#f87171" font-family="Rajdhani" font-size="15">an email cannot be unsent</text>
+</svg>
+<p class="cap">Plate — the three keys, and the path from a flat file to a page.</p>
+
+<h2>What actually happens on one request</h2>
+
+<p>Take a reader opening a figure's terminal. Nothing is fetched from a database
+of pages, because there is no such database.</p>
+
+<table>
+  <thead><tr><th>#</th><th>What happens</th><th>Where</th></tr></thead>
+  <tbody>
+    <tr><td class="g">1</td><td>GitHub Pages serves <code>Page1.html</code> — markup and script, no content</td><td class="m">Amenti · static</td></tr>
+    <tr><td class="g">2</td><td>The page calls <code>/feed</code> on the proxy</td><td class="m">Hades</td></tr>
+    <tr><td class="g">3</td><td>The proxy reads <code>names.csv</code> from <code>raw.githubusercontent</code>, cached an hour</td><td class="m">Amenti → Hades</td></tr>
+    <tr><td class="g">4</td><td>It reads the week's articles from the <code>ARTICLES</code> KV binding</td><td class="m">Hades · KV</td></tr>
+    <tr><td class="g">5</td><td>Plates resolve <b>by convention</b> — <code>img/{key}-terminal.jpg</code>, probed, never looked up in a map</td><td class="m">Amenti · static</td></tr>
+    <tr><td class="g">6</td><td>For the court, it calls the mint over the <code>MINT_SVC</code> service binding — worker to worker, never over the public internet</td><td class="m">Hades → Hades</td></tr>
+    <tr><td class="g">7</td><td>The mint reads Supabase with its service key and returns <code>/hall</code></td><td class="m">Hades · Supabase</td></tr>
+    <tr><td class="g">8</td><td>The page composes HTML in the browser and the reader sees it</td><td class="m">the surface</td></tr>
+    <tr><td class="g">·</td><td><b>The proxy keeps none of it.</b> It wakes, runs, and is gone</td><td class="m">Hades</td></tr>
+  </tbody>
+</table>
+
+<div class="law blue">NO PAGE IS STORED. EVERY ONE IS ASSEMBLED AT THE EDGE<br>
+FROM FLAT FILES THAT CANNOT RUN AND COMPUTE THAT CANNOT REMEMBER.</div>
+
+<h2>What each Worker can reach</h2>
+
+<p>Derived from the bindings, not stated — <b>a binding is the only way a Worker
+can touch anything outside itself.</b> If a store is not bound here, that Worker
+cannot see it, whatever any document claims.</p>
+
+<div id="reach"></div>
 
 <h2>The restore checklist</h2>
 <p><b>The source is not the whole Worker.</b> Standing these back up in a fresh
@@ -420,6 +600,24 @@ if (document.fonts && document.fonts.ready) {
             + '</div></div>'
           : '<div class="row"><div class="rk">Secrets</div><div class="rv" style="color:var(--dim)">none — it needs nothing to come back up</div></div>')
       + '</div></div>';
+  }).join('');
+
+  /* ── what each Worker can reach, derived from its bindings ──────────── */
+  const REACH = {
+    kv_namespace:'a KV namespace', r2_bucket:'an R2 bucket',
+    service:'another Worker', ai:'the AI catalogue', plain_text:'a config value',
+  };
+  $('reach').innerHTML = names.map(w => {
+    const out = binds(w).filter(b => b.type !== 'secret_text');
+    return '<div class="reach"><div class="rn">' + esc(w) + '</div>'
+      + (out.length
+          ? '<div class="rl">' + out.map(b =>
+              '<span class="b ' + (CLS[b.type] || '') + '">' + esc(b.name)
+              + '<span class="t">' + esc(REACH[b.type] || b.type) + '</span></span>').join('')
+            + '</div>'
+          : '<div class="none">Reaches nothing outside itself. It answers requests from what it is '
+            + 'given and returns. Not a limitation — the smallest surface a Worker can have.</div>')
+      + '</div>';
   }).join('');
 
   /* ── the restore checklist ──────────────────────────────────────────── */
