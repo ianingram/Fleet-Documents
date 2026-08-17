@@ -4,22 +4,76 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>The Fleet at Anchor — bird's-eye</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Special+Elite&family=Rajdhani:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="amenti.css">
+<!-- ============================================================================
+     ocean.html  ·  THE FLEET AT ANCHOR
+     ----------------------------------------------------------------------------
+     ── FOUR FAULTS FOUND BY PROBE, 17 AUGUST 2026 ────────────────────────────
+     This pane had already been rescued once: the fleet was HARD-CODED here,
+     seven ships typed by hand under a comment claiming they came from the
+     manifest. That was fixed and the header records it. Four things remained.
+
+     1. UNPROVEN RENDERED AS CONFIRMED.  stampOf() tested for CONTRADICTED, then
+        ADRIFT, then returned CONFIRMED for everything else — so a ship stamped
+        UNPROVEN, a ship stamped UNDECLARED, and a ship carrying NO STAMPS AT
+        ALL all drew gold and glowing. The Harbor counts unproven in its health
+        strip. The engine room prints it amber. This chart called it fine.
+
+        A GREEN LIGHT WITH NOTHING BEHIND IT — and worse here than anywhere,
+        because a chart is the surface a reader trusts most at a glance.
+
+     2. THE FILTERS DROPPED THINGS SILENTLY.  `.filter(s => s.grid)` meant a
+        ship with no coordinates was simply NOT ON THE MAP, and nothing said so.
+        Six drawn out of seven aboard, and the difference invisible. For a pane
+        whose whole rewrite was about not being a confident portrait, a silent
+        omission is the same fault in a quieter coat. Now counted and named
+        below the chart.
+
+     3. THE CREW RING WAS ARBITRARY.  Ship positions come from s.grid, authored
+        in fleet-semantics.js. Crew positions were computed from ARRAY INDEX —
+        i / n * 2π — so adding one hand moved every other one. The ring carried
+        no information about the ship. It is still a ring, because a ring is
+        honest about being a list, but it now SAYS it is ordering rather than
+        position.
+
+     4. THE GUARD DID NOT COVER crew.  The empty-glass check required ships,
+        satellites and watches. A manifest missing `crew` would have thrown in
+        the draw loop instead of showing the box.
+
+     THE LAW THIS PANE RUNS ON: it reads fleet-manifest.js and nothing else. If
+     there is no reading it shows you nothing — not the last thing it saw.
+     ============================================================================ -->
 <style>
   :root{
     --void:#04060e; --term:#57b6ff; --termlite:#9adcff; --gold:#e6b450;
     --goldlite:#f5d76e; --rust:#e0575f; --green:#5fcf80; --dim:#8b95ad; --faint:#57607a;
+    --amber:#fbbf24; --red:#f87171;
     --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+    /* THE DISPLAY FACE. This pane used Trebuchet MS for its heading — the only
+       pane in the fleet that did. Amenti Display now, Special Elite behind it. */
+    --disp:'Amenti Display','Special Elite',cursive;
+    --elite:'Amenti Display','Special Elite',cursive;
   }
   body{margin:0;background:var(--void);color:#e4e8f4;font-family:var(--mono);padding:24px}
   .frame{max-width:1000px;margin:0 auto}
   .cap{text-align:center;font:11px/1.6 var(--mono);letter-spacing:.14em;color:var(--faint);margin-top:14px;text-transform:uppercase}
-  h2{text-align:center;font-family:'Trebuchet MS',sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#fff;font-size:20px}
+  h2{text-align:center;font-family:var(--disp);font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--goldlite);font-size:clamp(22px,3.4vw,34px);margin:26px 0 6px}
   .sub{text-align:center;color:var(--dim);font-style:italic;font-size:13px;margin-bottom:16px}
   canvas{display:block;width:100%;height:auto;border:1px solid #1a2440;border-radius:12px;
     background:radial-gradient(1200px 600px at 50% 35%, #14263f 0%, #0a1424 60%, #060c16 100%)}
   .legend{display:flex;gap:20px;justify-content:center;flex-wrap:wrap;margin-top:12px;font-size:11px;color:var(--dim)}
   .legend span{display:inline-flex;align-items:center;gap:6px}
   .dot{width:10px;height:10px;border-radius:2px;display:inline-block}
+
+  /* ── NOT ON THIS CHART ────────────────────────────────────────────────────
+     Everything the filters dropped, named. A chart that omits without saying
+     so is a portrait again. */
+  #omitted{display:none;margin:16px 0 0;padding:14px 18px;border:1px solid #7a5a1a;
+    border-radius:8px;background:rgba(251,191,36,.06);font-size:13px;line-height:1.8;color:var(--amber)}
+  #omitted .k{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--amber)}
+  #omitted .v{color:#e4e8f4;margin-top:4px}
+  #omitted .why{color:var(--dim);font-style:italic;margin-top:8px;font-size:12.5px}
 </style>
 <style>
 .fleet-nav{position:sticky;top:0;z-index:900;display:flex;flex-wrap:wrap;gap:2px;padding:0 20px;
@@ -43,7 +97,10 @@
     <span><i class="dot" style="background:#f5d76e"></i> Ships of the Line (on-repo)</span>
     <span><i class="dot" style="background:#e6b450;opacity:.6"></i> Fleet Beyond the Harbor (off-repo)</span>
     <span><i class="dot" style="background:#57b6ff"></i> Sentry Corps (the watch)</span>
+    <span><i class="dot" style="background:#fbbf24"></i> Unproven — nothing has looked</span>
+    <span><i class="dot" style="background:#f87171"></i> Contradicted</span>
   </div>
+  <div id="omitted"></div>
   <div class="cap">Amenti Command · a living chart</div>
 </div>
 
@@ -64,9 +121,12 @@
 
      It now reads fleet-manifest.js and NOTHING ELSE. If there is no reading, it
      shows you nothing — not the last thing it saw.
+
+     FAULT 4: `crew` was READ by the draw loop and NOT CHECKED here, so a
+     manifest missing it would throw rather than show the box. Checked now.
      ──────────────────────────────────────────────────────────────────────── */
   const M = window.FLEET_MANIFEST;
-  if (!M || !M.ships || !M.satellites || !M.watches) {
+  if (!M || !M.ships || !M.satellites || !M.watches || !M.crew) {
     document.body.innerHTML =
       '<div style="max-width:640px;margin:16vh auto;padding:38px 40px;border:2px solid #f87171;' +
       'border-radius:8px;background:rgba(248,113,113,.08);font:16px/1.7 ui-monospace,monospace;color:#e8b0b0">' +
@@ -79,52 +139,110 @@
     return;
   }
 
-  /* A ship that CONTRADICTS the reading BURNS RED on the water.
-     The old chart had no way to show a broken ship. It only knew how to be pretty. */
+  /* ── FAULT 1 · THE STAMP ──────────────────────────────────────────────────
+     This used to be: CONTRADICTED, else ADRIFT, else CONFIRMED. Everything the
+     fleet calls UNPROVEN or UNDECLARED — and everything carrying NO STAMP AT
+     ALL — came back CONFIRMED and drew gold.
+
+     The fleet has four words and this chart knew two of them. It now knows all
+     four, and UNSTAMPED is its own answer rather than a pass: a ship nobody has
+     said anything about is not a ship anybody has checked. */
   const stampOf = (o) => {
     const st = o.stamps || [];
-    if (st.indexOf('CONTRADICTED') >= 0) return 'CONTRADICTED';
-    if (st.indexOf('ADRIFT') >= 0)       return 'ADRIFT';
-    return 'CONFIRMED';
+    if (!st.length)                       return 'UNSTAMPED';
+    if (st.indexOf('CONTRADICTED') >= 0)  return 'CONTRADICTED';
+    if (st.indexOf('ADRIFT') >= 0)        return 'ADRIFT';
+    if (st.indexOf('UNPROVEN') >= 0)      return 'UNPROVEN';
+    if (st.indexOf('UNDECLARED') >= 0)    return 'UNDECLARED';
+    if (st.indexOf('CONFIRMED') >= 0)     return 'CONFIRMED';
+    return 'UNSTAMPED';
   };
   const hex = (n) => '#' + ('000000' + ((n || 0x888888) >>> 0).toString(16)).slice(-6);
-  const hullCol = (o) => {
-    const st = stampOf(o);
-    if (st === 'CONTRADICTED') return '#f87171';
-    if (st === 'ADRIFT')       return '#fbbf24';
-    return hex(o.color);
+  const STCOL = {
+    CONTRADICTED: '#f87171',
+    ADRIFT:       '#fbbf24',
+    UNPROVEN:     '#fbbf24',
+    UNDECLARED:   '#fbbf24',
+    UNSTAMPED:    '#8b95ad',   /* grey. Not an alarm — an absence, and it looks like one. */
   };
+  const hullCol = (o) => STCOL[stampOf(o)] || hex(o.color);
+  const isClean = (o) => stampOf(o) === 'CONFIRMED';
 
-  /* THE SHIPS — observed, not typed. */
+  /* ── FAULT 2 · WHAT THE FILTERS DROP ─────────────────────────────────────
+     A ship with no grid is not on the map. That was true before and silent.
+     It is still true — a chart cannot draw a thing with no position — but it
+     is now COUNTED AND NAMED beneath the canvas.
+
+     "Six of seven, and the seventh has no coordinates" is a fact. "Six" on its
+     own is a portrait. */
+  const omitted = { ships: [], crew: [], satellites: [] };
+
   const ships = M.ships
-    .filter(s => s.grid)
+    .filter(s => { if (s.grid) return true; omitted.ships.push(s.name || s.file || '?'); return false; })
     .map(s => ({
       n: s.name, file: s.file, cls: s.flag ? 'flag' : 'ship',
       gx: s.grid.gx, gy: s.grid.gy, size: s.flag ? 1.4 : 1,
-      col: hullCol(s), stamp: stampOf(s)
+      col: hullCol(s), stamp: stampOf(s), clean: isClean(s)
     }));
 
   /* THE CREW — the hands below deck. They did not appear on the old chart at
-     all, and six of them were invisible to every view in the fleet. */
-  const crew = M.crew
-    .filter(c => c.board)
-    .map((c, i, arr) => {
+     all, and six of them were invisible to every view in the fleet.
+
+     FAULT 3: these positions are COMPUTED FROM ARRAY INDEX, not read from the
+     manifest — add one hand and every other one moves. It is a RING, which is
+     an honest shape for a list, and the caption below now says so rather than
+     letting a reader take the arrangement for a station. */
+  const crewOnBoard = M.crew.filter(c => {
+    if (c.board) return true;
+    omitted.crew.push(c.name || c.file || '?');
+    return false;
+  });
+  const crew = crewOnBoard.map((c, i, arr) => {
       const n = arr.length, a = (i / n) * Math.PI * 2 - Math.PI / 2;
       return { n: c.name, file: c.file, gx: Math.cos(a) * 1.15, gy: Math.sin(a) * 0.9 + 2.6,
-               col: hullCol(c), stamp: stampOf(c) };
+               col: hullCol(c), stamp: stampOf(c), clean: isClean(c) };
     });
 
-  const offshore = M.satellites.filter(s => s.grid)
+  const offshore = M.satellites
+    .filter(s => { if (s.grid) return true; omitted.satellites.push(s.name || s.id || '?'); return false; })
     .map(s => ({ n: s.name || s.id, gx: s.grid.gx, gy: s.grid.gy }));
 
   /* THE WATCHES. A watch with NO INSTRUMENT burns amber. Not because it failed —
      because NOTHING IS WATCHING, and this chart will no longer put a green light
-     over an empty tower. */
-  const sentries = M.watches.map(w => ({
-    n: w.id, corner: w.corner,
-    col: w.stamp === 'CONFIRMED' ? '#57b6ff' : (w.stamp === 'CONTRADICTED' ? '#f87171' : '#fbbf24'),
-    proven: w.stamp === 'CONFIRMED'
-  }));
+     over an empty tower.
+
+     Two watches assigned the same corner would draw on top of each other and
+     one would be invisible. Collisions are pushed to the omitted panel rather
+     than stacked in silence. */
+  const seenCorner = {};
+  const sentries = M.watches.map(w => {
+    const cn = w.corner || 'tc';
+    if (seenCorner[cn]) omitted.crew.push('watch ' + (w.id || '?') + ' — corner ' + cn + ' already taken by ' + seenCorner[cn]);
+    else seenCorner[cn] = w.id;
+    return {
+      n: w.id, corner: cn,
+      col: w.stamp === 'CONFIRMED' ? '#57b6ff' : (w.stamp === 'CONTRADICTED' ? '#f87171' : '#fbbf24'),
+      proven: w.stamp === 'CONFIRMED'
+    };
+  });
+
+  /* ── say what is not here ── */
+  (function () {
+    const bits = [];
+    if (omitted.ships.length)      bits.push(['Ships not on the chart', omitted.ships.join(' · '), 'no grid coordinates in fleet-semantics.js — the chart cannot place them']);
+    if (omitted.satellites.length) bits.push(['Satellites not on the chart', omitted.satellites.join(' · '), 'no grid coordinates']);
+    if (omitted.crew.length)       bits.push(['Hands not shown', omitted.crew.join(' · '), 'not marked board:true, or a watch corner already taken']);
+    const el = document.getElementById('omitted');
+    if (!bits.length) return;
+    el.style.display = 'block';
+    el.innerHTML = '<div class="k">Not on this chart</div>'
+      + bits.map(b => '<div class="v"><b>' + b[0] + ':</b> ' + b[1]
+                    + '<div class="why">' + b[2] + '</div></div>').join('')
+      + '<div class="why">Drawn: ' + ships.length + ' of ' + M.ships.length + ' ships · '
+      + crew.length + ' of ' + M.crew.length + ' hands · '
+      + offshore.length + ' of ' + M.satellites.length + ' satellites. '
+      + 'A chart that omits without saying so is a portrait.</div>';
+  })();
 
   const CX = W/2, CY = H/2 + 20, U = 96; // unit spacing (enlarged)
   let t = 0;
@@ -267,17 +385,20 @@
       const bob = Math.sin(t*0.8 + i)*3;
       const px = CX + s.gx*U, py = CY + s.gy*U*0.72 + bob;
       const heading = -Math.PI/2 + Math.sin(t*0.3+i)*0.06; // gently pointing "up"/forward
-      const col = s.col;
-      const glow= s.stamp === 'CONFIRMED'
+      const col = s.clean ? (s.cls==='flag' ? '#f5d76e' : '#e6b450') : s.col;
+      const glow= s.clean
         ? (s.cls==='flag' ? 'rgba(245,215,110,.7)' : 'rgba(202,162,58,.4)')
-        : 'rgba(248,113,113,.8)';
+        : (s.stamp === 'UNSTAMPED' ? 'rgba(139,149,173,.5)' : 'rgba(251,191,36,.7)');
       ship(px,py,s.size,heading,col,glow,s.cls==='flag');
-      x.fillStyle = s.stamp === 'CONFIRMED' ? (s.cls==='flag' ? '#ffe6a0':'#e6c878') : col;
+      x.fillStyle = s.clean ? (s.cls==='flag' ? '#ffe6a0':'#e6c878') : col;
       x.font=(s.cls==='flag'?'bold 17px ':'bold 15px ')+'ui-monospace'; x.textAlign='center';
       x.fillText(s.n, px, py+24*s.size);
-      if (s.stamp !== 'CONFIRMED') {
+      /* EVERY state that is not CONFIRMED prints its word under the hull.
+         Before, only CONTRADICTED and ADRIFT did — so a ship nobody had checked
+         sailed gold and unlabelled. */
+      if (!s.clean) {
         x.font='11px ui-monospace'; x.fillStyle=col;
-        x.fillText(s.stamp, px, py+24*s.size+15);
+        x.fillText(s.stamp === 'UNSTAMPED' ? 'NO STAMP' : s.stamp, px, py+24*s.size+15);
       }
     });
 
@@ -285,14 +406,22 @@
     crew.forEach((c,i)=>{
       const px = CX + c.gx*U, py = CY + c.gy*U*0.72 + Math.sin(t*0.7+i)*2;
       x.beginPath(); x.arc(px,py,5,0,7);
-      x.fillStyle = c.col; x.shadowColor = c.col;
-      x.shadowBlur = c.stamp === 'CONFIRMED' ? 8 : 16;
+      x.fillStyle = c.clean ? '#8b95ad' : c.col;
+      x.shadowColor = c.clean ? '#8b95ad' : c.col;
+      x.shadowBlur = c.clean ? 8 : 16;
       x.fill(); x.shadowBlur = 0;
-      x.fillStyle = c.stamp === 'CONFIRMED' ? 'rgba(180,190,210,.7)' : c.col;
-      x.font = (c.stamp === 'CONFIRMED' ? '11px ' : 'bold 11px ') + 'ui-monospace';
+      x.fillStyle = c.clean ? 'rgba(180,190,210,.7)' : c.col;
+      x.font = (c.clean ? '11px ' : 'bold 11px ') + 'ui-monospace';
       x.textAlign = 'center';
       x.fillText(c.n, px, py + 17);
     });
+
+    /* THE RING IS AN ORDERING, NOT A STATION. Said on the chart itself, because
+       a reader looking at a ring will otherwise assume the arrangement means
+       something. It does not: positions come from array index, and adding one
+       hand moves all of them. */
+    x.fillStyle='rgba(87,96,122,.75)'; x.font='11px ui-monospace'; x.textAlign='center';
+    x.fillText('the ring is an ordering, not a station', CX, CY + 2.6*U*0.72 + 62);
 
     // center label
     x.fillStyle='rgba(138,149,173,.5)'; x.font='13px ui-monospace'; x.textAlign='center';
