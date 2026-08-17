@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>THE ENGINE ROOM · Amenti Fleet</title>
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Special+Elite&family=Rajdhani:wght@200;300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="amenti.css">
 <!-- ============================================================================
      engine-room.html  ·  A PANE OF THE GLASS GATE
      ----------------------------------------------------------------------------
@@ -28,6 +29,22 @@
      ships-manifest.html has been showing a beautiful, confident, months-old
      fleet, in green, with no way to know it had gone blind. It was not lying.
      IT WAS STILL SHOWING THE LAST THING IT SAW, FOREVER.
+
+     ── THE FACE, 17 AUGUST 2026 ──────────────────────────────────────────────
+     This pane rendered in SPECIAL ELITE for its whole life. --elite named the
+     fallback directly, so the display face was never asked for — nine of ten
+     panes did the same, and it never errored. A pane that names a font it
+     cannot load falls back and looks FINISHED.
+
+     No failure to point at, so nothing pointed at it. The same shape as
+     `sealed: 1` counting a freeze that 400'd, as the cron registered for
+     Sunday, as this repo's index.html replaced by a Go hello-world with
+     nothing in the fleet able to notice for twelve hours.
+
+     Two lines: link amenti.css, and put 'Amenti Display' in front of the
+     fallback. Special Elite STAYS behind it deliberately — if the face fails
+     again the pane will look wrong rather than merely plain, and wrong is
+     easier to see.
      ============================================================================ -->
 <style>
 :root{
@@ -36,7 +53,12 @@
   --ink:#0a0a0f; --granite:#12121a; --slate:#2a2a38; --wire:#3a3a52;
   --text:#c8c8d8; --dim:#a4a4b8;
   --red:#f87171; --amber:#fbbf24; --green:#4ade80;
-  --elite:'Special Elite',cursive; --mono:'Share Tech Mono',monospace; --body:'Rajdhani',sans-serif;
+  /* THE DISPLAY FACE. Amenti Display first — the woff2 files are carried into
+     this repo by the Glass Gate, so they are same-origin and load without a
+     CORS negotiation. Special Elite remains the fallback, on purpose. */
+  --elite:'Amenti Display','Special Elite',cursive;
+  --disp:'Amenti Display','Special Elite',cursive;   /* the fleet's newer panes use this name */
+  --mono:'Share Tech Mono',monospace; --body:'Rajdhani',sans-serif;
 }
 *{box-sizing:border-box}
 body{margin:0;background:var(--ink);color:var(--text);font-family:var(--body);font-weight:300;font-size:18px;line-height:1.7}
@@ -51,10 +73,10 @@ main{max-width:1060px;margin:0 auto;padding:48px 24px 140px}
 .mark .live{color:var(--term);text-shadow:0 0 10px var(--term);animation:blink 1.35s steps(1,end) infinite}
 @keyframes blink{0%,54%{opacity:1}55%,100%{opacity:.18}}
 
-h1{font-family:var(--elite);font-size:clamp(30px,5vw,50px);color:var(--gold-bright);letter-spacing:.04em;margin:36px 0 6px}
+h1{font-family:var(--elite);font-weight:700;font-size:clamp(30px,5vw,50px);color:var(--gold-bright);letter-spacing:.04em;margin:36px 0 6px}
 .sub{font-family:var(--elite);font-size:16px;letter-spacing:.2em;color:var(--gold-deep);margin:0 0 8px}
 .eyebrow{font-family:var(--mono);font-size:13px;letter-spacing:.3em;color:var(--neon);text-transform:uppercase;margin:0}
-h2{font-family:var(--elite);font-size:clamp(21px,3vw,29px);color:var(--gold);margin:56px 0 16px;border-bottom:1px solid var(--slate);padding-bottom:10px}
+h2{font-family:var(--elite);font-weight:600;font-size:clamp(21px,3vw,29px);color:var(--gold);margin:56px 0 16px;border-bottom:1px solid var(--slate);padding-bottom:10px}
 h3{font-family:var(--mono);font-size:14px;letter-spacing:.22em;color:var(--neon);text-transform:uppercase;margin:34px 0 12px}
 
 /* ── THE EMPTY-GLASS BOX ─────────────────────────────────────────────────── */
@@ -72,7 +94,7 @@ h3{font-family:var(--mono);font-size:14px;letter-spacing:.22em;color:var(--neon)
 /* ── HEALTH ──────────────────────────────────────────────────────────────── */
 .health{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin:26px 0}
 .h{padding:18px;border:1px solid var(--slate);border-radius:5px;background:var(--granite);text-align:center}
-.h .n{font-family:var(--elite);font-size:38px;line-height:1}
+.h .n{font-family:var(--elite);font-weight:700;font-size:38px;line-height:1}
 .h .l{font-family:var(--mono);font-size:12px;letter-spacing:.18em;color:var(--dim);text-transform:uppercase;margin-top:8px}
 .h.bad{border-color:#7a2a2a}.h.bad .n{color:var(--red)}
 .h.warn{border-color:#7a5a1a}.h.warn .n{color:var(--amber)}
@@ -94,7 +116,7 @@ h3{font-family:var(--mono);font-size:14px;letter-spacing:.22em;color:var(--neon)
 .eng{margin:18px 0;border:1px solid var(--slate);border-radius:6px;background:var(--granite);overflow:hidden}
 .eng .top{display:flex;align-items:center;gap:14px;padding:18px 22px;border-bottom:1px solid var(--slate)}
 .eng .dot{width:11px;height:11px;border-radius:50%;flex:none}
-.eng .nm{font-family:var(--elite);font-size:22px;color:var(--gold-bright);flex:1}
+.eng .nm{font-family:var(--elite);font-weight:600;font-size:22px;color:var(--gold-bright);flex:1}
 .eng .st{font-family:var(--mono);font-size:12px;letter-spacing:.2em;padding:4px 12px;border-radius:20px;border:1px solid}
 .st.CONFIRMED{color:var(--green);border-color:#2f7a52}
 .st.UNPROVEN{color:var(--amber);border-color:#7a5a1a}
