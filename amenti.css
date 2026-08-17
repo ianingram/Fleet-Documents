@@ -1,1 +1,8 @@
+@font-face{font-family:'Amenti Display';font-weight:400;font-style:normal;font-display:swap;
+  src:url('https://ianingram.github.io/Amenti.live/fonts/amenti-display-400.woff2') format('woff2');}
+@font-face{font-family:'Amenti Display';font-weight:600;font-style:normal;font-display:swap;
+  src:url('https://ianingram.github.io/Amenti.live/fonts/amenti-display-600.woff2') format('woff2');}
+@font-face{font-family:'Amenti Display';font-weight:700;font-style:normal;font-display:swap;
+  src:url('https://ianingram.github.io/Amenti.live/fonts/amenti-display-700.woff2') format('woff2');}
 
+:root{--disp:'Amenti Display','Special Elite',serif;}
