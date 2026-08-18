@@ -1,4 +1,3 @@
-
 #!/usr/bin/env node
 /* ============================================================================
    probes/probe-panes.mjs  ·  THE PANE WATCH
