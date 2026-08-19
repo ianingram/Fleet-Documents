@@ -28,6 +28,12 @@
 
      This file states no facts. It renders fleet-manifest.js. If there is no
      reading, it shows the EMPTY-GLASS BOX — not the last thing it saw.
+
+     ── AND, SINCE 19 AUGUST, THE ARK ─────────────────────────────────────────
+     The four towers guard the fleet WHILE IT SAILS. The ark guards against the
+     fleet not existing. It is NOT a fifth watch — it has no threat and no probe
+     — so it reads ARK.json, renders as a strip beneath the towers, and takes no
+     lamp in the tally.
      ============================================================================ -->
 <style>
 :root{
@@ -105,6 +111,29 @@ h1{font-family:var(--elite);font-size:clamp(30px,5vw,50px);color:var(--gold-brig
 .saw .h{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;opacity:.75;margin-bottom:6px}
 .note{font-size:16px;color:var(--dim);font-style:italic;line-height:1.6;border-left:2px solid var(--wire);padding-left:14px;margin-top:14px}
 
+/* ── THE ARK ──────────────────────────────────────────────────────────────
+   The four towers guard the fleet WHILE IT SAILS. This guards against the
+   fleet not existing. Not a fifth watch — no threat, no probe — so it renders
+   as a strip and takes no lamp in the tally above. */
+.ark{margin:34px 0 0;border:1px solid var(--slate);border-left-width:4px;border-radius:0 8px 8px 0;
+  background:var(--granite);padding:18px 24px}
+.ark.ok{border-left-color:var(--green)}
+.ark.warn{border-left-color:var(--amber)}
+.ark.bad{border-left-color:var(--red)}
+.ark .h{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.ark .lamp{width:12px;height:12px;border-radius:50%;flex:none}
+.ark.ok .lamp{background:var(--green);box-shadow:0 0 12px var(--green)}
+.ark.warn .lamp{background:var(--amber);box-shadow:0 0 12px var(--amber);animation:pulse 1.8s ease-in-out infinite}
+.ark.bad .lamp{background:var(--red);box-shadow:0 0 16px var(--red);animation:pulse .9s ease-in-out infinite}
+.ark .nm{font-family:var(--elite);font-size:21px;color:var(--gold-bright);letter-spacing:.03em;flex:1}
+.ark .st{font-family:var(--mono);font-size:12px;letter-spacing:.2em;padding:4px 12px;border-radius:20px;border:1px solid}
+.ark.ok .st{color:var(--green);border-color:#2f7a52}
+.ark.warn .st{color:var(--amber);border-color:#7a5a1a}
+.ark.bad .st{color:var(--red);border-color:#7a2a2a}
+.ark .line{margin-top:12px;font-size:16.5px;line-height:1.6;color:var(--dim)}
+.ark .line b{color:#e6e9f2;font-weight:400}
+.ark .m{font-family:var(--mono);font-size:13px;letter-spacing:.06em;color:var(--dim);margin-top:10px}
+
 .law{margin:56px 0 0;padding:26px 30px;border:1px solid var(--gold-deep);border-radius:6px;background:linear-gradient(180deg,rgba(212,160,23,.06),transparent)}
 .law p{font-family:var(--elite);font-size:20px;color:var(--gold-bright);margin:0 0 12px;line-height:1.5}
 .law p:last-child{margin-bottom:0}
@@ -145,6 +174,8 @@ h1{font-family:var(--elite);font-size:clamp(30px,5vw,50px);color:var(--gold-brig
 
     <div id="watches"></div>
 
+    <div id="ark"></div>
+
     <div class="law">
       <p>The probe is the instrument. The patrol record is the reading.</p>
       <p>A probe that has never run is a prayer.</p>
@@ -164,12 +195,79 @@ h1{font-family:var(--elite);font-size:clamp(30px,5vw,50px);color:var(--gold-brig
   'use strict';
   var M = window.FLEET_MANIFEST;
 
-  /* NO READING -> THE BOX. Never a memory. Never a guess. */
-  if (!M || !M.meta || !M.watches) { document.getElementById('empty').style.display = 'block'; return; }
-  document.getElementById('glass').style.display = 'block';
-
   var $   = function (id) { return document.getElementById(id); };
   var esc = function (s) { return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); };
+
+  /* ── THE ARK ────────────────────────────────────────────────────────────
+     Not a fifth watch. The towers guard the fleet WHILE IT SAILS; this guards
+     against the fleet not existing.
+
+     THE FIELD THAT MATTERS IS offProvider. A run that bundled every repository
+     and kept the result as a GitHub artifact is not a backup against losing the
+     account — it is a second copy on the same platform as the original.
+     GREEN IS RESERVED FOR A COPY THAT IS SOMEWHERE ELSE.
+
+     AND STALE IS RED, NOT AMBER. Every other amber on this pane means "nothing
+     is watching" — bad, and static. A backup that has silently stopped is bad
+     and GETTING WORSE: every day widens the gap between what exists and what
+     survives.
+
+     DRAWN INDEPENDENTLY of fleet-manifest.js, and deliberately so — whether the
+     repositories survive is a fact that does not depend on whether a patrol
+     made the rounds. */
+  function paintArk() {
+    fetch('ARK.json', { cache: 'no-store' })
+      .then(function (r) { if (!r.ok) throw 0; return r.json(); })
+      .then(function (a) {
+        var days = (Date.now() - Date.parse(a.at)) / 864e5;
+        var cls, word, line;
+
+        if (days > (a.staleAfterDays || 8)) {
+          cls = 'bad'; word = 'STALE';
+          line = 'The last ark was <b>' + Math.round(days) + ' days ago</b>. A backup that has '
+               + 'silently stopped is the failure this exists to prevent, and the gap between '
+               + 'what exists and what survives widens every day.';
+        } else if (!a.offProvider) {
+          cls = 'warn'; word = 'SAME PLATFORM';
+          line = '<b>' + a.repos + ' repositories</b> bundled and verified — and kept as a GitHub '
+               + 'artifact, which is the same platform as the thing being copied. This protects '
+               + 'against a bad push. It does <b>not</b> protect against losing the account.';
+        } else {
+          cls = 'ok'; word = 'OFF-PROVIDER';
+          line = '<b>' + a.repos + ' repositories</b>, full history, every bundle opened and read '
+               + 'back before it was called good — and held <b>somewhere other than GitHub</b>.';
+        }
+        if (a.failed) {
+          cls = 'bad'; word = 'INCOMPLETE';
+          line = '<b>' + a.failed + ' repositor' + (a.failed === 1 ? 'y' : 'ies') + ' did not bundle.</b> '
+               + 'A partial ark that passes is how you discover, on the worst day, that the repo '
+               + 'you needed was the one that quietly stopped being included.';
+        }
+
+        $('ark').innerHTML =
+          '<div class="ark ' + cls + '">'
+          + '<div class="h"><span class="lamp"></span><span class="nm">THE ARK</span>'
+          + '<span class="st">' + word + '</span></div>'
+          + '<div class="line">' + line + '</div>'
+          + '<div class="m">taken ' + String(a.at).replace('T', ' ').slice(0, 16)
+          + ' · ' + esc(a.where || '') + ' · restore: ' + esc(a.restore || '') + '</div>'
+          + '</div>';
+      })
+      .catch(function () {
+        /* EMPTY GLASS, like everything else on this pane. An ark that cannot be
+           read is not an ark that failed — and it is not one that worked. */
+        $('ark').innerHTML =
+          '<div class="ark warn"><div class="h"><span class="lamp"></span>'
+          + '<span class="nm">THE ARK</span><span class="st">NO READING</span></div>'
+          + '<div class="line">ARK.json has not come through the gate. Whether the repositories '
+          + 'are backed up is <b>unknown</b> — which is a different answer from no.</div></div>';
+      });
+  }
+
+  /* NO READING -> THE BOX. Never a memory. Never a guess. */
+  if (!M || !M.meta || !M.watches) { $('empty').style.display = 'block'; return; }
+  $('glass').style.display = 'block';
+  paintArk();
 
   /* THE PATROL. A watch carries its patrol record if one was folded in by the
      merge. If none of them do, NOBODY HAS MADE THE ROUNDS — and this pane will
