@@ -46,6 +46,12 @@
        Cloudflare's API by mirror.yml and carried here by the Glass Gate.
        Crons, bindings, and the names of every secret a restore would need. */
     { file: 'workers.html',        label: 'WORKERS'      },
+    /* 20 Aug 2026 — the fifteenth. Reads VOICE.json, written by
+       probes/probe-voice.mjs walking the surfaces and carried here by the Glass
+       Gate. Which speech globals are registered and where, load order against
+       use order, where the mouth opens, and the chunk profile each surface
+       keeps. The pane that would have caught the 936-line gap. */
+    { file: 'voice.html',          label: 'THE VOICE'    },
   ];
   /* which page are we on? match the last path segment, default to index.html */
   const here = (location.pathname.split('/').pop() || 'index.html').toLowerCase()

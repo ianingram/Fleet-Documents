@@ -1,0 +1,546 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Voice · Amenti Fleet</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet">
+<!-- THE AMENTI FACE. Declared in amenti.css as an @font-face with the woff2
+     embedded. Naming a family without loading it is a CLAIM, not a font. -->
+<link rel="stylesheet" href="amenti.css">
+<!--
+  ==========================================================================
+   THE VOICE  ·  voice.html  ·  Fleet-Documents
+  --------------------------------------------------------------------------
+   THIS PANE TYPES NOTHING. It reads VOICE.json, which probes/probe-voice.mjs
+   wrote by walking the surfaces, and which the Glass Gate copied here. Every
+   line number, count and verdict below is a READING.
+
+   THE DIVISION, AGREED BEFORE THIS PANE WAS BUILT
+     THE PANE carries the readable half — what is registered and where, load
+     order against use order, which paths chunk and at what profile, where the
+     mouth opens, and every call site the probe could not attribute.
+     THE BRIEFS carry the authored half — the doctrine, why the microphone has
+     four colours, why the mouth needs a brake. Prose on a pane goes stale.
+     This pane links out rather than restating.
+
+   WHAT THIS PANE MUST NOT DO, and does not:
+     · NO FIFTH WATCH. The ARCHIVE WATCH already reports the cache key on the
+       Watch pane, six wires, every six hours. This pane shows the SHAPE of the
+       key — its inputs — never its health.
+     · NO RESTATING THE DOCTRINE. Register tables, microphone colours and the
+       arrest belong to AMENTI-SPEECH-DOCTRINE.html.
+     · EMPTY GLASS if VOICE.json cannot be read. Never the last thing it saw.
+
+   THE ONE THING STATED RATHER THAN READ is the seam — a diagram of cognition
+   and articulation kept apart. It is a drawing of an idea, not a count, and it
+   is marked as authored where it sits.
+
+   VOCABULARY is the fleet's: CONTRADICTED, UNPROVEN, UNDECLARED, ACCEPTED.
+   The probe's own severities map onto it in one place, below, so a reader
+   moving between panes does not learn a second dictionary.
+  ==========================================================================
+-->
+<style>
+:root{
+  --gold:#d4a017; --gold-b:#f5c542; --neon:#00ffe0; --term:#57c98a;
+  --violet:#c4a5ff; --tblue:#57b6ff; --amber:#fbbf24; --red:#f87171;
+  --ink:#08090e; --granite:#11131c; --slate:#232838; --wire:#343b52;
+  --text:#c8ccdc; --dim:#8f95ab;
+  --gold-bright:#f5c542; --gold-light:#f0c040;
+  --mono:'Share Tech Mono',monospace; --body:'Rajdhani',sans-serif;
+  /* --disp is declared by amenti.css, which also loads the face. This local
+     copy is a FALLBACK ONLY. */
+  --disp:'Amenti Display','Special Elite',serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--ink)}
+body{font-family:var(--body);font-weight:300;font-size:18px;line-height:1.62;color:var(--text);
+  padding:0 0 90px;
+  background-image:radial-gradient(ellipse at 50% -8%,rgba(212,160,23,.10),transparent 60%)}
+main{max-width:1120px;margin:0 auto;padding:26px 30px 0}
+
+.stamp{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:8px 18px;
+  padding:0 2px 12px;border-bottom:1px solid var(--slate);
+  font-family:var(--disp);font-size:14px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim)}
+.stamp .doc{color:var(--gold)}
+.stamp .live{color:var(--term)}
+.stamp .sm{flex-basis:100%;order:3;color:var(--gold);opacity:.75}
+@media(min-width:760px){.stamp .sm{flex-basis:auto;order:0}}
+.stamp .sep{opacity:.35;margin:0 5px}
+
+header{padding:34px 0 6px}
+.eyebrow{font-family:var(--disp);font-size:15px;letter-spacing:.26em;text-transform:uppercase;
+  color:var(--neon);margin:0 0 14px}
+h1{font-family:var(--disp);font-size:clamp(34px,5.6vw,58px);color:var(--gold-b);line-height:1;
+  margin:0;text-shadow:0 0 34px rgba(245,197,66,.24)}
+h1 .the{display:block;font-size:.27em;letter-spacing:.34em;color:var(--gold);opacity:.85;
+  text-shadow:none;margin-bottom:.04em}
+.tag{font-family:var(--disp);font-size:clamp(16px,2.1vw,21px);color:#e6e9f2;letter-spacing:.18em;
+  text-transform:uppercase;margin:14px 0 0}
+.rule{width:170px;height:1px;margin:22px 0 26px;background:linear-gradient(90deg,var(--gold),transparent)}
+
+h2{font-family:var(--disp);font-size:clamp(23px,3vw,31px);letter-spacing:.06em;
+  color:var(--gold);margin:50px 0 14px;padding-bottom:10px;border-bottom:1px solid var(--slate)}
+p{max-width:80ch;margin:12px 0}
+em{color:var(--gold-b);font-style:italic}
+b{font-weight:600;color:#e6e9f2}
+code{font-family:var(--mono);font-size:15px;color:var(--neon);
+  background:rgba(0,255,224,.07);padding:1px 6px;border-radius:3px}
+a{color:var(--tblue);text-decoration:none;border-bottom:1px solid rgba(87,182,255,.35)}
+a:hover{color:var(--neon);border-bottom-color:var(--neon)}
+
+/* ── EMPTY GLASS ───────────────────────────────────────────────────────── */
+#glass{display:none;border:1px solid rgba(248,113,113,.34);border-radius:8px;
+  background:rgba(248,113,113,.05);padding:26px 24px;margin:26px 0}
+#glass .gk{font-family:var(--disp);font-size:19px;letter-spacing:.16em;text-transform:uppercase;color:var(--red)}
+#glass .gv{margin-top:10px;font-size:17px;max-width:76ch}
+#glass code{color:var(--red);background:rgba(248,113,113,.08)}
+
+/* ── THE SEAM ──────────────────────────────────────────────────────────── */
+.seam{border:1px solid var(--slate);border-radius:10px;background:var(--granite);
+  padding:24px 22px 18px;margin:26px 0;overflow-x:auto}
+.seamgrid{display:grid;grid-template-columns:1fr 64px 1fr;align-items:stretch;gap:0;min-width:520px}
+.organ{padding:16px 18px}
+.organ .oh{font-family:var(--disp);font-size:16px;letter-spacing:.18em;text-transform:uppercase;margin-bottom:10px}
+.organ.mind .oh{color:var(--neon)}
+.organ.voice .oh{color:var(--violet)}
+.organ ul{margin:0;padding-left:18px;font-family:var(--mono);font-size:13px;line-height:2;color:var(--dim)}
+.organ.mind li{color:rgba(0,255,224,.72)}
+.organ.voice li{color:rgba(196,165,255,.78)}
+.wall{position:relative;border-left:1px dashed var(--wire);border-right:1px dashed var(--wire);
+  background:repeating-linear-gradient(180deg,rgba(52,59,82,.22) 0 6px,transparent 6px 12px)}
+.wall span{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(90deg);
+  font-family:var(--disp);font-size:12px;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--dim);white-space:nowrap}
+.seamnote{font-family:var(--mono);font-size:12px;color:var(--dim);margin-top:16px;line-height:1.9}
+.seamnote b{color:var(--text)}
+
+/* ── HUD COUNTS ────────────────────────────────────────────────────────── */
+.strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1px;
+  background:var(--slate);border:1px solid var(--slate);border-radius:8px;overflow:hidden;margin:22px 0}
+.cell{background:var(--granite);padding:14px 16px}
+.cell .ck{font-family:var(--disp);font-size:14px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim)}
+.cell .cv{font-family:var(--disp);font-size:34px;line-height:1.05;margin-top:6px;color:#fff}
+.cv.n{color:var(--gold-b)} .cv.am{color:var(--amber)} .cv.ok{color:var(--term)} .cv.bad{color:var(--red)}
+.cell .cs{font-family:var(--disp);font-size:13px;letter-spacing:.05em;color:var(--dim);margin-top:4px}
+
+table{width:100%;border-collapse:collapse;margin:18px 0;border:1px solid var(--slate)}
+th{font-family:var(--disp);font-size:14px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);
+  text-align:left;padding:10px 13px;background:#0d0f17;border-bottom:1px solid var(--slate)}
+td{padding:10px 13px;font-size:16px;border-bottom:1px solid #171d29;vertical-align:top}
+tr:last-child td{border-bottom:none}
+td.m{font-family:var(--mono);font-size:14px}
+td.g{font-family:var(--mono);font-size:14px;color:var(--gold-b);white-space:nowrap}
+td.v{font-family:var(--mono);font-size:14px;color:var(--violet);white-space:nowrap}
+td.b{font-family:var(--mono);font-size:14px;color:var(--tblue)}
+td.n{font-family:var(--mono);font-size:14px;color:var(--dim);text-align:right;white-space:nowrap}
+td.ok{color:var(--term)} td.req{color:var(--gold-b)} td.opt{color:var(--dim)}
+td.bad{color:var(--red)}
+.role{font-family:var(--disp);font-size:13px;letter-spacing:.14em;text-transform:uppercase}
+.role.engine{color:var(--red)} .role.facade{color:var(--tblue)}
+.role.tell{color:var(--dim)} .role.file{color:var(--term)} .role.unresolved{color:var(--amber)}
+
+/* ── FINDINGS, in the fleet's vocabulary ───────────────────────────────── */
+.find{border-left:3px solid var(--wire);padding:11px 0 11px 20px;margin:14px 0;max-width:84ch}
+.find .fk{font-family:var(--disp);font-size:15px;letter-spacing:.14em;text-transform:uppercase}
+.find .fb{margin-top:5px;font-size:17px}
+.find.contradicted{border-left-color:var(--red)} .find.contradicted .fk{color:var(--red)}
+.find.unproven{border-left-color:var(--amber)} .find.unproven .fk{color:var(--amber)}
+.find.undeclared{border-left-color:var(--violet)} .find.undeclared .fk{color:var(--violet)}
+.find.accepted{border-left-color:var(--term)} .find.accepted .fk{color:var(--term)}
+.find.confirmed{border-left-color:var(--tblue)} .find.confirmed .fk{color:var(--tblue)}
+.empty{font-family:var(--disp);font-size:16px;letter-spacing:.05em;color:var(--term);padding:8px 0}
+
+.law{font-family:var(--disp);font-size:clamp(16px,2vw,20px);letter-spacing:.05em;line-height:1.85;text-align:center;color:var(--gold-b);
+  border:1px solid rgba(245,197,66,.30);border-radius:6px;background:rgba(245,197,66,.05);
+  padding:18px 22px;margin:32px 0}
+.law.blue{color:var(--tblue);border-color:rgba(87,182,255,.30);background:rgba(87,182,255,.05)}
+.law.violet{color:var(--violet);border-color:rgba(196,165,255,.30);background:rgba(196,165,255,.05)}
+
+.foot{font-family:var(--disp);font-size:14px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);
+  text-align:center;line-height:2;border-top:1px solid var(--slate);margin-top:54px;padding-top:22px}
+
+@media(max-width:640px){
+  main{padding:20px 16px 0}body{font-size:17px;padding-bottom:64px}
+  table{display:block;overflow-x:auto}
+  .seam{padding:16px 12px 12px}
+}
+</style>
+</head>
+<body>
+<div id="fleet-nav"></div>
+<script src="fleet-nav.js"></script>
+<main>
+
+<div class="stamp">
+  <div class="sl"><span class="doc">Fleet Pane</span><span class="sep">·</span><span>The Voice</span></div>
+  <div class="sm">Ingram Manor LLC</div>
+  <div><span class="live" id="stamp-read">reading VOICE.json…</span></div>
+</div>
+
+<header>
+  <p class="eyebrow">Engines · load order · the cache namespace</p>
+  <h1><span class="the">The</span>Voice</h1>
+  <p class="tag">Which path is live, and where the mouth opens</p>
+  <div class="rule"></div>
+  <p><code>amenti-chat.js</code> was documented as <b>THE PRIMARY PATH, in capitals</b>, and the
+  Terminal never loaded it. An IIFE asked for a core that registered <em>936 lines too late</em>,
+  the guard evaluated false, and every call site took the inline fallback without a word.
+  Fourteen harnesses reported green across 316 assertions — each one building its own object and
+  testing that. A pane showing which path was live would have caught both.</p>
+</header>
+
+<div id="glass">
+  <div class="gk">Empty glass</div>
+  <div class="gv">This pane cannot read <code>VOICE.json</code>. Nothing below is shown, because a
+  pane that renders yesterday's wiring when it cannot see today's is worse than a blank one. The
+  register is written by <code>probes/probe-voice.mjs</code> and copied here by the Glass Gate on
+  every push to <code>Amenti.live</code> — if it is missing, the probe has not run or the copy
+  step is not publishing it.</div>
+</div>
+
+<div id="deck" hidden>
+
+<h2>The seam</h2>
+
+<div class="seam">
+  <div class="seamgrid">
+    <div class="organ mind">
+      <div class="oh">A mind</div>
+      <ul>
+        <li>what is said</li>
+        <li>which figure is speaking</li>
+        <li>the move, and its register</li>
+        <li>when to stop</li>
+      </ul>
+    </div>
+    <div class="wall"><span>one nervous system</span></div>
+    <div class="organ voice">
+      <div class="oh">A voice</div>
+      <ul>
+        <li>base voice · accent · character</li>
+        <li>pace and rest</li>
+        <li>chunk boundaries</li>
+        <li>the brake</li>
+      </ul>
+    </div>
+  </div>
+  <p class="seamnote">
+    <b>This diagram is AUTHORED, not read.</b> It is the one thing on this pane the register did
+    not supply — a drawing of an idea rather than a count. Everything below it is a reading.<br>
+    Cognition composes; articulation renders. One Worker carries signals between them and never
+    merges the organs.
+  </p>
+</div>
+
+<div class="law violet">A MIND. A VOICE. ONE NERVOUS SYSTEM.<br>DO NOT BRAID THEM.</div>
+
+<h2>The reading</h2>
+<div class="strip" id="counts"></div>
+<p id="readline"></p>
+
+<h2>Loaded, and used</h2>
+<p>The column that would have caught the 936-line gap. <b>Registered</b> is where a global is
+declared; <b>available</b> is the line on that surface from which it can be asked for — the line
+of a blocking <code>&lt;script src&gt;</code>, or the line itself when written inline. A
+<code>defer</code> or <code>async</code> tag is never available at parse time at all. A
+parse-time read before that point is the fault, and it is silent.</p>
+<table>
+  <thead><tr><th>Surface</th><th>Global</th><th>Role</th><th>Registered in</th><th>Available</th><th>First read</th><th>When</th></tr></thead>
+  <tbody id="wiring"></tbody>
+</table>
+<p class="empty" id="wiringnote" style="display:none"></p>
+
+<h2>Where the mouth opens</h2>
+<p>Not which object is <em>named</em> like an engine — where a request is actually posted to
+<code>/speak</code> and where an Audio is actually built. A surface that names a voice worker and
+opens no mouth is tackle left on deck, and it reads as live infrastructure to anyone who greps.</p>
+<table>
+  <thead><tr><th>Surface</th><th>Line</th><th>What happens there</th><th>Whose</th><th>How attributed</th></tr></thead>
+  <tbody id="synthesis"></tbody>
+</table>
+
+<h2>The paths, and their chunk profile</h2>
+<p>Each surface's boundaries are part of its cache key, so a surface keeps its own profile until
+somebody decides to pay for a re-render. A size that matches a declared profile is a <b>ruling</b>.
+Only an undeclared size is drift.</p>
+<div class="strip" id="profiles"></div>
+<table>
+  <thead><tr><th>Surface</th><th>Constant</th><th>Value</th><th>Line</th><th>Declared as</th></tr></thead>
+  <tbody id="chunking"></tbody>
+</table>
+
+<h2>The cache key</h2>
+<p id="keyline"></p>
+
+<div class="law">TEXT IS IN THE KEY.<br>SO THE CHUNK BOUNDARIES <em>ARE</em> THE CACHE NAMESPACE.</div>
+
+<p>What each surface <b>sends</b> can be read. How the Worker <b>hashes</b> it cannot — the proxy
+lives in a private repository and no pane should pretend otherwise.</p>
+<table>
+  <thead><tr><th>Surface</th><th>Line</th><th>Posted body</th></tr></thead>
+  <tbody id="posts"></tbody>
+</table>
+
+<div class="law blue">THE WORKER CANNOT BE READ. SO IT IS ASKED.<br>
+SIX HITS = THE KEY HELD. ONE MISS = THE ARCHIVE FORKED.</div>
+
+<p>That asking is the <b>ARCHIVE WATCH</b>, and it already exists — six wires, a frozen
+933-character passage, every six hours, reported on <a href="watch.html">The Watch</a>. This pane
+shows the <em>shape</em> of the key, never its health. A second watch over one thing is how two
+registers come to disagree.</p>
+
+<h2>Call sites the probe could not attribute</h2>
+<p>Every <code>speak()</code> and <code>play()</code> on each surface is either attributed to a
+path or named here. The count reconciles; nothing is dropped quietly. An unattributed call is not
+a fault — an <code>&lt;audio&gt;</code> element playing a decoded buffer is the mouth opening, not
+a path being chosen — but a call nobody can attribute is a call this pane cannot draw.</p>
+<table>
+  <thead><tr><th>Surface</th><th>Attributed</th><th>Line</th><th>Receiver</th><th>Method</th></tr></thead>
+  <tbody id="unattributed"></tbody>
+</table>
+
+<h2>Findings</h2>
+<div id="findings"></div>
+
+<h2>What the register refuses to judge</h2>
+<table>
+  <thead><tr><th>Checked</th><th>Against what</th><th>Claimed</th></tr></thead>
+  <tbody id="refuses"></tbody>
+</table>
+
+<div class="law">BEING LOADED IS NOT BEING USED.</div>
+
+<h2>The briefs</h2>
+<p>The pane carries the reading. The briefs carry the reasoning, and they are dated, because a
+brief is a shop-floor account and not a manual. Where a brief and this pane disagree about what
+is wired today, <b>this pane is the reading and the brief is a memory.</b></p>
+<table>
+  <thead><tr><th>Brief</th><th>Written</th><th>What it holds</th></tr></thead>
+  <tbody>
+    <tr><td class="b">Amenti_The_Voice_That_Carries</td><td class="m">29 Jun 2026</td><td>the flood, metering, six faculties, render-once</td></tr>
+    <tr><td class="b">AMENTI-SPEECH-DOCTRINE</td><td class="m">13 Jul 2026</td><td>four engines into one; the 936-line gap; the last law</td></tr>
+    <tr><td class="b">Amenti_Conversation_Matrix</td><td class="m">14 Jul 2026</td><td>the seam; the cache key; the ward</td></tr>
+    <tr><td class="b">Amenti_ReadingRoom_Chat_VoicePath</td><td class="m">18 Jul 2026</td><td>the paths on Page2; the unchunked one</td></tr>
+    <tr><td class="b">Amenti_Taking_Time</td><td class="m">18 Jul 2026</td><td>fluency reads as machine; imperfection reads as mind</td></tr>
+    <tr><td class="b">BRIEF-THE-LIVING-VOICE</td><td class="m">15 Aug 2026</td><td>the living voice</td></tr>
+  </tbody>
+</table>
+
+</div>
+
+<p class="foot">
+  Amenti Fleet<br>
+  Ingram Manor LLC<br>
+  The Voice · reads VOICE.json · nothing on this pane was typed<br>
+  <span id="footread"></span>
+</p>
+
+<script>
+(async function () {
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+  let R;
+  try {
+    const res = await fetch('VOICE.json', { cache: 'no-store' });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    R = await res.json();
+  } catch (e) {
+    $('glass').style.display = 'block';
+    $('stamp-read').textContent = 'empty glass';
+    $('stamp-read').style.color = 'var(--red)';
+    $('footread').textContent = 'the register could not be read';
+    return;
+  }
+
+  $('deck').hidden = false;
+
+  const S = R.surfaces || [];
+  const C = R.counts || {};
+  const when = R.generated ? new Date(R.generated) : null;
+  const stamp = when ? when.toISOString().replace('T', ' ').slice(0, 16) + ' UTC' : 'unknown';
+  $('stamp-read').textContent = 'read ' + stamp;
+  $('footread').textContent = 'register generated ' + stamp + ' by ' + (R.probe || 'unknown')
+    + ' ' + (R.version || '');
+
+  /* ── counts ─────────────────────────────────────────────────────────── */
+  const engines = S.reduce((n, s) => n + (s.engines || []).filter(e => e.role === 'engine').length, 0);
+  const synth   = S.reduce((n, s) => n + (s.synthesis || []).length, 0);
+  const sites   = S.reduce((n, s) => n + ((s.callSites && s.callSites.total) || 0), 0);
+  const attr    = S.reduce((n, s) => n + ((s.callSites && s.callSites.attributed) || 0), 0);
+
+  const cells = [
+    ['Surfaces',  C.surfaces,   'n',  S.map(s => s.file).join(' · ')],
+    ['Engines',   engines,      engines > 1 ? 'am' : 'n', 'inline, opening a mouth'],
+    ['Synthesis', synth,        'n',  'posts and audio builds'],
+    ['Call sites', attr + ' / ' + sites, attr === sites ? 'ok' : 'am', 'attributed to a path'],
+    ['Files read', C.filesRead, C.filesUnread ? 'am' : 'ok', C.filesUnread + ' unread'],
+    ['Faults',    C.faults,     C.faults ? 'bad' : 'ok', (C.blocking || 0) + ' blocking']
+  ];
+  $('counts').innerHTML = cells.map(([k, v, cls, sub]) =>
+    '<div class="cell"><div class="ck">' + esc(k) + '</div>'
+    + '<div class="cv ' + cls + '">' + esc(v == null ? '—' : v) + '</div>'
+    + '<div class="cs">' + esc(sub) + '</div></div>').join('');
+
+  $('readline').innerHTML = 'The probe walks the surfaces on every push that touches one, and on '
+    + 'a rung of its own. It reads every local <code>&lt;script src&gt;</code> it can open and '
+    + '<b>names every one it cannot</b>' + (C.filesUnread
+      ? ' — <b>' + C.filesUnread + ' unread on this run</b>, and no verdict here covers them.'
+      : ' — none were unreadable on this run, so every verdict here is measured.');
+
+  /* ── loaded and used ────────────────────────────────────────────────── */
+  const rows = [];
+  for (const s of S) {
+    for (const e of (s.engines || [])) {
+      const parse = (e.parseTimeReads || []).length;
+      const late = parse && e.availableAt !== null && e.availableAt !== undefined
+        && (e.availableAt === 'after parse' || (e.parseTimeReads[0] < e.availableAt));
+      rows.push('<tr>'
+        + '<td class="m">' + esc(s.file) + '</td>'
+        + '<td class="g">' + esc(e.global) + '</td>'
+        + '<td><span class="role ' + esc(e.role || '') + '">' + esc(e.role || '—') + '</span></td>'
+        + '<td class="m">' + esc(e.registeredIn || '—')
+          + (e.registered != null ? '<span style="color:var(--dim)">:' + e.registered + '</span>' : '')
+          + (e.loading && e.loading !== 'inline'
+              ? ' <span style="color:var(--dim)">· ' + esc(e.loading) + '</span>' : '')
+        + '</td>'
+        + '<td class="n">' + esc(e.availableAt == null ? '—' : e.availableAt) + '</td>'
+        + '<td class="n">' + esc(e.firstRead == null ? '—' : e.firstRead) + '</td>'
+        + '<td class="' + (late ? 'bad' : (e.firstReadEvaluation === 'parse-time' ? 'ok' : 'opt')) + '">'
+          + esc(e.firstReadEvaluation || 'never read') + '</td>'
+        + '</tr>');
+    }
+  }
+  $('wiring').innerHTML = rows.join('') ||
+    '<tr><td colspan="7" class="m opt">No speech globals on any surface.</td></tr>';
+
+  /* ── where the mouth opens ──────────────────────────────────────────── */
+  const syn = [];
+  for (const s of S) for (const x of (s.synthesis || [])) {
+    syn.push('<tr><td class="m">' + esc(s.file) + '</td><td class="n">' + esc(x.line) + '</td>'
+      + '<td class="b">' + esc(x.kind) + '</td>'
+      + '<td class="g">' + esc(x.owner || 'unattributed') + '</td>'
+      + '<td class="m opt">' + esc(x.attribution || '—') + '</td></tr>');
+  }
+  $('synthesis').innerHTML = syn.join('')
+    || '<tr><td colspan="5" class="m opt">No synthesis site on any surface — every mouth is in a '
+       + 'file, not on a page.</td></tr>';
+
+  /* ── profiles and chunking ──────────────────────────────────────────── */
+  const P = (R.profiles && R.profiles.profiles) || {};
+  const psrc = ((R.profiles && R.profiles.sources) || []).map(x => x.file).join(', ');
+  const pk = Object.keys(P);
+  $('profiles').innerHTML = pk.length
+    ? pk.map(k => '<div class="cell"><div class="ck">' + esc(k) + '</div>'
+        + '<div class="cv n">' + esc(P[k]) + '</div>'
+        + '<div class="cs">chars per measure</div></div>').join('')
+    : '<div class="cell"><div class="ck">Profiles</div><div class="cv am">—</div>'
+      + '<div class="cs">no table readable</div></div>';
+
+  const declared = new Set(Object.values(P));
+  const nameFor = v => pk.filter(k => P[k] === v).join(' / ');
+  const chunk = [];
+  for (const s of S) {
+    const ch = s.chunking;
+    if (!ch) {
+      chunk.push('<tr><td class="m">' + esc(s.file) + '</td>'
+        + '<td colspan="4" class="m opt">no chunk constant on this surface — its boundaries are '
+        + 'cut by the platform, not by the page</td></tr>');
+      continue;
+    }
+    for (const k of Object.keys(ch)) {
+      const v = ch[k].value;
+      /* MAX_CHARS is a ceiling for a hard split and LOOKAHEAD is a prefetch
+         depth. NEITHER CUTS A CACHE BOUNDARY, and the probe excludes both from
+         its profile test for that reason. A pane that marked them UNDECLARED in
+         red would be contradicting the register it reads — which is the exact
+         fault this pane exists to catch, committed by the pane. */
+      const BOUNDARY = !(k === 'MAX_CHARS' || k === 'LOOKAHEAD');
+      const known = declared.has(v);
+      const cls = !BOUNDARY ? 'opt' : (known ? 'ok' : 'bad');
+      const say = !BOUNDARY
+        ? (k === 'MAX_CHARS' ? 'not a boundary · hard-split ceiling'
+                             : 'not a boundary · prefetch depth')
+        : (known ? esc(nameFor(v)) + (psrc ? ' · ' + esc(psrc) : '') : 'UNDECLARED');
+      chunk.push('<tr><td class="m">' + esc(s.file) + '</td><td class="b">' + esc(k) + '</td>'
+        + '<td class="n">' + esc(v) + '</td><td class="n">' + esc(ch[k].line) + '</td>'
+        + '<td class="' + cls + '">' + say + '</td></tr>');
+    }
+  }
+  $('chunking').innerHTML = chunk.join('');
+
+  /* ── the cache key ──────────────────────────────────────────────────── */
+  const K = R.cacheKey || {};
+  $('keyline').innerHTML = 'The Worker keys every clip as <code>' + esc(K.composition || 'unknown')
+    + '</code>. That composition is <b>not read from source</b> — it lives in '
+    + '<code>' + esc(K.composedIn || 'the proxy') + '</code>, which this probe cannot open. It is '
+    + 'reproduced here as the fleet\u2019s stated understanding and is marked as such in the '
+    + 'register itself.';
+
+  const posts = [];
+  for (const p of (K.posts || [])) {
+    for (const site of (p.sites || [])) {
+      posts.push('<tr><td class="m">' + esc(p.surface) + '</td><td class="n">' + esc(site.line)
+        + '</td><td class="m">{ ' + (site.keys || []).map(esc).join(', ') + ' }</td></tr>');
+    }
+    if (!(p.sites || []).length) {
+      posts.push('<tr><td class="m">' + esc(p.surface) + '</td><td class="n">—</td>'
+        + '<td class="m opt">posts nothing to /speak from the page itself</td></tr>');
+    }
+  }
+  $('posts').innerHTML = posts.join('');
+
+  /* ── unattributed calls ─────────────────────────────────────────────── */
+  const un = [];
+  for (const s of S) {
+    const cs = s.callSites || {};
+    for (const u of (cs.unattributed || [])) {
+      un.push('<tr><td class="m">' + esc(s.file) + '</td>'
+        + '<td class="n">' + esc(cs.attributed) + ' / ' + esc(cs.total) + '</td>'
+        + '<td class="n">' + esc(u.line) + '</td><td class="v">' + esc(u.receiver) + '</td>'
+        + '<td class="b">' + esc(u.method) + '</td></tr>');
+    }
+  }
+  $('unattributed').innerHTML = un.join('')
+    || '<tr><td colspan="5" class="ok m">Every call site on every surface is attributed to a '
+       + 'path.</td></tr>';
+
+  /* ── findings, mapped ONCE onto the fleet's vocabulary ───────────────
+     The probe grades fault / finding / unproven / accepted / confirmed /
+     blocking. The fleet reads CONTRADICTED / UNPROVEN / UNDECLARED / ACCEPTED.
+     The mapping lives here, in one place, so a reader moving between panes
+     does not learn a second dictionary — and so that changing it is one edit. */
+  const VOCAB = {
+    fault:     ['contradicted', 'Contradicted'],
+    blocking:  ['contradicted', 'Blocked'],
+    finding:   ['undeclared',   'Undeclared'],
+    unproven:  ['unproven',     'Unproven'],
+    accepted:  ['accepted',     'Accepted'],
+    confirmed: ['confirmed',    'Confirmed']
+  };
+  const out = (R.findings || []).map(f => {
+    const [cls, word] = VOCAB[f.severity] || ['undeclared', esc(f.severity || 'Finding')];
+    const where = [f.surface, f.global, f.register].filter(Boolean).join(' · ');
+    return '<div class="find ' + cls + '">'
+      + '<div class="fk">' + esc(word) + ' · ' + esc(f.id) + (where ? ' · ' + esc(where) : '') + '</div>'
+      + '<div class="fb">' + esc(f.detail) + '</div></div>';
+  });
+  $('findings').innerHTML = out.length ? out.join('')
+    : '<div class="empty">Nothing outstanding. Every global reached for at parse time is '
+      + 'available before its caller, and every call site is attributed.</div>';
+
+  /* ── what it refuses to judge, from the register's own declaration ──── */
+  const nm = R.notMeasured || [];
+  $('refuses').innerHTML = nm.length
+    ? nm.map(x => '<tr><td class="opt">' + esc(x) + '</td><td class="m opt">not readable from '
+        + 'source</td><td class="opt">never</td></tr>').join('')
+    : '<tr><td colspan="3" class="m opt">The register declares no limits, which is itself a '
+      + 'finding — every instrument has some.</td></tr>';
+})();
+</script>
+
+</main>
+</body>
+</html>
