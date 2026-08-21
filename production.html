@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>THE PRODUCTION · Amenti Fleet</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Special+Elite&family=Rajdhani:wght@300;400;600;700&family=Cormorant+Garamond:ital,wght@1,300&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="amenti.css">
+<!--
+  ==========================================================================
+   THE PRODUCTION  ·  production.html  ·  Fleet-Documents
+  --------------------------------------------------------------------------
+   THIS PANE TYPES NOTHING. It reads PRODUCTION.json, written by
+   probes/probe-production.mjs walking BOOK.json against book/, and carried
+   here by the Glass Gate.
+
+   WHY IT EXISTS
+   Every register in this fleet watches the ship. Nothing watched THE WORK.
+   The book is being written from the living site and the engineering briefs,
+   and until now the only way to know where it stood was to remember.
+
+   A tracker with the chapter list typed into it would be a DOCUMENT
+   PRETENDING TO BE AN INSTRUMENT — correct the day it is written, drifting
+   invisibly after. So the register says which chapters exist, the disk says
+   which are written, and GIT SAYS WHEN.
+
+   THE TIMELINE IS A RECORD, NOT A PLAN. It shows the days chapters actually
+   landed. A schedule this book does not have cannot be missed.
+
+   EMPTY GLASS if PRODUCTION.json cannot be read.
+  ==========================================================================
+-->
+<style>
+:root{
+  --gold:#d4a017;--gold-b:#f5c542;--gold-d:#a87c14;
+  --neon:#00ffe0;--term:#57c98a;--violet:#c4a5ff;--tblue:#57b6ff;
+  --amber:#fbbf24;--red:#f87171;
+  --ink:#08090e;--granite:#11131c;--slate:#232838;--wire:#343b52;
+  --text:#c8ccdc;--dim:#8f95ab;--paper:#e8e4d9;
+  --mono:'Share Tech Mono',monospace;--body:'Rajdhani',sans-serif;
+  --read:'Cormorant Garamond',Georgia,serif;
+  --disp:'Amenti Display','Special Elite',cursive;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--ink)}
+body{font-family:var(--body);font-weight:300;font-size:18px;line-height:1.62;color:var(--text);
+  padding:0 0 90px;background-image:radial-gradient(ellipse at 50% -8%,rgba(212,160,23,.10),transparent 60%)}
+main{max-width:1120px;margin:0 auto;padding:26px 30px 0}
+
+.stamp{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:8px 18px;
+  padding:0 2px 12px;border-bottom:1px solid var(--slate);
+  font-family:var(--disp);font-size:14px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim)}
+.stamp .doc{color:var(--gold)}.stamp .live{color:var(--term)}.stamp .sep{opacity:.35;margin:0 5px}
+
+header{padding:34px 0 6px}
+.eyebrow{font-family:var(--disp);font-size:15px;letter-spacing:.26em;text-transform:uppercase;color:var(--neon);margin:0 0 14px}
+h1{font-family:var(--disp);font-weight:700;font-size:clamp(34px,5.6vw,58px);color:var(--gold-b);line-height:1;margin:0;
+  text-shadow:0 0 34px rgba(245,197,66,.24)}
+h1 .the{display:block;font-size:.27em;letter-spacing:.34em;color:var(--gold);opacity:.85;text-shadow:none;margin-bottom:.04em}
+.tag{font-family:var(--disp);font-weight:500;font-size:clamp(16px,2.1vw,21px);color:#e6e9f2;letter-spacing:.18em;text-transform:uppercase;margin:14px 0 0}
+.rule{width:170px;height:1px;margin:22px 0 26px;background:linear-gradient(90deg,var(--gold),transparent)}
+
+h2{font-family:var(--disp);font-weight:600;font-size:clamp(23px,3vw,31px);letter-spacing:.06em;color:var(--gold);
+  margin:48px 0 14px;padding-bottom:10px;border-bottom:1px solid var(--slate)}
+p{max-width:82ch;margin:12px 0}
+b,strong{color:#e6e9f2;font-weight:600}em{color:var(--gold-b)}
+code{font-family:var(--mono);font-size:15px;color:var(--neon);background:rgba(0,255,224,.07);padding:1px 6px;border-radius:3px}
+
+#glass{display:none;border:1px solid rgba(248,113,113,.34);border-radius:8px;
+  background:rgba(248,113,113,.05);padding:26px 24px;margin:26px 0}
+#glass .gk{font-family:var(--disp);font-size:19px;letter-spacing:.16em;text-transform:uppercase;color:var(--red)}
+#glass .gv{margin-top:10px;font-size:17px;max-width:76ch}
+
+.strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(138px,1fr));gap:1px;
+  background:var(--slate);border:1px solid var(--slate);border-radius:8px;overflow:hidden;margin:22px 0}
+.cell{background:var(--granite);padding:14px 16px}
+.cell .ck{font-family:var(--disp);font-size:14px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim)}
+.cell .cv{font-family:var(--disp);font-weight:700;font-size:34px;line-height:1.05;margin-top:6px;color:#fff}
+.cv.n{color:var(--gold-b)}.cv.ok{color:var(--term)}.cv.am{color:var(--amber)}.cv.dim{color:var(--dim)}
+.cell .cs{font-family:var(--disp);font-size:13px;color:var(--dim);margin-top:4px}
+
+/* ── the movements ── */
+.mv{border:1px solid var(--slate);border-left-width:4px;border-radius:0 9px 9px 0;
+  background:var(--granite);padding:18px 22px;margin:14px 0}
+.mv.m1{border-left-color:var(--violet)}
+.mv.m2{border-left-color:var(--tblue)}
+.mv.m3{border-left-color:var(--term)}
+.mv.m4{border-left-color:var(--gold)}
+.mv .top{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.mv .n{font-family:var(--mono);font-size:12px;letter-spacing:.26em;color:var(--dim)}
+.mv .t{font-family:var(--disp);font-weight:700;font-size:23px;color:var(--gold-b);flex:1}
+.mv .when{font-family:var(--mono);font-size:12.5px;letter-spacing:.12em;color:var(--neon)}
+.mv .form{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+  padding:3px 10px;border:1px solid var(--wire);border-radius:20px;color:var(--dim)}
+.mv .w{margin-top:8px;font-size:16.5px;color:var(--dim)}
+.mv .src{font-family:var(--mono);font-size:12.5px;color:var(--dim);margin-top:8px;opacity:.8}
+.mv .prog{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:11px}
+.mv .bar{flex:1;min-width:120px;height:6px;background:#0a0c12;border:1px solid var(--wire);border-radius:4px;overflow:hidden}
+.mv .bar span{display:block;height:100%;background:linear-gradient(90deg,var(--gold-d),var(--gold-b))}
+.mv .pc{font-family:var(--mono);font-size:12px;letter-spacing:.1em;color:var(--dim);white-space:nowrap}
+.mv .mstate{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+  padding:3px 10px;border:1px solid;border-radius:20px;white-space:nowrap}
+.mstate.written{color:var(--term);border-color:rgba(87,201,138,.4)}
+.mstate.serialising{color:var(--gold-b);border-color:rgba(245,197,66,.4)}
+.mstate.planned{color:var(--dim);border-color:var(--wire)}
+.mv .elsewhere{margin-top:9px;font-size:15.5px;color:var(--term);opacity:.85}
+
+/* ── the timeline ── */
+.tl{border-left:2px solid var(--slate);margin:22px 0 22px 10px;padding-left:0}
+.tl .ev{position:relative;padding:10px 0 10px 26px}
+.tl .ev::before{content:'';position:absolute;left:-7px;top:19px;width:12px;height:12px;border-radius:50%;
+  background:var(--gold-b);box-shadow:0 0 12px rgba(245,197,66,.5)}
+.tl .on{font-family:var(--mono);font-size:12.5px;letter-spacing:.14em;color:var(--neon)}
+.tl .ti{font-family:var(--disp);font-size:20px;color:#e6e9f2;margin-top:2px}
+.tl .wc{font-family:var(--mono);font-size:12.5px;color:var(--dim);margin-top:2px}
+.tl .none{font-family:var(--disp);font-size:16px;color:var(--dim);padding:10px 0 10px 26px}
+
+table{width:100%;border-collapse:collapse;margin:18px 0;border:1px solid var(--slate)}
+th{font-family:var(--disp);font-size:14px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);
+  text-align:left;padding:10px 13px;background:#0c0e16;border-bottom:1px solid var(--slate)}
+td{padding:10px 13px;font-size:16px;border-bottom:1px solid #171d29;vertical-align:top}
+tr:last-child td{border-bottom:none}
+td.g{font-family:var(--mono);font-size:14px;color:var(--gold-b);white-space:nowrap}
+td.m{font-family:var(--mono);font-size:13px;color:var(--dim)}
+td.n{font-family:var(--mono);font-size:13.5px;color:var(--tblue);text-align:right;white-space:nowrap}
+.pill{font-family:var(--mono);font-size:11px;letter-spacing:.16em;padding:3px 9px;border-radius:20px;border:1px solid;white-space:nowrap}
+.pill.WRITTEN{color:var(--term);border-color:rgba(87,201,138,.4)}
+.pill.PARTIAL{color:var(--amber);border-color:rgba(251,191,36,.4)}
+.pill.DECLARED{color:var(--violet);border-color:rgba(196,165,255,.4)}
+.pill.PLANNED{color:var(--dim);border-color:var(--wire)}
+.bandmark{font-family:var(--mono);font-size:12px;letter-spacing:.1em;color:var(--dim)}
+.bandmark b{color:var(--gold-b);font-weight:400}
+
+.law{font-family:var(--disp);font-weight:500;font-size:clamp(16px,2vw,20px);letter-spacing:.05em;line-height:1.85;
+  text-align:center;color:var(--gold-b);border:1px solid rgba(245,197,66,.30);border-radius:6px;
+  background:rgba(245,197,66,.05);padding:18px 22px;margin:30px 0}
+.through{font-family:var(--read);font-size:clamp(20px,2.8vw,27px);font-style:italic;color:var(--paper);
+  text-align:center;margin:26px 0 10px}
+
+.foot{font-family:var(--disp);font-size:14px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);
+  text-align:center;line-height:2;border-top:1px solid var(--slate);margin-top:54px;padding-top:22px}
+@media(max-width:640px){main{padding:20px 16px 0}body{font-size:17px}table{display:block;overflow-x:auto}}
+</style>
+</head>
+<body>
+<div id="fleet-nav"></div>
+<script src="fleet-nav.js"></script>
+<main>
+
+<div class="stamp">
+  <div><span class="doc">Fleet Pane</span><span class="sep">·</span><span>Production</span></div>
+  <div><span class="live" id="stamp-read">reading PRODUCTION.json…</span></div>
+</div>
+
+<header>
+  <p class="eyebrow">One work · four movements</p>
+  <h1><span class="the">The</span>Production</h1>
+  <p class="tag">What is written, and the day it landed</p>
+  <div class="rule"></div>
+  <p>Every register in this fleet watches the ship. <b>Nothing watched the
+  work.</b> The book is written from the living site and the engineering briefs,
+  and until this pane the only way to know where it stood was to remember.</p>
+</header>
+
+<div id="glass">
+  <div class="gk">Empty glass</div>
+  <div class="gv">This pane cannot read <code>PRODUCTION.json</code>. Nothing
+  below is shown. The file is written by <code>probes/probe-production.mjs</code>
+  and carried here by the Glass Gate — if it is missing, the probe has not run
+  or the gate is not publishing it.</div>
+</div>
+
+<div id="deck" hidden>
+
+  <p class="through" id="through"></p>
+
+  <div class="strip" id="counts"></div>
+
+  <h2>The movements</h2>
+  <p>Chronological. The first three are <b>prose</b> — nothing was measurable
+  yet, and a chapter about June cannot show a live number. The fourth carries
+  the five bands, because by then the system could be read.</p>
+  <div id="movements"></div>
+  <div class="law">THE TURN BETWEEN THE FORMS IS NOT A CHANGE OF STYLE.<br>
+  IT IS THE MOMENT THE THING BECAME MEASURABLE.</div>
+
+  <h2>The timeline</h2>
+  <p><b>A record, not a plan.</b> These are the days chapters actually landed,
+  read from git rather than from a schedule.</p>
+  <div class="tl" id="timeline"></div>
+
+  <h2>Every chapter</h2>
+  <div id="chapters"></div>
+
+  <div class="law" style="color:var(--dim);border-color:var(--wire);background:none">
+  NO CHAPTER PUBLISHES BEFORE THE THING IT DESCRIBES.<br>
+  A CHAPTER WAITING ON THE BELL IS CORRECTLY WAITING, NOT OVERDUE.</div>
+
+</div>
+
+<p class="foot">
+  The Book of the Dead<br>
+  Ingram Manor LLC · Amenti<br>
+  This pane counts words. It cannot read.
+</p>
+
+<script>
+(async function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var esc = function (s) { return String(s == null ? '' : s)
+    .replace(/[&<>]/g, function (c) { return ({'&':'&amp;','<':'&lt;','>':'&gt;'})[c]; }); };
+  var num = function (n) { return (n == null ? '—' : Number(n).toLocaleString()); };
+
+  var P;
+  try {
+    var r = await fetch('PRODUCTION.json', { cache: 'no-store' });
+    if (!r.ok) throw 0;
+    P = await r.json();
+  } catch (e) {
+    $('glass').style.display = 'block';
+    $('stamp-read').textContent = 'empty glass';
+    $('stamp-read').style.color = 'var(--red)';
+    return;
+  }
+
+  $('deck').hidden = false;
+  $('stamp-read').textContent = 'read ' + String(P.generated || '').replace('T', ' ').slice(0, 16) + ' UTC';
+  $('through').textContent = P.through || '';
+
+  /* ── counts ─────────────────────────────────────────────────────────── */
+  var T = P.totals || {};
+  $('counts').innerHTML = [
+    ['Words',      num(T.words),     'n',  'written so far'],
+    ['Written',    T.written,        'ok', 'of ' + T.chapters + ' in the register'],
+    ['Prose',      T.prose,          '',   'no apparatus'],
+    ['Apparatus',  T.apparatus,      '',   'five bands'],
+    ['Declared',   T.declaredNotWritten, T.declaredNotWritten ? 'am' : 'ok', 'a file that is not there'],
+    ['Planned',    T.planned,        'dim','no file claimed'],
+  ].map(function (c) {
+    return '<div class="cell"><div class="ck">' + esc(c[0]) + '</div>' +
+           '<div class="cv ' + c[2] + '">' + esc(c[1]) + '</div>' +
+           '<div class="cs">' + esc(c[3]) + '</div></div>';
+  }).join('');
+
+  /* ── movements ──────────────────────────────────────────────────────── */
+  $('movements').innerHTML = (P.movements || []).map(function (m, i) {
+    return '<div class="mv m' + (i + 1) + '">' +
+      '<div class="top">' +
+        '<span class="n">Movement ' + esc(m.id) + '</span>' +
+        '<span class="t">' + esc(m.name) + '</span>' +
+        '<span class="when">' + esc(m.when) + '</span>' +
+        '<span class="form">' + esc(m.form) + '</span>' +
+      '</div>' +
+      '<div class="w">' + esc(m.what) + '</div>' +
+      /* TWO FACTS, AND THEY CAN DISAGREE. `state` is the movement's real
+         condition — The Long Climb is WRITTEN AND TYPESET. `writtenHere` is
+         how much of it is in book/ as chapter files, which is a different
+         thing. A movement finished elsewhere reads 0 of 6 here, and that is
+         true of this repository rather than of the work. Both are shown so
+         neither can pass for the other. */
+      '<div class="prog">' +
+        '<span class="bar"><span style="width:' +
+          (m.chapters ? Math.round(100 * (m.writtenHere || 0) / m.chapters) : 0) +
+        '%"></span></span>' +
+        '<span class="pc">' + (m.writtenHere || 0) + ' / ' + (m.chapters || 0) +
+        ' in <code>book/</code></span>' +
+        '<span class="mstate ' + esc(m.state) + '">' + esc(m.state) + '</span>' +
+      '</div>' +
+      (m.state === 'written' && !m.writtenHere
+        ? '<div class="elsewhere">Finished — <b>elsewhere</b>. It exists as a ' +
+          'complete document and has not been set as chapter files. Nothing is ' +
+          'missing; it has not been moved.</div>'
+        : '') +
+      '<div class="src">' + esc(m.source) + '</div>' +
+    '</div>';
+  }).join('');
+
+  /* ── the timeline ───────────────────────────────────────────────────── */
+  var tl = P.timeline || [];
+  $('timeline').innerHTML = tl.length
+    ? tl.map(function (e) {
+        return '<div class="ev">' +
+          '<div class="on">' + esc(e.on) + '</div>' +
+          '<div class="ti">' + esc(e.title) + '</div>' +
+          '<div class="wc">' + num(e.words) + ' words · ' +
+            (e.n === 0 ? 'prologue' : 'chapter ' + e.n) + '</div>' +
+        '</div>';
+      }).join('')
+    : '<div class="none">Nothing has landed yet. A timeline is a record, and there is nothing to record.</div>';
+
+  /* ── every chapter ──────────────────────────────────────────────────── */
+  var FIVE = ['SPELL', 'MECHANISM', 'PRIMER', 'PLATE', 'ROADMAP'];
+  var pill = function (s) {
+    if (s === 'WRITTEN') return 'WRITTEN';
+    if (s.indexOf('PARTIAL') > -1) return 'PARTIAL';
+    if (s.indexOf('DECLARED') > -1) return 'DECLARED';
+    return 'PLANNED';
+  };
+
+  $('chapters').innerHTML =
+    '<table><thead><tr><th>#</th><th>Chapter</th><th>State</th><th>Bands</th>' +
+    '<th style="text-align:right">Words</th><th>Landed</th></tr></thead><tbody>' +
+    (P.chapters || []).map(function (c) {
+      /* THE BANDS, MARKED NOT GRADED. A prose chapter with no bands is not an
+         incomplete chapter — it is prose. The probe reports what it found and
+         this pane shows it without calling it short. */
+      var bands = '—';
+      if (c.bands && c.bands.length) {
+        bands = '<span class="bandmark">' + FIVE.map(function (b) {
+          return c.bands.indexOf(b) > -1
+            ? '<b>' + b.slice(0, 2) + '</b>'
+            : '<span style="opacity:.3">' + b.slice(0, 2) + '</span>';
+        }).join(' ') + '</span>';
+      } else if (c.words) {
+        bands = '<span class="bandmark" style="color:var(--violet)">prose</span>';
+      }
+
+      return '<tr>' +
+        '<td class="g">' + (c.n === 0 ? 'pro' : c.n) + '</td>' +
+        '<td>' + esc(c.title) +
+          (c.blurb ? '<div style="font-size:14.5px;color:var(--dim);margin-top:3px;max-width:56ch">' +
+            esc(c.blurb) + '</div>' : '') + '</td>' +
+        '<td><span class="pill ' + pill(c.state) + '">' + esc(c.state) + '</span></td>' +
+        '<td>' + bands + '</td>' +
+        '<td class="n">' + (c.words ? num(c.words) : '—') + '</td>' +
+        '<td class="m">' + esc(c.landed || '—') + '</td>' +
+      '</tr>';
+    }).join('') + '</tbody></table>';
+})();
+</script>
+
+</main>
+</body>
+</html>

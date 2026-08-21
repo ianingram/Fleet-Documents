@@ -46,12 +46,15 @@
        Cloudflare's API by mirror.yml and carried here by the Glass Gate.
        Crons, bindings, and the names of every secret a restore would need. */
     { file: 'workers.html',        label: 'WORKERS'      },
-    /* 20 Aug 2026 — the fifteenth. Reads VOICE.json, written by
-       probes/probe-voice.mjs walking the surfaces and carried here by the Glass
-       Gate. Which speech globals are registered and where, load order against
-       use order, where the mouth opens, and the chunk profile each surface
-       keeps. The pane that would have caught the 936-line gap. */
-    { file: 'voice.html',          label: 'THE VOICE'    },
+    /* 18 Aug 2026 — the fifteenth. Reads KEYS.json: every key the ship uses
+       and whether it reaches one soul, none, or several. Built because
+       `caesar` was correct for months and became ambiguous the day Augustus
+       came aboard, and nothing was watching the shape of the names. */
+    { file: 'keyring.html',        label: 'KEYRING'      },
+    /* 20 Aug 2026 — the sixteenth. Reads PRODUCTION.json: the book measured
+       against BOOK.json, and the day each chapter actually landed. Every
+       register watches the ship; nothing watched the work. */
+    { file: 'production.html',     label: 'PRODUCTION'   },
   ];
   /* which page are we on? match the last path segment, default to index.html */
   const here = (location.pathname.split('/').pop() || 'index.html').toLowerCase()
