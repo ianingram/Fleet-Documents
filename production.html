@@ -231,7 +231,12 @@ td.n{font-family:var(--mono);font-size:13.5px;color:var(--tblue);text-align:righ
   var T = P.totals || {};
   $('counts').innerHTML = [
     ['Words',      num(T.words),     'n',  'written so far'],
-    ['Written',    T.written,        'ok', 'of ' + T.chapters + ' in the register'],
+    /* PREAMBLES COUNTED SEPARATELY. They carry no number and no apparatus and
+       are not part of the chapter count — folding them in would make the book
+       look further along than it is. */
+    ['Preamble',   (T.preamblesWritten || 0) + ' / ' + (T.preambles || 0), 'ok',
+                   num(T.preambleWords || 0) + ' words'],
+    ['Written',    T.written,        'ok', 'of ' + T.chapters + ' chapters'],
     ['Prose',      T.prose,          '',   'no apparatus'],
     ['Apparatus',  T.apparatus,      '',   'five bands'],
     ['Declared',   T.declaredNotWritten, T.declaredNotWritten ? 'am' : 'ok', 'a file that is not there'],
@@ -283,7 +288,7 @@ td.n{font-family:var(--mono);font-size:13.5px;color:var(--tblue);text-align:righ
           '<div class="on">' + esc(e.on) + '</div>' +
           '<div class="ti">' + esc(e.title) + '</div>' +
           '<div class="wc">' + num(e.words) + ' words · ' +
-            (e.n === 0 ? 'prologue' : 'chapter ' + e.n) + '</div>' +
+            (e.kind === 'preamble' ? 'preamble' : 'chapter ' + e.n) + '</div>' +
         '</div>';
       }).join('')
     : '<div class="none">Nothing has landed yet. A timeline is a record, and there is nothing to record.</div>';
@@ -316,7 +321,7 @@ td.n{font-family:var(--mono);font-size:13.5px;color:var(--tblue);text-align:righ
       }
 
       return '<tr>' +
-        '<td class="g">' + (c.n === 0 ? 'pro' : c.n) + '</td>' +
+        '<td class="g">' + (c.kind === 'preamble' ? 'pre' : c.n) + '</td>' +
         '<td>' + esc(c.title) +
           (c.blurb ? '<div style="font-size:14.5px;color:var(--dim);margin-top:3px;max-width:56ch">' +
             esc(c.blurb) + '</div>' : '') + '</td>' +
