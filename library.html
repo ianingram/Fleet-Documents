@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Emerald Tablets · Amenti Fleet</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="amenti.css">
+<!--
+   THE LIBRARY · library.html · Fleet-Documents
+   Reads LIBRARY.json (written by Amenti.live/probes/probe-library.mjs, which
+   walks library/ and confirms each work's file on disk). Every count is a
+   READING. EMPTY GLASS: if LIBRARY.json will not load, the pane says so and
+   shows nothing else. Vocabulary is the fleet's: FULL / EMPTY / PLACEHOLDER.
+-->
+<style>
+:root{
+  --gold:#d4a017; --gold-b:#f5c542; --neon:#00ffe0; --term:#57c98a;
+  --violet:#c4a5ff; --tblue:#57b6ff; --amber:#fbbf24; --red:#f87171;
+  --ink:#08090e; --granite:#11131c; --slate:#232838; --wire:#343b52;
+  --text:#c8ccdc; --dim:#8f95ab; --gold-light:#f0c040;
+  --mono:'Share Tech Mono',monospace; --body:'Rajdhani',sans-serif;
+  --disp:'Amenti Display','Special Elite',serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--ink)}
+body{font-family:var(--body);font-weight:300;font-size:18px;line-height:1.62;color:var(--text);
+  padding:0 0 90px;background-image:radial-gradient(ellipse at 50% -8%,rgba(212,160,23,.10),transparent 60%)}
+main{max-width:1120px;margin:0 auto;padding:26px 30px 0}
+.stamp{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:8px 18px;
+  padding:0 2px 12px;border-bottom:1px solid var(--slate);
+  font-family:var(--disp);font-size:14px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim)}
+.stamp .doc{color:var(--gold)} .stamp .live{color:var(--term)}
+.stamp .sm{flex-basis:100%;order:3;color:var(--gold);opacity:.75}
+@media(min-width:760px){.stamp .sm{flex-basis:auto;order:0}}
+.stamp .sep{opacity:.35;margin:0 5px}
+header{padding:34px 0 6px}
+.lib-head{display:flex;flex-direction:column;align-items:center;text-align:center;padding:38px 0 8px}
+.lib-gem{filter:drop-shadow(0 0 22px rgba(60,224,150,.45));margin-bottom:6px}
+.lib-titles{display:flex;flex-direction:column;align-items:center}
+.lib-head .eyebrow{margin:10px 0 0;color:var(--gold-b)}
+.lib-head h1{margin:6px 0 0;color:#3ce096;text-shadow:0 0 30px rgba(60,224,150,.35)}
+.lib-head .tag{margin:12px auto 0;max-width:52ch;font-family:var(--disp);text-transform:uppercase;letter-spacing:.18em;font-size:clamp(16px,2.1vw,21px);color:#d8dced}
+@media(max-width:640px){.lib-gem svg{width:88px;height:84px}}
+.eyebrow{font-family:var(--disp);font-size:15px;letter-spacing:.26em;text-transform:uppercase;color:var(--neon);margin:0 0 14px}
+h1{font-family:var(--disp);font-size:clamp(34px,5.6vw,58px);color:var(--gold-b);line-height:1;margin:0;text-shadow:0 0 34px rgba(245,197,66,.24)}
+h1 .the{display:block;font-size:.27em;letter-spacing:.34em;color:#2ea86a;opacity:.9;text-shadow:none;margin-bottom:.04em}
+.tag{font-family:var(--disp);font-size:clamp(16px,2.1vw,21px);color:#e6e9f2;letter-spacing:.18em;text-transform:uppercase;margin:14px 0 0}
+.rule{width:170px;height:1px;margin:22px 0 26px;background:linear-gradient(90deg,var(--gold),transparent)}
+#glass{display:none;border:1px solid rgba(248,113,113,.34);border-radius:8px;background:rgba(248,113,113,.05);padding:26px 24px;margin:26px 0}
+#glass .gk{font-family:var(--disp);font-size:19px;letter-spacing:.16em;text-transform:uppercase;color:var(--red)}
+#glass .gv{margin-top:10px;font-size:17px;max-width:76ch}
+#glass code{font-family:var(--mono);color:var(--red);background:rgba(248,113,113,.08);padding:1px 6px;border-radius:3px}
+.strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1px;background:var(--slate);border:1px solid var(--slate);border-radius:8px;overflow:hidden;margin:22px 0}
+.cell{background:var(--granite);padding:14px 16px}
+.cell .ck{font-family:var(--disp);font-size:14px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim)}
+.cell .cv{font-family:var(--disp);font-size:34px;line-height:1.05;margin-top:6px;color:#fff}
+.cv.n{color:var(--gold-b)} .cv.am{color:var(--amber)} .cv.ok{color:var(--term)} .cv.bad{color:var(--red)}
+table{width:100%;border-collapse:collapse;margin:18px 0;border:1px solid var(--slate)}
+th{font-family:var(--disp);font-size:14px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);text-align:left;padding:10px 13px;background:#0d0f17;border-bottom:1px solid var(--slate)}
+th.num,td.num{text-align:right;font-variant-numeric:tabular-nums}
+th.ctr,td.ctr{text-align:center}
+td{padding:10px 13px;font-size:16px;border-bottom:1px solid #171d29;vertical-align:top}
+tr:last-child td{border-bottom:none} tr:hover td{background:rgba(87,182,255,.04)}
+.name{color:#e6e9f2} .key{font-family:var(--mono);font-size:13px;color:var(--dim)}
+.pill{font-family:var(--mono);font-size:12px;letter-spacing:.06em;padding:2px 8px;border-radius:3px;text-transform:uppercase}
+.full{color:var(--term);border:1px solid rgba(87,201,138,.4);background:rgba(87,201,138,.08)}
+.empty{color:var(--amber);border:1px solid rgba(251,191,36,.4);background:rgba(251,191,36,.08)}
+.placeholder{color:var(--dim);border:1px solid var(--wire);background:rgba(255,255,255,.02)}
+.error{color:var(--red);border:1px solid rgba(248,113,113,.4);background:rgba(248,113,113,.08)}
+.imgyes{color:var(--term)} .imgno{color:var(--wire)}
+.biblio{margin:26px 0 0}
+.biblio button{font-family:var(--disp);font-size:15px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink);background:var(--gold-b);border:0;border-radius:6px;padding:12px 22px;cursor:pointer}
+.biblio button:hover{background:var(--gold-light)}
+.biblio .note{color:var(--dim);font-size:14px;margin-left:14px;font-family:var(--mono)}
+.foot{font-family:var(--disp);font-size:14px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);text-align:center;line-height:2;border-top:1px solid var(--slate);margin-top:54px;padding-top:22px}
+@media(max-width:640px){main{padding:20px 16px 0}body{font-size:17px;padding-bottom:64px}table{display:block;overflow-x:auto}}
+</style>
+</head>
+<body>
+<div id="fleet-nav"></div>
+<script src="fleet-nav.js"></script>
+<main>
+<div class="stamp">
+  <div class="sl"><span class="doc">Fleet Pane</span><span class="sep">·</span><span>The Emerald Tablets</span></div>
+  <div class="sm">Ingram Manor LLC</div>
+  <div><span class="live" id="stamp-read">reading LIBRARY.json…</span></div>
+</div>
+<header class="lib-head">
+  <div class="lib-gem" aria-hidden="true">
+    <svg viewBox="0 0 130 122" width="124" height="117" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="rimF" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#f7dc82"/><stop offset="0.5" stop-color="#d4a017"/><stop offset="1" stop-color="#7d5a10"/>
+        </linearGradient>
+      </defs>
+      <polygon points="65,118 12,58 12,40 28,16 50,16 65,34 80,16 102,16 118,40 118,58" fill="url(#rimF)"/>
+      <polygon points="65,40 18,44 28,20 50,20" fill="#3ec882"/>
+      <polygon points="65,40 18,44 38,68 65,62" fill="#1f7d4e"/>
+      <polygon points="18,44 38,68 19,53" fill="#12563a"/>
+      <polygon points="65,40 112,44 102,20 80,20" fill="#4ada90"/>
+      <polygon points="65,40 112,44 92,68 65,62" fill="#2ea86a"/>
+      <polygon points="112,44 92,68 111,53" fill="#12563a"/>
+      <polygon points="65,40 65,62 38,68 52,96" fill="#268f5c"/>
+      <polygon points="65,40 65,62 92,68 78,96" fill="#1b6e46"/>
+      <polygon points="38,68 52,96 65,110" fill="#124f31"/>
+      <polygon points="92,68 78,96 65,110" fill="#0d3e26"/>
+      <polygon points="52,96 65,110 78,96 65,62" fill="#1f7d4e"/>
+      <polygon points="50,20 65,40 33,34" fill="#86e6ae" opacity="0.75"/>
+      <polygon points="65,56 53,49 47,55 50,64 65,74" fill="#c8402f"/>
+      <polygon points="65,56 77,49 83,55 80,64 65,74" fill="#e35a44"/>
+      <polygon points="65,56 53,49 65,61" fill="#ec7a62"/>
+      <polygon points="65,56 77,49 65,61" fill="#b53324"/>
+      <polygon points="50,64 65,74 65,86" fill="#a52c1e"/>
+      <polygon points="80,64 65,74 65,86" fill="#861c12"/>
+      <polygon points="53,49 47,55 56,53" fill="#f4917a" opacity="0.85"/>
+    </svg>
+  </div>
+  <div class="lib-titles">
+    <p class="eyebrow">Heart of Amenti</p>
+    <h1><span class="the">The</span>EMERALD TABLETS</h1>
+    <p class="tag">Sources</p>
+  </div>
+  <div class="rule" style="margin-left:auto;margin-right:auto"></div>
+</header>
+<div id="glass">
+  <div class="gk">⚠ No reading.</div>
+  <div class="gv" id="glass-msg"><code>LIBRARY.json</code> did not load. The librarian (<code>probes/probe-library.mjs</code>) may not have run yet. This pane shows nothing rather than yesterday's numbers.</div>
+</div>
+<div class="strip" id="strip"></div>
+<div id="body"></div>
+<div class="biblio" id="biblio" style="display:none">
+  <button id="biblio-btn">⬇ Download Bibliography (.md)</button>
+  <span class="note" id="biblio-note"></span>
+</div>
+<div class="foot">Ingram Manor LLC · The Library reads itself · Amenti.live</div>
+</main>
+<script>
+(function(){
+  var $=function(id){return document.getElementById(id)};
+  var esc=function(s){return String(s==null?'':s).replace(/[&<>]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;'}[c]})};
+  var LIBRARY_URL='https://ianingram.github.io/Amenti.live/LIBRARY.json';
+  fetch(LIBRARY_URL,{cache:'no-store'})
+    .then(function(r){if(!r.ok)throw new Error('LIBRARY.json '+r.status);return r.json();})
+    .then(render)
+    .catch(function(e){
+      $('glass').style.display='block';
+      $('glass-msg').innerHTML='<code>LIBRARY.json</code> did not load ('+esc(e.message)+'). The librarian (<code>probes/probe-library.mjs</code>) may not have run yet.';
+      $('stamp-read').textContent='no reading'; $('stamp-read').style.color='var(--red)';
+    });
+  function render(d){
+    var t=d.totals||{};
+    $('stamp-read').textContent='LAST READ · '+(d.generatedAt||'?');
+    var mb=(t.totalKB!=null? Math.round(t.totalKB/1024*10)/10+' MB':'?');
+    var cells=[['unlocked',t.unlocked,'n'],['rooms',t.manifests,''],['works',t.totalWorksPresent,''],['total size',mb,''],['cards',t.withCard,''],['plates',t.withTerminal,''],['empty',t.empty,t.empty?'am':'ok'],['placeholder',t.placeholder,t.placeholder?'am':'ok']];
+    $('strip').innerHTML=cells.map(function(c){return '<div class="cell"><div class="ck">'+c[0]+'</div><div class="cv '+c[2]+'">'+esc(c[1])+'</div></div>';}).join('');
+    var rooms=(d.rooms||[]).slice().sort(function(a,b){var o={full:0,empty:1,placeholder:2,error:3};if(o[a.status]!==o[b.status])return o[a.status]-o[b.status];return (b.worksPresent||0)-(a.worksPresent||0);});
+    var img=function(has,label){return has?'<span class="imgyes" title="'+label+' present">●</span>':'<span class="imgno" title="no '+label+'">–</span>';};
+    var rows=rooms.map(function(r){return '<tr>'+
+      '<td><span class="name">'+esc(r.name||r.key)+'</span> <span class="key">'+esc(r.key)+'</span></td>'+
+      '<td><span class="pill '+esc(r.status)+'">'+esc(r.status)+'</span></td>'+
+      '<td class="num">'+esc(r.worksPresent!=null?r.worksPresent:'–')+(r.worksListed&&r.worksListed!==r.worksPresent?' <span class="key">/'+esc(r.worksListed)+'</span>':'')+'</td>'+
+      '<td class="num">'+esc(r.sizeKB!=null?r.sizeKB+' KB':'–')+'</td>'+
+      '<td class="ctr">'+img(r.hasCard,'card')+'</td>'+
+      '<td class="ctr">'+img(r.hasTerminal,'terminal plate')+'</td>'+
+    '</tr>';}).join('');
+    $('body').innerHTML='<table><thead><tr><th>Reading Room</th><th>State</th><th class="num">Works</th><th class="num">Size</th><th class="ctr">Card</th><th class="ctr">Plate</th></tr></thead><tbody>'+rows+'</tbody></table>';
+    wireBiblio(d,rooms);
+  }
+  function wireBiblio(d,rooms){
+    var ww=rooms.filter(function(r){return r.works&&r.works.length;});
+    var sc=ww.reduce(function(n,r){return n+r.works.length;},0);
+    if(!sc)return;
+    $('biblio').style.display='block';
+    $('biblio-note').textContent=sc+' works across '+ww.length+' rooms';
+    $('biblio-btn').onclick=function(){
+      var L=['# THE AMENTI LIBRARY — BIBLIOGRAPHY','','Primary sources held in the reading rooms. A reading of LIBRARY.json, generated '+(d.generatedAt||'')+'.','All texts public domain unless a source states otherwise.','','---',''];
+      ww.slice().sort(function(a,b){return (a.name||a.key).localeCompare(b.name||b.key);}).forEach(function(r){
+        L.push('## '+(r.name||r.key),'');
+        var bs={};r.works.forEach(function(w){var s=w.source||'(source not recorded)';(bs[s]=bs[s]||[]).push(w.title||'');});
+        Object.keys(bs).forEach(function(s){L.push('- '+s);});L.push('');
+      });
+      L.push('---','','_'+sc+' works · '+ww.length+' figures · Ingram Manor LLC · Amenti.live_');
+      var b=new Blob([L.join('\n')],{type:'text/markdown'});var a=document.createElement('a');
+      a.href=URL.createObjectURL(b);a.download='amenti-library-bibliography.md';
+      document.body.appendChild(a);a.click();a.remove();
+    };
+  }
+})();
+</script>
+</body>
+</html>
