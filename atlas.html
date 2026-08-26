@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Amenti Atlas · Amenti Fleet</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="amenti.css">
+<!--
+   THE ATLAS · atlas.html · Fleet-Documents
+   The map of the whole system, for any reader — human or machine. Read this
+   top to bottom and you have the mental model of the ship without reading the
+   code. Authored structure (how it works, stable); LIVE counts pulled from the
+   registers (so the numbers are readings, not memories). If a count will not
+   load it shows "—" rather than a stale number.
+-->
+<style>
+:root{
+  --gold:#d4a017; --gold-b:#f5c542; --neon:#00ffe0; --term:#57c98a;
+  --violet:#c4a5ff; --tblue:#57b6ff; --amber:#fbbf24; --red:#f87171;
+  --ink:#08090e; --granite:#11131c; --slate:#232838; --wire:#343b52;
+  --text:#c8ccdc; --dim:#8f95ab; --gold-light:#f0c040;
+  --mono:'Share Tech Mono',monospace; --body:'Rajdhani',sans-serif;
+  --disp:'Amenti Display','Special Elite',serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--ink)}
+body{font-family:var(--body);font-weight:300;font-size:18px;line-height:1.66;color:var(--text);
+  padding:0 0 90px;background-image:radial-gradient(ellipse at 50% -8%,rgba(212,160,23,.10),transparent 60%)}
+main{max-width:1000px;margin:0 auto;padding:26px 30px 0}
+.stamp{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:8px 18px;
+  padding:0 2px 12px;border-bottom:1px solid var(--slate);
+  font-family:var(--disp);font-size:14px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim)}
+.stamp .doc{color:var(--gold)} .stamp .live{color:var(--term)}
+.stamp .sm{flex-basis:100%;order:3;color:var(--gold);opacity:.75}
+@media(min-width:760px){.stamp .sm{flex-basis:auto;order:0}}
+.stamp .sep{opacity:.35;margin:0 5px}
+header{padding:34px 0 6px;text-align:center}
+.eyebrow{font-family:var(--disp);font-size:15px;letter-spacing:.26em;text-transform:uppercase;color:var(--gold-b);margin:0 0 12px}
+h1{font-family:var(--disp);font-size:clamp(30px,5vw,54px);color:var(--tblue);line-height:1;margin:0;letter-spacing:.04em;white-space:nowrap;text-shadow:0 0 34px rgba(87,182,255,.28)}
+h1 .the{display:block;font-size:.27em;letter-spacing:.34em;color:var(--gold);opacity:.85;text-shadow:none;margin-bottom:.04em}
+.tag{font-family:var(--disp);font-size:clamp(12px,1.7vw,17px);color:#e6e9f2;letter-spacing:.12em;text-transform:uppercase;margin:14px auto 0;white-space:nowrap}
+.tag2{font-family:var(--disp);font-size:clamp(11px,1.5vw,14px);color:var(--dim);letter-spacing:.16em;text-transform:uppercase;margin:8px auto 0;white-space:nowrap}
+.rule{width:170px;height:1px;margin:22px auto 30px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+h2{font-family:var(--disp);font-size:clamp(21px,2.7vw,28px);letter-spacing:.05em;color:var(--gold);
+  margin:46px 0 4px;padding-bottom:9px;border-bottom:1px solid var(--slate)}
+h2 .n{font-family:var(--mono);font-size:.6em;color:var(--dim);letter-spacing:.1em;margin-left:10px}
+.lede{color:var(--dim);font-size:16px;margin:2px 0 18px}
+.tiers{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin:20px 0}
+.tier{background:var(--granite);border:1px solid var(--slate);border-left:3px solid var(--gold);border-radius:8px;padding:16px 18px}
+.tier .t{font-family:var(--disp);letter-spacing:.1em;text-transform:uppercase;font-size:15px;color:var(--gold-b)}
+.tier .d{font-size:15px;color:var(--text);margin-top:6px}
+.tier.cf{border-left-color:var(--amber)} .tier.gh{border-left-color:var(--term)} .tier.sb{border-left-color:var(--violet)}
+.card{background:var(--granite);border:1px solid var(--slate);border-radius:8px;padding:6px 18px;margin:14px 0}
+.row{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline;padding:11px 0;border-bottom:1px solid #171d29}
+.row:last-child{border-bottom:none}
+.row .k{font-family:var(--mono);font-size:14px;color:var(--tblue);min-width:170px}
+.row .v{flex:1;font-size:16px;min-width:220px}
+.row .c{font-family:var(--mono);font-size:15px;color:var(--gold-b);text-align:right;min-width:64px}
+.flow{counter-reset:step;margin:18px 0}
+.flow .s{position:relative;padding:8px 0 8px 42px;font-size:16px}
+.flow .s::before{counter-increment:step;content:counter(step);position:absolute;left:0;top:6px;
+  width:26px;height:26px;border-radius:50%;background:var(--slate);color:var(--gold-b);
+  font-family:var(--mono);font-size:13px;display:flex;align-items:center;justify-content:center}
+.doctrine{background:rgba(0,255,224,.03);border:1px solid rgba(0,255,224,.18);border-radius:8px;padding:6px 20px;margin:16px 0}
+.doctrine .d{padding:12px 0;border-bottom:1px solid rgba(0,255,224,.08);font-size:16px}
+.doctrine .d:last-child{border-bottom:none}
+.doctrine .d b{font-family:var(--disp);letter-spacing:.05em;color:var(--neon);text-transform:uppercase;font-size:15px;display:block;margin-bottom:2px}
+code{font-family:var(--mono);font-size:.86em;color:var(--gold-light);background:rgba(212,160,23,.08);padding:1px 6px;border-radius:3px}
+.foot{font-family:var(--disp);font-size:14px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);text-align:center;line-height:2;border-top:1px solid var(--slate);margin-top:54px;padding-top:22px}
+@media(max-width:640px){main{padding:20px 16px 0}body{font-size:17px}}
+</style>
+</head>
+<body>
+<div id="fleet-nav"></div>
+<script src="fleet-nav.js"></script>
+<main>
+<div class="stamp">
+  <div class="sl"><span class="doc">Fleet Pane</span><span class="sep">·</span><span>Amenti Atlas</span></div>
+  <div class="sm">Ingram Manor LLC</div>
+  <div><span class="live" id="stamp-read">live counts loading…</span></div>
+</div>
+
+<header>
+  <h1>AMENTI ATLAS</h1>
+  <p class="tag">How Amenti works</p>
+  <p class="tag2">For any reader, human or machine.</p>
+  <div class="rule"></div>
+</header>
+
+<h2>The three tiers</h2>
+<p class="lede">The whole system rests on three providers, each with one job.</p>
+<div class="tiers">
+  <div class="tier cf"><div class="t">Cloudflare runs it</div><div class="d">Six Workers do the live work — AI proxying, minting, quizzes, art. The moving parts.</div></div>
+  <div class="tier gh"><div class="t">GitHub defines it</div><div class="d">The repos hold the truth: content, code, registers, and the Actions that regenerate the readings.</div></div>
+  <div class="tier sb"><div class="t">Supabase remembers it</div><div class="d">Persistent state — votes, the pool, what must survive between visits.</div></div>
+</div>
+
+<h2>The repositories</h2>
+<p class="lede">Where the ship is defined. Each repo has one role.</p>
+<div class="card">
+  <div class="row"><span class="k">Amenti.live</span><span class="v">The flagship site (public). Page1, the library, the registers, the probes, the Actions.</span></div>
+  <div class="row"><span class="k">Fleet-Documents</span><span class="v">The instrument deck — every pane lives here, and the fleet registers they read.</span></div>
+  <div class="row"><span class="k">Amenti-Workers</span><span class="v">The six Cloudflare Workers (private).</span></div>
+  <div class="row"><span class="k">Amenti-Technical-Briefs</span><span class="v">The written record — briefs, rulings, the standing slip. Why things are the way they are.</span></div>
+  <div class="row"><span class="k">Admin · Gameroom0.0</span><span class="v">Private admin and experimental surfaces.</span></div>
+</div>
+
+<h2>The six Workers</h2>
+<p class="lede">The live machinery on Cloudflare. Only one holds a cron.</p>
+<div class="card">
+  <div class="row"><span class="k">amenti-mint</span><span class="v">Settlement &amp; the weekly bell — the pool settles Monday 00:00 UTC. <b>The only live cron.</b></span></div>
+  <div class="row"><span class="k">amenti-proxy</span><span class="v">The AI gate — every model call passes through here (limits, rate-caps, metering).</span></div>
+  <div class="row"><span class="k">amenti-probe</span><span class="v">Reads state on demand for the instruments.</span></div>
+  <div class="row"><span class="k">amenti-artdirector</span><span class="v">Image &amp; plate direction.</span></div>
+  <div class="row"><span class="k">amenti-quizzard</span><span class="v">The quizzes — one path by which votes reach the pool.</span></div>
+  <div class="row"><span class="k">amenti-terminal</span><span class="v">The dial-in / conversation surface.</span></div>
+</div>
+
+<h2>The registers <span class="n">readings, not memories</span></h2>
+<p class="lede">A register is a <em>reading</em> of the real thing, regenerated by a probe or Action — never hand-edited. This is the ship's first law. Counts below are live.</p>
+<div class="card">
+  <div class="row"><span class="k">LIBRARY.json</span><span class="v">The reading rooms — written by <code>probe-library.mjs</code>. Read by The Emerald Tablets.</span><span class="c" id="c-lib">—</span></div>
+  <div class="row"><span class="k">ROSTER-INDEX.json</span><span class="v">Every soul in the archive.</span><span class="c" id="c-roster">—</span></div>
+  <div class="row"><span class="k">fleet.json</span><span class="v">The fleet's intent — cadences, what should run.</span><span class="c"></span></div>
+  <div class="row"><span class="k">fleet-dispatch.json</span><span class="v">The fleet's reality — what actually fired.</span><span class="c"></span></div>
+  <div class="row"><span class="k">ARK.json</span><span class="v">The backup's last reading — verified, all repos. Read by The Watch.</span><span class="c" id="c-ark">—</span></div>
+  <div class="row"><span class="k">PANES.json</span><span class="v">Every pane — generated by <code>probe-panes.mjs</code>.</span><span class="c" id="c-panes">—</span></div>
+  <div class="row"><span class="k">WORKERS.json · PLATES.json · SOURCES.json · HALL-STATE.json</span><span class="v">The workers, the plates, the citations, the hall.</span><span class="c"></span></div>
+</div>
+
+<h2>The panes <span class="n">the instrument deck</span></h2>
+<p class="lede">Each pane reads a register and shows one part of the ship, so no one reads code to know its state. This Atlas is the map of them all. <span id="pane-count-line"></span></p>
+
+<h2>How a reading is made</h2>
+<p class="lede">The pattern every subsystem follows — the thing that makes the ship legible.</p>
+<div class="flow">
+  <div class="s">The real thing exists — a folder of reading rooms, a fleet of tubes, a backup bundle.</div>
+  <div class="s">A <b>probe</b> or <b>Action</b> walks it and reads what is actually there — not what should be there.</div>
+  <div class="s">It writes a <b>register</b> — a JSON reading — and commits it. Regenerated, never hand-kept.</div>
+  <div class="s">A <b>pane</b> fetches the register and shows it. If the register won't load, the pane shows nothing — the empty glass — not a stale number.</div>
+  <div class="s">You (or a machine) read the pane. The code is never read to know the state.</div>
+</div>
+
+<h2>The doctrine</h2>
+<p class="lede">The principles the whole ship is built on. If you understand these, you understand Amenti.</p>
+<div class="doctrine">
+  <div class="d"><b>Readings, not memories</b>A register is observed and regenerated, never hand-typed. A hand-kept number drifts the moment the thing it counts changes.</div>
+  <div class="d"><b>The empty glass</b>Report what is there, not what should be there. A pane with no reading shows nothing rather than yesterday's numbers.</div>
+  <div class="d"><b>The Silent Signature</b>The worst failure is an instrument glowing green while watching nothing. A schedule nobody checks is a promise nobody keeps.</div>
+  <div class="d"><b>Look first</b>The reading is cheaper than the guess. Check the real thing before assuming its state.</div>
+  <div class="d"><b>A backup never read back is not a backup</b>It is a file with a hopeful name. The Ark verifies its own bundles, off-provider, daily.</div>
+</div>
+
+<div class="foot">Ingram Manor LLC · The map of the whole · read this, not the code</div>
+</main>
+
+<script>
+(function(){
+  var $=function(id){return document.getElementById(id)};
+  var A='https://ianingram.github.io/Amenti.live/';
+  var loaded=0, tried=0;
+  function done(){ tried++; if(tried>=4) $('stamp-read').textContent = loaded? ('LIVE · '+loaded+' counts') : 'authored map · counts offline'; }
+  function set(id,v){ var e=$(id); if(e){ e.textContent=v; loaded++; } }
+
+  fetch(A+'LIBRARY.json',{cache:'no-store'}).then(function(r){return r.ok?r.json():null;})
+    .then(function(d){ if(d&&d.totals) set('c-lib', d.totals.unlocked+' rooms'); }).catch(function(){}).finally(done);
+  fetch(A+'ROSTER-INDEX.json',{cache:'no-store'}).then(function(r){return r.ok?r.json():null;})
+    .then(function(d){ if(d&&d.souls) set('c-roster', d.souls.length+' souls'); }).catch(function(){}).finally(done);
+  fetch('ARK.json',{cache:'no-store'}).then(function(r){return r.ok?r.json():null;})
+    .then(function(d){ if(d){ set('c-ark', (d.verified?'✓ ':'')+(d.repos||'')+' repos'); } }).catch(function(){}).finally(done);
+  fetch('PANES.json',{cache:'no-store'}).then(function(r){return r.ok?r.json():null;})
+    .then(function(d){ if(d&&d.panes){ set('c-panes', d.panes.length+' panes'); $('pane-count-line').textContent='('+d.panes.length+' panes on the deck.)'; } }).catch(function(){}).finally(done);
+})();
+</script>
+</body>
+</html>
