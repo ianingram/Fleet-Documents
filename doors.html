@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>THE DOORS · Amenti Fleet</title>
+<meta name="description" content="Every document in the index, as a door you can open.">
+<style>
+  /* ═══════════════════════════════════════════════════════════════════════
+     doors.html · THE SEVENTEENTH PANE
+
+     WHAT IT IS. One anchor per reachable document in SOURCES.json. Nothing
+     more. It authors nothing, judges nothing, and holds no list of its own.
+
+     WHY. SOURCES.json has carried its own complaint for weeks — its briefs
+     section is literally titled "41 files, 8 of them linked anywhere", and
+     its _finding says the hub shows a subset without saying which. A file
+     nothing links to is unreachable twice over: a reader cannot click to it,
+     and neither can anything that can only follow links. Proved 26 Aug —
+     a public file, sitting at a URL, could not be opened because no fetched
+     page linked to it. The register knew about all of them the whole time.
+
+     A REFLECTION, NOT A DOCUMENT. Per the Glass Gate: this pane is generated
+     from state at open. Nothing here is typed. Add a file, let the source
+     index walk it, and the door appears with no edit to this page. Which
+     also means it cannot be edited into a lie — there is nothing to edit.
+
+     THE URL DERIVATION. The index stores repo/branch/file for RAW fetching;
+     a reader needs the Pages URL, which is the same path with the branch
+     segment removed. Verified against the live Separation-of-Power link
+     that hall.html already carries.
+
+     WHAT IT REFUSES TO LINK.
+       · anything the index marked unreachable — it is not a door
+       · any repo not confirmed to serve Pages. Fleet-Documents and
+         Gameroom0.0 appear in the index and are NOT whitelisted: they are
+         listed as known-but-unopened rather than linked to a possible 404.
+         Add them to SERVED once someone has opened one.
+     A door that does not open is worse than an honest absence.
+     ═══════════════════════════════════════════════════════════════════════ */
+  :root{
+    --ink:#0a0a0f; --dim:#a4a4b8; --slate:#2a2a38;
+    --neon:#00ffe0; --gold:#d4a017; --gold-bright:#f5c542;
+    --mono:'Share Tech Mono',ui-monospace,Menlo,monospace;
+    color-scheme:dark;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ink);color:var(--dim);font-family:var(--mono);font-size:13px;line-height:1.6}
+  .wrap{max-width:1100px;margin:0 auto;padding:0 24px 80px}
+  h1{font-size:20px;letter-spacing:.16em;color:var(--gold-bright);margin:28px 0 4px;font-weight:400}
+  .standfirst{margin:0 0 4px;font-size:12px;opacity:.75;max-width:60ch}
+  .reading{margin:0 0 28px;font-size:11px;letter-spacing:.06em;color:var(--neon);opacity:.8}
+  .counts{display:flex;flex-wrap:wrap;gap:26px;margin:0 0 30px;padding:14px 0;border-top:1px solid var(--slate);border-bottom:1px solid var(--slate)}
+  .count .k{display:block;font-size:10px;letter-spacing:.14em;opacity:.5}
+  .count .v{font-size:22px;color:var(--gold-bright)}
+  h2{font-size:11px;letter-spacing:.16em;color:var(--gold);margin:30px 0 8px;font-weight:400;text-transform:uppercase}
+  ul{list-style:none;margin:0;padding:0}
+  li{padding:5px 0;border-bottom:1px solid rgba(42,42,56,.5);display:grid;grid-template-columns:22rem 1fr;gap:16px}
+  a{color:var(--neon);text-decoration:none;word-break:break-all}
+  a:hover,a:focus-visible{color:var(--gold-bright);text-decoration:underline}
+  .shut{color:var(--dim);opacity:.45;word-break:break-all}
+  .gloss{opacity:.6;font-size:12px}
+  .gloss.none{opacity:.32;font-style:italic}
+  .note{margin:26px 0 0;padding:12px 14px;border-left:2px solid var(--slate);font-size:12px;opacity:.7;max-width:70ch}
+  .degraded{margin:20px 0;padding:12px 14px;border-left:2px solid var(--gold);color:var(--gold-bright);font-size:12px}
+  @media (max-width:720px){ li{grid-template-columns:1fr;gap:2px} }
+</style>
+</head>
+<body>
+<div id="fleet-nav"></div>
+<div class="wrap">
+  <h1>THE DOORS</h1>
+  <p class="standfirst">Every document the source index can reach, as an anchor. This pane holds no list of its own — it reads <code>SOURCES.json</code> and renders what is there.</p>
+  <p class="reading" id="reading">reading the index&hellip;</p>
+  <div class="counts" id="counts"></div>
+  <div id="doors"></div>
+  <p class="note">
+    A file nothing links to is unreachable to a reader and to any machine that
+    can only follow links — even when it is public and sitting at a URL. These
+    doors are generated from the index at open; add a file, let the source
+    index walk it, and its door appears here with no edit to this page.
+  </p>
+</div>
+<script src="fleet-nav.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  var SRC    = 'https://raw.githubusercontent.com/ianingram/Amenti.live/main/SOURCES.json';
+  var PAGES  = 'https://ianingram.github.io/';
+  /* Confirmed serving. NOT a guess — both have been opened. */
+  var SERVED = { 'Amenti.live': 1, 'Amenti-Technical-Briefs': 1 };
+
+  function esc(s){ return String(s == null ? '' : s)
+    .replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+
+  function door(path){
+    var b = String(path).split('/'), repo = b.shift();
+    if (!SERVED[repo]) return null;
+    b.shift();                                   /* the branch segment */
+    if (!b.length) return null;
+    return PAGES + repo + '/' + b.map(encodeURIComponent).join('/');
+  }
+
+  function el(tag, cls, text){
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text != null) e.textContent = text;
+    return e;
+  }
+
+  /* Cache-busted: raw is served through a CDN that hands back minutes-old
+     bytes with a 200 and nothing to say they are stale. */
+  fetch(SRC + '?_=' + Date.now(), { cache:'no-store' })
+    .then(function (r){ if (!r.ok) throw new Error(r.status + ' SOURCES.json'); return r.json(); })
+    .then(function (d){
+      var open = 0, shut = 0, undescribed = 0, root = document.getElementById('doors');
+
+      document.getElementById('reading').textContent =
+        'the source index walked ' + (d.generated || 'at an unknown hour') +
+        ' \u00b7 written by ' + (d.generator || 'unknown');
+
+      Object.keys(d.sources || {}).forEach(function (section){
+        var items = (d.sources[section] || []).slice().sort(function(a,b){
+          return String(a.id).localeCompare(String(b.id));
+        });
+        if (!items.length) return;
+
+        root.appendChild(el('h2', null, section));
+        var ul = el('ul');
+
+        items.forEach(function (i){
+          var li = el('li');
+          var url = i.unreachable ? null : door(i.path);
+
+          if (url){
+            var a = el('a', null, i.id);
+            a.href = url;
+            li.appendChild(a);
+            open++;
+          } else {
+            /* Named, not linked, and the reason is stated. */
+            var why = i.unreachable
+              ? i.id + '  \u2014 unreachable (' + i.unreachable + ')'
+              : i.id + '  \u2014 no confirmed Pages site';
+            li.appendChild(el('span', 'shut', why));
+            shut++;
+          }
+
+          var w = i.what;
+          if (i.supersededBy) w = (w || '') + '  [superseded by ' + i.supersededBy + ']';
+          if (!w) undescribed++;
+          li.appendChild(el('span', 'gloss' + (w ? '' : ' none'),
+            w || 'undescribed \u2014 a document waiting for a sentence'));
+
+          ul.appendChild(li);
+        });
+
+        root.appendChild(ul);
+      });
+
+      var counts = [
+        ['doors that open', open],
+        ['named, not linked', shut],
+        ['undescribed', undescribed]
+      ];
+      var c = document.getElementById('counts');
+      counts.forEach(function (p){
+        var d2 = el('div','count');
+        d2.appendChild(el('span','k',p[0]));
+        d2.appendChild(el('span','v',String(p[1])));
+        c.appendChild(d2);
+      });
+    })
+    .catch(function (e){
+      document.getElementById('reading').textContent = '';
+      var d2 = el('div','degraded',
+        'SOURCES.json could not be read \u2014 ' + (e.message || e) +
+        '. No doors are shown rather than a list that may no longer be true.');
+      document.getElementById('doors').appendChild(d2);
+    });
+})();
+</script>
+</body>
+</html>

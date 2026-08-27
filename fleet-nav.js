@@ -55,6 +55,12 @@
        against BOOK.json, and the day each chapter actually landed. Every
        register watches the ship; nothing watched the work. */
     { file: 'production.html',     label: 'PRODUCTION'   },
+    /* 26 Aug 2026 — the seventeenth. Reads SOURCES.json and renders one anchor
+       per reachable document. Built because the index has carried its own
+       complaint for weeks — 41 briefs, 8 of them linked anywhere — and because
+       a file nothing links to is unreachable to a reader AND to any machine
+       that can only follow links. The doors are the register, made walkable. */
+    { file: 'doors.html',          label: 'THE DOORS'    },
   ];
   /* which page are we on? match the last path segment, default to index.html */
   const here = (location.pathname.split('/').pop() || 'index.html').toLowerCase()
