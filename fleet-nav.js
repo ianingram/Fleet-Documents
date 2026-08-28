@@ -61,6 +61,14 @@
        a file nothing links to is unreachable to a reader AND to any machine
        that can only follow links. The doors are the register, made walkable. */
     { file: 'doors.html',          label: 'THE DOORS'    },
+    /* 28 Aug 2026 — the eighteenth. Reads SURFACES.json: every place a person
+       can act on this system, and what reaches each one. Built because every
+       register on this ship mapped the MACHINERY and none mapped the PLACES —
+       and on 27 Aug the same gap was found nine times in one day, each time by
+       tripping over it. A surface is a user interface point: hall.html is a
+       page, the Ask box is the surface. This pane is itself a surface and
+       appears in the register it renders. */
+    { file: 'surfaces.html',       label: 'SURFACES'     },
   ];
   /* which page are we on? match the last path segment, default to index.html */
   const here = (location.pathname.split('/').pop() || 'index.html').toLowerCase()

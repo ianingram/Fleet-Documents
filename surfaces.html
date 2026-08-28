@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Surface Manifest · Amenti Fleet</title>
+<style>
+  /* ═══════════════════════════════════════════════════════════════════════
+     THE SURFACE MANIFEST · the eighteenth pane
+     ------------------------------------------------------------------------
+     WHAT IT IS. Every place a person can act on this system, and what reaches
+     each one. Reads SURFACES.json, which probes/probe-surfaces.mjs writes by
+     walking the public repos and merging SURFACES.semantics.json.
+
+     WHY. Every register on this ship maps the MACHINERY — SOURCES.json maps
+     documents, FLEET_MANIFEST maps files, PANES maps panes, KEYS maps keys.
+     NOTHING MAPPED THE PLACES A PERSON CAN ACT, and on 27 Aug 2026 the same
+     gap was found nine times in one day: the dial and counsel, a memory
+     feature that worked on one prompt path and silently vanished on the
+     other, a visit reading that measures one surface of many, a whole game in
+     a seventh repository, and hall.html in no register at all.
+
+     Every one of those was found by TRIPPING OVER IT.
+
+     A SURFACE IS A USER INTERFACE POINT. Not a file, not a page, not a route.
+     hall.html is a page; the Ask box is the surface. That distinction is the
+     whole value: "does the dial fire on counsel" is a question about the
+     counsel INPUT, and a page-level register could never have answered it.
+
+     THE FOUR COLUMNS ARE THE POINT. counted · memory · dial · voice. Each was
+     an argument before it was a field.
+
+     A DOT IS NOT A DASH. `·` means checked and false. `?` means NOBODY HAS
+     LOOKED, and the register stores null rather than false because false is a
+     claim and null is an admission. The two must never render alike.
+
+     A REFLECTION, NOT A DOCUMENT. Per the Glass Gate: generated from state at
+     open. Nothing here is typed, so it cannot be edited into a lie — there is
+     nothing to edit. Add a surface, let the probe walk it, and the row
+     appears with no change to this page.
+
+     AND IT CONTAINS ITSELF. This pane is a surface, and it has an entry in
+     SURFACES.semantics.json. A map that omits itself is the fault it was
+     built to catch.
+     ═══════════════════════════════════════════════════════════════════════ */
+  :root{
+    --ink:#0a0a0f; --dim:#a4a4b8; --slate:#2a2a38;
+    --neon:#00ffe0; --gold:#d4a017; --gold-bright:#f5c542;
+    --warn:#c8613f;
+    --mono:'Share Tech Mono',ui-monospace,Menlo,monospace;
+    color-scheme:dark;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ink);color:var(--dim);font-family:var(--mono);font-size:13px;line-height:1.6}
+  .wrap{max-width:1100px;margin:0 auto;padding:0 24px 80px}
+  h1{font-size:20px;letter-spacing:.16em;color:var(--gold-bright);margin:28px 0 4px;font-weight:400}
+  .standfirst{margin:0 0 4px;font-size:12px;opacity:.75;max-width:64ch}
+  .reading{margin:0 0 28px;font-size:11px;letter-spacing:.06em;color:var(--neon);opacity:.8}
+  .counts{display:flex;flex-wrap:wrap;gap:26px;margin:0 0 30px;padding:14px 0;border-top:1px solid var(--slate);border-bottom:1px solid var(--slate)}
+  .count .k{display:block;font-size:10px;letter-spacing:.14em;opacity:.5}
+  .count .v{font-size:22px;color:var(--gold-bright)}
+  .count.warn .v{color:var(--warn)}
+  h2{font-size:11px;letter-spacing:.16em;color:var(--gold);margin:30px 0 8px;font-weight:400;text-transform:uppercase}
+  .note{font-size:11px;opacity:.6;margin:0 0 12px;max-width:70ch}
+  table{width:100%;border-collapse:collapse}
+  th{text-align:left;font-size:10px;letter-spacing:.14em;color:var(--dim);opacity:.5;font-weight:400;padding:0 10px 6px 0;border-bottom:1px solid var(--slate)}
+  td{padding:6px 10px 6px 0;border-bottom:1px solid rgba(42,42,56,.5);vertical-align:top}
+  td.name{color:var(--gold-bright)}
+  td.where{font-size:11px;opacity:.6}
+  .r{text-align:center;width:4.4rem;font-size:14px}
+  .yes{color:var(--neon)}
+  .no{opacity:.28}
+  .unk{color:var(--gold-bright)}
+  .stamp{font-size:10px;letter-spacing:.1em;padding:1px 6px;border:1px solid var(--slate);border-radius:2px;opacity:.75}
+  .CONFIRMED{color:var(--neon);border-color:rgba(0,255,224,.3)}
+  .ADRIFT,.DUPLICATE{color:var(--warn);border-color:rgba(200,97,63,.45)}
+  .UNDECLARED{color:var(--gold);border-color:rgba(212,160,23,.35)}
+  .UNRESOLVED{color:var(--dim)}
+  .OFF-WALK{opacity:.5}
+  .aud{font-size:10px;letter-spacing:.1em;opacity:.5}
+  .drift li{padding:4px 0;border-bottom:1px solid rgba(42,42,56,.5);display:grid;grid-template-columns:8rem 14rem 1fr;gap:12px;font-size:12px}
+  ul{list-style:none;margin:0;padding:0}
+  .degraded{margin:20px 0;padding:12px 14px;border-left:2px solid var(--gold);color:var(--gold-bright);font-size:12px}
+  .gaps li{padding:3px 0;font-size:12px;opacity:.75;border-bottom:1px solid rgba(42,42,56,.4)}
+  footer{margin:40px 0 0;padding:14px 0 0;border-top:1px solid var(--slate);font-size:11px;opacity:.45}
+</style>
+</head>
+<body>
+<div id="fleet-nav"></div>
+<div class="wrap">
+  <h1>THE SURFACE MANIFEST</h1>
+  <p class="standfirst">Every place a person can act on this system, and what reaches each one. A surface is a user interface point — not a file, not a page. <em>hall.html</em> is a page; the Ask box is the surface.</p>
+  <p class="reading" id="reading">reading SURFACES.json…</p>
+  <div id="body"></div>
+  <footer id="foot"></footer>
+</div>
+
+<script src="fleet-nav.js"></script>
+<script>
+(function () {
+  'use strict';
+  var $ = function (id) { return document.getElementById(id); };
+  var esc = function (s) { return String(s == null ? '' : s)
+    .replace(/[&<>"]/g, function (c) { return { '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c]; }); };
+
+  /* A DOT IS NOT A DASH, AND A QUESTION MARK IS NEITHER.
+       yes  checked, and true
+       ·    checked, and false
+       ?    NOBODY HAS LOOKED — the register holds null, and null is an
+            admission where false would be a claim.
+     Rendering the last two alike would erase the distinction the register
+     goes out of its way to keep. */
+  function cell(v) {
+    if (v === true)  return '<td class="r yes">●</td>';
+    if (v === false) return '<td class="r no">·</td>';
+    return '<td class="r unk" title="not checked">?</td>';
+  }
+
+  function render(d) {
+    var c = d.counts || {}, r = d.reach || {};
+    var out = [];
+
+    out.push('<div class="counts">' + [
+      ['SURFACES',   (d.surfaces || []).length, false],
+      ['CONFIRMED',  c.confirmed,  false],
+      ['UNDECLARED', c.undeclared, c.undeclared > 0],
+      ['ADRIFT',     c.adrift,     c.adrift > 0],
+      ['DUPLICATE',  c.duplicate,  c.duplicate > 0],
+      ['OFF-WALK',   c.offWalk,    false]
+    ].map(function (x) {
+      return '<div class="count' + (x[2] ? ' warn' : '') + '"><span class="k">' + x[0] +
+             '</span><span class="v">' + (x[1] == null ? '—' : x[1]) + '</span></div>';
+    }).join('') + '</div>');
+
+    /* THE FINDING, FIRST. Somebody opening this pane is asking one question
+       before any other: what is not being measured. */
+    if (r.conversationSurfaces != null) {
+      out.push('<h2>What is not measured</h2>');
+      out.push('<p class="note">' + esc(r.conversationSurfaces) +
+        ' surfaces hold a conversation and cost model tokens. ' +
+        esc(r.countedOfThose) + ' of them ' +
+        (r.countedOfThose === 1 ? 'is' : 'are') + ' seen by the visit reading.' +
+        (r.uncounted && r.uncounted.length
+          ? ' <strong style="color:var(--warn)">Not counted: ' + esc(r.uncounted.join(', ')) + '.</strong>'
+          : '') +
+        (r.unknown && r.unknown.length
+          ? ' Not checked at all: ' + esc(r.unknown.join(', ')) + '.'
+          : '') + '</p>');
+    }
+
+    /* the register itself, reader surfaces before operator ones */
+    ['reader', 'operator'].forEach(function (aud) {
+      var rows = (d.surfaces || []).filter(function (s) { return s.audience === aud; });
+      if (!rows.length) return;
+      out.push('<h2>' + aud + ' surfaces · ' + rows.length + '</h2>');
+      out.push('<table><thead><tr>' +
+        '<th>surface</th><th>kind</th><th>where</th>' +
+        '<th class="r">counted</th><th class="r">memory</th><th class="r">dial</th><th class="r">voice</th>' +
+        '<th>stamp</th></tr></thead><tbody>' +
+        rows.map(function (s) {
+          var w = s.where || {}, re = s.reaches || {};
+          return '<tr>' +
+            '<td class="name">' + esc(s.name || s.id) + '</td>' +
+            '<td class="aud">' + esc(s.kind || '') + '</td>' +
+            '<td class="where">' + esc([w.file, w.section].filter(Boolean).join(' · ')) +
+              (s.duplicated ? ' <span class="stamp DUPLICATE">×' + s.duplicated + '</span>' : '') + '</td>' +
+            cell(re.counted) + cell(re.memory) + cell(re.dial) + cell(re.voice) +
+            '<td><span class="stamp ' + esc(s.stamp || '') + '">' + esc(s.stamp || '') + '</span></td>' +
+          '</tr>';
+        }).join('') + '</tbody></table>');
+    });
+
+    /* THE DRIFT. UNDECLARED is not an error — it is a surface waiting for a
+       sentence, exactly as SOURCES.json says of an undescribed document. */
+    if (d.drift && d.drift.length) {
+      out.push('<h2>Drift · ' + d.drift.length + '</h2>');
+      out.push('<p class="note">UNDECLARED is a surface the walk found and nobody has described — a surface waiting for a sentence, not a fault. ADRIFT and DUPLICATE are faults. UNRESOLVED is built at runtime and has no id to find.</p>');
+      out.push('<ul class="drift">' + d.drift.map(function (x) {
+        return '<li><span class="stamp ' + esc(x.stamp) + '">' + esc(x.stamp) + '</span>' +
+               '<span>' + esc(x.id) + '</span><span style="opacity:.6">' + esc(x.reading || '') + '</span></li>';
+      }).join('') + '</ul>');
+    }
+
+    /* WHAT THE REGISTER ADMITS IT DOES NOT KNOW. Carried from the semantics
+       file and shown, because a gap nobody can see is a gap nobody closes. */
+    if (d.stillUnknown && d.stillUnknown.length) {
+      out.push('<h2>Not yet known</h2>');
+      out.push('<ul class="gaps">' + d.stillUnknown.map(function (x) {
+        return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>');
+    }
+
+    if (d.unread && d.unread.length) {
+      out.push('<div class="degraded">' + d.unread.length +
+        ' file(s) could not be read on this walk, and are absent from the counts above rather than judged. ' +
+        esc(d.unread.join(', ')) + '</div>');
+    }
+
+    $('body').innerHTML = out.join('');
+    $('reading').textContent = 'read ' + (d.generated || 'unknown') + ' · ' +
+      (c.walkedControls || 0) + ' named controls walked';
+    $('foot').textContent = 'Generated by ' + (d.generator || 'probe-surfaces.mjs') +
+      '. Meaning is authored in SURFACES.semantics.json; existence is walked. ' +
+      'This pane is itself a surface and appears in the register above. ' +
+      '\u00a9 2026 Ingram Manor LLC.';
+  }
+
+  /* EMPTY GLASS. If the register cannot be read, say so plainly and show
+     nothing — a pane that invents a surface is worse than a pane that admits
+     it is blind. */
+  fetch('SURFACES.json?_=' + Date.now(), { cache: 'no-store' })
+    .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+    .then(render)
+    .catch(function (e) {
+      $('reading').textContent = '';
+      $('body').innerHTML = '<div class="degraded">SURFACES.json could not be read \u2014 ' +
+        esc(e && e.message) + '.<br>The register is written by probes/probe-surfaces.mjs. ' +
+        'Nothing is shown rather than something invented.</div>';
+    });
+})();
+</script>
+</body>
+</html>
