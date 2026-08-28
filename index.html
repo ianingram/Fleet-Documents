@@ -34,6 +34,13 @@
 
      THE OPEN QUESTION THIS LEAVES: a pane that 404s or renders as the wrong
      page is undetectable from inside the fleet. Worth a probe.
+
+     ── AND THE GRID DRIFTED ANYWAY, 28 AUGUST 2026 ───────────────────────────
+     Not this file being lost, but its LIST going stale: thirteen cards against
+     a registry of eighteen. A reader at the way in could not reach four panes
+     that existed, and two cards shared a number. The grid is now built from
+     window.FLEET_PANES. One list, positional numbering, and adding a pane is
+     one line in fleet-nav.js again — as the law always said it was.
      ============================================================================ -->
 <style>
 :root{
@@ -128,101 +135,68 @@ a.pane.soon .t{color:var(--dim)}
   </div>
 
   <!-- ══ THE PANE GRID ═══════════════════════════════════════════════════════
-       HAND-WRITTEN, and fleet-nav.js holds the same list as a registry. Two
-       copies of one truth is the fault this fleet exists to catch, and it has
-       already drawn blood here: two panes are both labelled "Pane IV" (the
-       Ordnance Bay and the Command View), which no reader notices and no check
-       catches.
+       BUILT FROM fleet-nav.js, not typed.
 
-       The fix is for this grid to be BUILT from fleet-nav.js's PANES array the
-       way the nav bar is. Left hand-written for now, deliberately, with the
-       cost written down rather than overlooked.
+       This grid was hand-written until 28 Aug 2026, and the comment that used
+       to sit here named the cost precisely: *two copies of one truth is the
+       fault this fleet exists to catch, and it has already drawn blood here.*
+
+       IT HAD. The grid held THIRTEEN cards against the registry's eighteen —
+       the Keyring, Production, the Doors and the Surfaces were all missing,
+       and a reader arriving at the way in could not reach four panes that
+       existed. Two cards were also both labelled "Pane IV".
+
+       Both faults are now impossible rather than fixed: the cards come from
+       window.FLEET_PANES, and the numbering is POSITIONAL, so it cannot
+       collide. Add a line to PANES and the way in follows.
+
+       If the registry cannot be read, this says so and shows nothing — the
+       same empty-glass rule the health strip above already keeps.
        ═════════════════════════════════════════════════════════════════════ -->
-  <div class="panes">
-    <a class="pane" href="ships-manifest.html">
-      <div class="n">Pane I</div>
-      <div class="t">The Ship's Manifest</div>
-      <div class="d">The fleet <b>by ship</b>. Every vessel, every hand below deck, and where the claims and the ship disagree.</div>
-    </a>
-
-    <a class="pane" href="engine-room.html">
-      <div class="n">Pane II</div>
-      <div class="t">The Engine Room</div>
-      <div class="d">The fleet <b>by capability</b>. The chain, the invariants, the guards — and the probe that holds each one.</div>
-    </a>
-  
-      <a class="pane" href="terminal.html">
-        <div class="n">The Terminal</div>
-        <div class="t">The Terminal</div>
-        <div class="d">The <b>emerald economy</b>, live. Circulating tokens over time, mint and burn, the weekly pool — real vitals in the language of a trading terminal. No fake prices; the glass shows the reading or the empty box.</div>
-      </a>
-
-    <a class="pane" href="sonar.html">
-      <div class="n">The Sonar</div>
-      <div class="t">The Sonar</div>
-      <div class="d">The <b>gate scope</b>. Who has reached the admin gate, from what bearing, and whether anyone on the glass is <b>not the captain</b>. A tripwire, not a traffic monitor.</div>
-    </a>
-
-    <a class="pane" href="broadcast.html">
-      <div class="n">The Broadcast</div>
-      <div class="t">The Broadcast</div>
-      <div class="d">The <b>weekly podcast</b>. A voice from the hall opens the gates, walks the week, and hands to the writer for the reading. Every edition kept &mdash; listen whenever.</div>
-    </a>
-
-    <a class="pane" href="watch.html">
-      <div class="n">Pane III</div>
-      <div class="t">The Watch</div>
-      <div class="d">The <b>Sentry Corps</b>. What guards the fleet, what it guards against — and whether anything is actually watching.</div>
-    </a>
-
-    <a class="pane" href="ordnance.html">
-      <div class="n">Pane IV</div>
-      <div class="t">The Ordnance Bay</div>
-      <div class="d">What the fleet has <b>fired</b>, what is <b>loaded</b>, and what was <b>missed</b>. A schedule nobody checks is a promise nobody keeps.</div>
-    </a>
-
-    <a class="pane" href="plate-deck.html">
-      <div class="n">The Plate Deck</div>
-      <div class="t">The Plate Deck</div>
-      <div class="d">The <b>art placement</b>. Where every image goes and how it is named — figures, and the <b>scenes</b> that belong to them. What the register can judge, and what it will never pretend to.</div>
-    </a>
-
-    <a class="pane" href="onboarding.html">
-      <div class="n">The Onboarding</div>
-      <div class="t">The Onboarding</div>
-      <div class="d">One soul from a bare name to a row, a room, a face and a docket — and what each of the <b>eight gates</b> refuses. Isaac Newton, traced.</div>
-    </a>
-
-    <a class="pane" href="workers.html">
-      <div class="n">The Workers</div>
-      <div class="t">The Workers</div>
-      <div class="d">The <b>machinery the ship runs on</b>. Every cron, every binding, and the name of every secret a restore would need — read from Cloudflare, never typed.</div>
-    </a>
-
-    <a class="pane" href="command.html">
-      <div class="n">Pane IV</div>
-      <div class="t">The Command View</div>
-      <div class="d">The board. Eight by eight, in three dimensions.</div>
-    </a>
-
-    <a class="pane" href="ocean.html">
-      <div class="n">Pane V</div>
-      <div class="t">The Ocean View</div>
-      <div class="d">The bird's-eye. The whole harbour at a glance.</div>
-    </a>
-  
-      <a class="pane" href="probe-corps.html">
-        <div class="n">The Corps</div>
-        <div class="t">The Probe Corps</div>
-        <div class="d">The fleet's <b>conscience</b>. The doctrine, the roster of every probe, and where they stand watch — the unit that accuses the system before it can lie to its captain.</div>
-      </a>
-  </div>
+  <div class="panes" id="panes"></div>
+  <p id="nopanes" style="display:none;text-align:center;color:var(--dim);
+     font-family:var(--mono);font-size:14px;letter-spacing:.1em">
+    fleet-nav.js did not load — the pane registry could not be read.
+  </p>
 
   <p class="foot">THE GLASS GATE <span style="color:var(--gold)">·</span> ONE DIRECTION <span style="color:var(--gold)">◈</span></p>
 </main>
 
 <script src="fleet-manifest.js" onerror="void 0"></script>
 <script>
+/* ── THE WAY IN, BUILT FROM THE REGISTRY ────────────────────────────────── */
+(function () {
+  'use strict';
+  var P = window.FLEET_PANES;
+  var grid = document.getElementById('panes');
+  if (!P || !P.length) { document.getElementById('nopanes').style.display = 'block'; return; }
+
+  /* Roman, and POSITIONAL. The old grid typed its own numbers and used
+     "Pane IV" twice; a number derived from position cannot repeat. */
+  var ROMAN = function (n) {
+    var v = [[10,'X'],[9,'IX'],[5,'V'],[4,'IV'],[1,'I']], out = '';
+    v.forEach(function (r) { while (n >= r[0]) { out += r[1]; n -= r[0]; } });
+    return out;
+  };
+  var esc = function (t) { return String(t == null ? '' : t)
+    .replace(/&(?!#?\w+;)/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); };
+
+  var here = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
+  var n = 0;
+  grid.innerHTML = P.filter(function (p) { return p.file !== 'index.html'; })
+    .map(function (p) {
+      n++;
+      /* `note` is authored in the registry and may carry <b> for emphasis, so
+         it is inserted as written. Everything the registry does not author is
+         escaped. */
+      return '<a class="pane" href="' + esc(p.file) + '"' +
+             (p.file.toLowerCase() === here ? ' style="border-color:var(--gold)"' : '') + '>' +
+             '<div class="n">Pane ' + ROMAN(n) + '</div>' +
+             '<div class="t">' + esc(p.label) + '</div>' +
+             '<div class="d">' + (p.note || '') + '</div></a>';
+    }).join('');
+})();
+
 (function () {
   'use strict';
   var M = window.FLEET_MANIFEST;
