@@ -1,191 +1,433 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>The Emerald Tablets · Amenti Fleet</title>
-<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="amenti.css">
-<!--
-   THE LIBRARY · library.html · Fleet-Documents
-   Reads LIBRARY.json (written by Amenti.live/probes/probe-library.mjs, which
-   walks library/ and confirms each work's file on disk). Every count is a
-   READING. EMPTY GLASS: if LIBRARY.json will not load, the pane says so and
-   shows nothing else. Vocabulary is the fleet's: FULL / EMPTY / PLACEHOLDER.
--->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Reading Desk · Amenti Fleet</title>
+
+<!-- ============================================================================
+     THE READING DESK · PANE XIX
+     ----------------------------------------------------------------------------
+     WHY THIS EXISTS. Eleven markdown documents sit in the root of Amenti.live —
+     the speech manual, the operator's map, the reader's manual, the glossary,
+     the pipeline, the doctrine, the log. Every one of them is a document a
+     PERSON is meant to read, and the only way to read one was to open GitHub
+     and look at a monospaced blob, or clone the repo.
+
+     Moving them to a docs/ folder was the other answer and it was refused, for
+     a good reason: three of them are FETCHED AT RUNTIME by their root path, and
+     a tidy folder that breaks the hall is not tidy.
+
+     So the fix is not filing. It is a READING SURFACE.
+
+     IT HOLDS NO LIST. The documents come from SOURCES.json — the same register
+     that already knows every path, its gloss and its authority. Add a document
+     to the semantics and it appears here. THE HARBOR'S CARD GRID WAS
+     HAND-WRITTEN BESIDE ITS REGISTRY FOR WEEKS and held thirteen cards against
+     eighteen panes; that fault is not repeated here.
+
+     AND IT PRINTS. The print stylesheet strips the chrome and leaves the
+     document, so the browser's own Save-as-PDF produces something you could
+     hand to somebody. No PDF library: a generated PDF that renders badly is
+     worse than the browser's, which knows the fonts it has.
+     ========================================================================= -->
+
 <style>
-:root{
-  --gold:#d4a017; --gold-b:#f5c542; --neon:#00ffe0; --term:#57c98a;
-  --violet:#c4a5ff; --tblue:#57b6ff; --amber:#fbbf24; --red:#f87171;
-  --ink:#08090e; --granite:#11131c; --slate:#232838; --wire:#343b52;
-  --text:#c8ccdc; --dim:#8f95ab; --gold-light:#f0c040;
-  --mono:'Share Tech Mono',monospace; --body:'Rajdhani',sans-serif;
-  --disp:'Amenti Display','Special Elite',serif;
-}
-*{box-sizing:border-box}
-html,body{margin:0;background:var(--ink)}
-body{font-family:var(--body);font-weight:300;font-size:18px;line-height:1.62;color:var(--text);
-  padding:0 0 90px;background-image:radial-gradient(ellipse at 50% -8%,rgba(212,160,23,.10),transparent 60%)}
-main{max-width:1120px;margin:0 auto;padding:26px 30px 0}
-.stamp{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:8px 18px;
-  padding:0 2px 12px;border-bottom:1px solid var(--slate);
-  font-family:var(--disp);font-size:14px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim)}
-.stamp .doc{color:var(--gold)} .stamp .live{color:var(--term)}
-.stamp .sm{flex-basis:100%;order:3;color:var(--gold);opacity:.75}
-@media(min-width:760px){.stamp .sm{flex-basis:auto;order:0}}
-.stamp .sep{opacity:.35;margin:0 5px}
-header{padding:34px 0 6px}
-.lib-head{display:flex;flex-direction:column;align-items:center;text-align:center;padding:38px 0 8px}
-.lib-gem{filter:drop-shadow(0 0 22px rgba(60,224,150,.45));margin-bottom:6px}
-.lib-titles{display:flex;flex-direction:column;align-items:center}
-.lib-head .eyebrow{margin:10px 0 0;color:var(--gold-b)}
-.lib-head h1{margin:6px 0 0;color:#3ce096;text-shadow:0 0 30px rgba(60,224,150,.35)}
-.lib-head .tag{margin:12px auto 0;max-width:52ch;font-family:var(--disp);text-transform:uppercase;letter-spacing:.18em;font-size:clamp(16px,2.1vw,21px);color:#d8dced}
-@media(max-width:640px){.lib-gem svg{width:88px;height:84px}}
-.eyebrow{font-family:var(--disp);font-size:15px;letter-spacing:.26em;text-transform:uppercase;color:var(--neon);margin:0 0 14px}
-h1{font-family:var(--disp);font-size:clamp(34px,5.6vw,58px);color:var(--gold-b);line-height:1;margin:0;text-shadow:0 0 34px rgba(245,197,66,.24)}
-h1 .the{display:block;font-size:.27em;letter-spacing:.34em;color:#2ea86a;opacity:.9;text-shadow:none;margin-bottom:.04em}
-.tag{font-family:var(--disp);font-size:clamp(16px,2.1vw,21px);color:#e6e9f2;letter-spacing:.18em;text-transform:uppercase;margin:14px 0 0}
-.rule{width:170px;height:1px;margin:22px 0 26px;background:linear-gradient(90deg,var(--gold),transparent)}
-#glass{display:none;border:1px solid rgba(248,113,113,.34);border-radius:8px;background:rgba(248,113,113,.05);padding:26px 24px;margin:26px 0}
-#glass .gk{font-family:var(--disp);font-size:19px;letter-spacing:.16em;text-transform:uppercase;color:var(--red)}
-#glass .gv{margin-top:10px;font-size:17px;max-width:76ch}
-#glass code{font-family:var(--mono);color:var(--red);background:rgba(248,113,113,.08);padding:1px 6px;border-radius:3px}
-.strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1px;background:var(--slate);border:1px solid var(--slate);border-radius:8px;overflow:hidden;margin:22px 0}
-.cell{background:var(--granite);padding:14px 16px}
-.cell .ck{font-family:var(--disp);font-size:14px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim)}
-.cell .cv{font-family:var(--disp);font-size:34px;line-height:1.05;margin-top:6px;color:#fff}
-.cv.n{color:var(--gold-b)} .cv.am{color:var(--amber)} .cv.ok{color:var(--term)} .cv.bad{color:var(--red)}
-table{width:100%;border-collapse:collapse;margin:18px 0;border:1px solid var(--slate)}
-th{font-family:var(--disp);font-size:14px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);text-align:left;padding:10px 13px;background:#0d0f17;border-bottom:1px solid var(--slate)}
-th.num,td.num{text-align:right;font-variant-numeric:tabular-nums}
-th.ctr,td.ctr{text-align:center}
-td{padding:10px 13px;font-size:16px;border-bottom:1px solid #171d29;vertical-align:top}
-tr:last-child td{border-bottom:none} tr:hover td{background:rgba(87,182,255,.04)}
-.name{color:#e6e9f2} .key{font-family:var(--mono);font-size:13px;color:var(--dim)}
-.pill{font-family:var(--mono);font-size:12px;letter-spacing:.06em;padding:2px 8px;border-radius:3px;text-transform:uppercase}
-.full{color:var(--term);border:1px solid rgba(87,201,138,.4);background:rgba(87,201,138,.08)}
-.empty{color:var(--amber);border:1px solid rgba(251,191,36,.4);background:rgba(251,191,36,.08)}
-.placeholder{color:var(--dim);border:1px solid var(--wire);background:rgba(255,255,255,.02)}
-.error{color:var(--red);border:1px solid rgba(248,113,113,.4);background:rgba(248,113,113,.08)}
-.imgyes{color:var(--term)} .imgno{color:var(--wire)}
-.biblio{margin:26px 0 0}
-.biblio button{font-family:var(--disp);font-size:15px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink);background:var(--gold-b);border:0;border-radius:6px;padding:12px 22px;cursor:pointer}
-.biblio button:hover{background:var(--gold-light)}
-.biblio .note{color:var(--dim);font-size:14px;margin-left:14px;font-family:var(--mono)}
-.foot{font-family:var(--disp);font-size:14px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);text-align:center;line-height:2;border-top:1px solid var(--slate);margin-top:54px;padding-top:22px}
-@media(max-width:640px){main{padding:20px 16px 0}body{font-size:17px;padding-bottom:64px}table{display:block;overflow-x:auto}}
+  :root{
+    --ink:#e8f0ea; --dim:#7fa694; --gold:#d4a017; --gold-bright:#f5c542;
+    --green:#00ff9c; --bg:#040806; --panel:rgba(0,10,6,.55);
+    --line:rgba(0,255,160,.16);
+    --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font:14px/1.65 var(--mono); letter-spacing:.01em;
+  }
+  a{color:var(--gold-bright);}
+
+  .wrap{max-width:1400px;margin:0 auto;padding:0 20px 60px;}
+  h1.title{
+    font-size:26px;letter-spacing:.22em;color:var(--gold);
+    margin:26px 0 4px;font-weight:400;
+  }
+  .sub{color:var(--dim);font-size:11px;letter-spacing:.14em;margin-bottom:22px;}
+
+  /* ── THE DESK · a list beside a page ─────────────────────────────────── */
+  .desk{display:grid;grid-template-columns:330px 1fr;gap:0;
+        border:1px solid var(--gold);min-height:74vh;max-height:82vh;}
+  .desk > *{min-height:0;}
+
+  .shelf{
+    border-right:1px solid var(--line); background:rgba(0,8,5,.5);
+    display:flex;flex-direction:column;overflow:hidden;
+  }
+  .shelf-head{
+    padding:12px 16px;border-bottom:1px solid var(--line);
+    font-size:10px;letter-spacing:.2em;color:var(--gold);
+    display:flex;justify-content:space-between;align-items:center;
+  }
+  .shelf-list{overflow-y:auto;flex:1 1 auto;min-height:0;padding:6px 0 14px;}
+  .grp{
+    padding:14px 16px 5px;font-size:9px;letter-spacing:.2em;
+    color:var(--dim);text-transform:uppercase;
+  }
+  .doc{
+    display:block;width:100%;text-align:left;background:none;border:none;
+    border-left:2px solid transparent;
+    padding:9px 16px;color:var(--ink);font:inherit;cursor:pointer;
+  }
+  .doc:hover{background:rgba(0,255,160,.05);}
+  .doc.on{background:rgba(212,160,23,.10);border-left-color:var(--gold);}
+  .doc-name{font-size:12px;letter-spacing:.04em;}
+  .doc-why{font-size:10px;color:var(--dim);line-height:1.45;margin-top:3px;}
+
+  /* ── THE PAGE ────────────────────────────────────────────────────────── */
+  .page{display:flex;flex-direction:column;overflow:hidden;background:var(--panel);}
+  .page-bar{
+    padding:10px 18px;border-bottom:1px solid var(--line);
+    display:flex;gap:10px;align-items:center;flex:0 0 auto;
+    background:rgba(0,6,4,.7);
+  }
+  .page-name{font-size:11px;letter-spacing:.14em;color:var(--gold);flex:1;
+             overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .btn{
+    background:rgba(0,10,6,.7);border:1px solid rgba(212,160,23,.5);
+    color:var(--gold-bright);font:11px/1 var(--mono);letter-spacing:.12em;
+    padding:8px 13px;cursor:pointer;white-space:nowrap;
+  }
+  .btn:hover{border-color:var(--gold);background:rgba(0,16,9,.9);}
+  .btn[disabled]{opacity:.35;cursor:default;}
+
+  .paper{overflow-y:auto;flex:1 1 auto;min-height:0;padding:30px 42px 60px;}
+  .paper.empty{display:flex;align-items:center;justify-content:center;
+               color:var(--dim);font-size:12px;text-align:center;padding:40px;}
+
+  /* the rendered document */
+  .md{max-width:78ch;}
+  .md h1{font-size:21px;letter-spacing:.1em;color:var(--gold);
+         margin:0 0 6px;font-weight:400;line-height:1.3;}
+  .md h2{font-size:15px;letter-spacing:.13em;color:var(--gold-bright);
+         margin:34px 0 10px;font-weight:400;
+         border-bottom:1px solid rgba(212,160,23,.22);padding-bottom:6px;}
+  .md h3{font-size:12.5px;letter-spacing:.16em;color:var(--green);
+         margin:24px 0 8px;font-weight:400;}
+  .md p{margin:0 0 13px;}
+  .md ul,.md ol{margin:0 0 13px;padding-left:22px;}
+  .md li{margin-bottom:5px;}
+  .md strong{color:#fff;}
+  .md em{color:var(--dim);font-style:italic;}
+  .md code{background:rgba(0,255,160,.07);padding:1px 5px;font-size:12.5px;
+           color:var(--green);}
+  .md pre{background:rgba(0,0,0,.45);border-left:2px solid var(--line);
+          padding:13px 16px;overflow-x:auto;margin:0 0 16px;}
+  .md pre code{background:none;padding:0;color:#9fe8c4;font-size:12px;
+               line-height:1.55;}
+  .md blockquote{
+    border-left:2px solid var(--gold);margin:0 0 16px;padding:4px 0 4px 16px;
+    color:var(--gold-bright);
+  }
+  .md blockquote p:last-child{margin-bottom:0;}
+  .md table{border-collapse:collapse;margin:0 0 18px;font-size:12px;width:100%;}
+  .md th,.md td{border:1px solid var(--line);padding:6px 10px;text-align:left;
+                vertical-align:top;}
+  .md th{color:var(--gold);font-weight:400;letter-spacing:.08em;
+         background:rgba(212,160,23,.06);}
+  .md hr{border:none;border-top:1px solid var(--line);margin:26px 0;}
+
+  .note{color:var(--dim);font-size:10px;letter-spacing:.1em;margin-top:16px;}
+  .err{color:#ff8a6b;}
+
+  @media (max-width:900px){
+    .desk{grid-template-columns:1fr;max-height:none;}
+    .shelf{border-right:none;border-bottom:1px solid var(--line);max-height:38vh;}
+    .paper{padding:22px 20px 40px;}
+  }
+
+  /* ── PRINT · WHAT SAVE-AS-PDF ACTUALLY GETS ──────────────────────────
+     Every piece of chrome is removed and the paper becomes the page: black on
+     white, serif, no scroll box. A PDF that carries the terminal's green on
+     black would be unreadable on paper and would waste a cartridge saying so. */
+  @media print{
+    body{background:#fff;color:#111;font-family:Georgia,'Times New Roman',serif;
+         font-size:11pt;line-height:1.5;}
+    .no-print,.shelf,.page-bar,h1.title,.sub,#fleet-nav,.note{display:none!important;}
+    .wrap{max-width:none;padding:0;}
+    .desk{display:block;border:none;max-height:none;min-height:0;}
+    .page{display:block;background:none;overflow:visible;}
+    .paper{overflow:visible;padding:0;max-height:none;}
+    .md{max-width:none;}
+    .md h1{color:#000;font-size:19pt;letter-spacing:0;font-family:inherit;}
+    .md h2{color:#000;font-size:14pt;letter-spacing:0;border-bottom:1px solid #999;
+           page-break-after:avoid;}
+    .md h3{color:#000;font-size:12pt;letter-spacing:0;page-break-after:avoid;}
+    .md strong{color:#000;}
+    .md em{color:#333;}
+    .md code,.md pre code{color:#000;background:none;
+      font-family:'SF Mono',Consolas,monospace;font-size:9.5pt;}
+    .md pre{background:#f4f4f4;border-left:2px solid #999;page-break-inside:avoid;}
+    .md blockquote{border-left:2px solid #000;color:#000;page-break-inside:avoid;}
+    .md th,.md td{border:1px solid #999;}
+    .md th{color:#000;background:#eee;}
+    .md table,.md tr{page-break-inside:avoid;}
+    a{color:#000;text-decoration:underline;}
+  }
 </style>
 </head>
 <body>
 <div id="fleet-nav"></div>
+
+<div class="wrap">
+  <h1 class="title">THE READING DESK</h1>
+  <div class="sub">
+    PANE XIX · every document in the fleet, rendered · read it, or print it to PDF
+  </div>
+
+  <div class="desk">
+    <aside class="shelf">
+      <div class="shelf-head">
+        <span>DOCUMENTS</span>
+        <span id="count" style="color:var(--dim);letter-spacing:.08em"></span>
+      </div>
+      <div class="shelf-list" id="shelf">
+        <div class="grp">reading the index…</div>
+      </div>
+    </aside>
+
+    <main class="page">
+      <div class="page-bar no-print">
+        <span class="page-name" id="pageName">— choose a document —</span>
+        <button class="btn" id="btnPrint" disabled>PRINT · PDF</button>
+        <button class="btn" id="btnRaw" disabled>SOURCE</button>
+      </div>
+      <div class="paper empty" id="paper">
+        Every markdown document in the fleet, read from
+        <code style="margin:0 4px">SOURCES.json</code>.<br><br>
+        This pane holds no list of its own — add a document to the semantics
+        and it appears here.
+      </div>
+    </main>
+  </div>
+
+  <div class="note" id="note"></div>
+</div>
+
 <script src="fleet-nav.js"></script>
-<main>
-<div class="stamp">
-  <div class="sl"><span class="doc">Fleet Pane</span><span class="sep">·</span><span>The Emerald Tablets</span></div>
-  <div class="sm">Ingram Manor LLC</div>
-  <div><span class="live" id="stamp-read">reading LIBRARY.json…</span></div>
-</div>
-<header class="lib-head">
-  <div class="lib-gem" aria-hidden="true">
-    <svg viewBox="0 0 130 122" width="124" height="117" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <linearGradient id="rimF" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stop-color="#f7dc82"/><stop offset="0.5" stop-color="#d4a017"/><stop offset="1" stop-color="#7d5a10"/>
-        </linearGradient>
-      </defs>
-      <polygon points="65,118 12,58 12,40 28,16 50,16 65,34 80,16 102,16 118,40 118,58" fill="url(#rimF)"/>
-      <polygon points="65,40 18,44 28,20 50,20" fill="#3ec882"/>
-      <polygon points="65,40 18,44 38,68 65,62" fill="#1f7d4e"/>
-      <polygon points="18,44 38,68 19,53" fill="#12563a"/>
-      <polygon points="65,40 112,44 102,20 80,20" fill="#4ada90"/>
-      <polygon points="65,40 112,44 92,68 65,62" fill="#2ea86a"/>
-      <polygon points="112,44 92,68 111,53" fill="#12563a"/>
-      <polygon points="65,40 65,62 38,68 52,96" fill="#268f5c"/>
-      <polygon points="65,40 65,62 92,68 78,96" fill="#1b6e46"/>
-      <polygon points="38,68 52,96 65,110" fill="#124f31"/>
-      <polygon points="92,68 78,96 65,110" fill="#0d3e26"/>
-      <polygon points="52,96 65,110 78,96 65,62" fill="#1f7d4e"/>
-      <polygon points="50,20 65,40 33,34" fill="#86e6ae" opacity="0.75"/>
-      <polygon points="65,56 53,49 47,55 50,64 65,74" fill="#c8402f"/>
-      <polygon points="65,56 77,49 83,55 80,64 65,74" fill="#e35a44"/>
-      <polygon points="65,56 53,49 65,61" fill="#ec7a62"/>
-      <polygon points="65,56 77,49 65,61" fill="#b53324"/>
-      <polygon points="50,64 65,74 65,86" fill="#a52c1e"/>
-      <polygon points="80,64 65,74 65,86" fill="#861c12"/>
-      <polygon points="53,49 47,55 56,53" fill="#f4917a" opacity="0.85"/>
-    </svg>
-  </div>
-  <div class="lib-titles">
-    <p class="eyebrow">Heart of Amenti</p>
-    <h1><span class="the">The</span>EMERALD TABLETS</h1>
-    <p class="tag">Sources</p>
-  </div>
-  <div class="rule" style="margin-left:auto;margin-right:auto"></div>
-</header>
-<div id="glass">
-  <div class="gk">⚠ No reading.</div>
-  <div class="gv" id="glass-msg"><code>LIBRARY.json</code> did not load. The librarian (<code>probes/probe-library.mjs</code>) may not have run yet. This pane shows nothing rather than yesterday's numbers.</div>
-</div>
-<div class="strip" id="strip"></div>
-<div id="body"></div>
-<div class="biblio" id="biblio" style="display:none">
-  <button id="biblio-btn">⬇ Download Bibliography (.md)</button>
-  <span class="note" id="biblio-note"></span>
-</div>
-<div class="foot">Ingram Manor LLC · The Library reads itself · Amenti.live</div>
-</main>
 <script>
-(function(){
-  var $=function(id){return document.getElementById(id)};
-  var esc=function(s){return String(s==null?'':s).replace(/[&<>]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;'}[c]})};
-  var LIBRARY_URL='https://ianingram.github.io/Amenti.live/LIBRARY.json';
-  fetch(LIBRARY_URL,{cache:'no-store'})
-    .then(function(r){if(!r.ok)throw new Error('LIBRARY.json '+r.status);return r.json();})
-    .then(render)
-    .catch(function(e){
-      $('glass').style.display='block';
-      $('glass-msg').innerHTML='<code>LIBRARY.json</code> did not load ('+esc(e.message)+'). The librarian (<code>probes/probe-library.mjs</code>) may not have run yet.';
-      $('stamp-read').textContent='no reading'; $('stamp-read').style.color='var(--red)';
-    });
-  function render(d){
-    var t=d.totals||{};
-    $('stamp-read').textContent='LAST READ · '+(d.generatedAt||'?');
-    var mb=(t.totalKB!=null? Math.round(t.totalKB/1024*10)/10+' MB':'?');
-    var cells=[['unlocked',t.unlocked,'n'],['rooms',t.manifests,''],['works',t.totalWorksPresent,''],['total size',mb,''],['cards',t.withCard,''],['plates',t.withTerminal,''],['empty',t.empty,t.empty?'am':'ok'],['placeholder',t.placeholder,t.placeholder?'am':'ok']];
-    $('strip').innerHTML=cells.map(function(c){return '<div class="cell"><div class="ck">'+c[0]+'</div><div class="cv '+c[2]+'">'+esc(c[1])+'</div></div>';}).join('');
-    var rooms=(d.rooms||[]).slice().sort(function(a,b){var o={full:0,empty:1,placeholder:2,error:3};if(o[a.status]!==o[b.status])return o[a.status]-o[b.status];return (b.worksPresent||0)-(a.worksPresent||0);});
-    var img=function(has,label){return has?'<span class="imgyes" title="'+label+' present">●</span>':'<span class="imgno" title="no '+label+'">–</span>';};
-    var rows=rooms.map(function(r){return '<tr>'+
-      '<td><span class="name">'+esc(r.name||r.key)+'</span> <span class="key">'+esc(r.key)+'</span></td>'+
-      '<td><span class="pill '+esc(r.status)+'">'+esc(r.status)+'</span></td>'+
-      '<td class="num">'+esc(r.worksPresent!=null?r.worksPresent:'–')+(r.worksListed&&r.worksListed!==r.worksPresent?' <span class="key">/'+esc(r.worksListed)+'</span>':'')+'</td>'+
-      '<td class="num">'+esc(r.sizeKB!=null?r.sizeKB+' KB':'–')+'</td>'+
-      '<td class="ctr">'+img(r.hasCard,'card')+'</td>'+
-      '<td class="ctr">'+img(r.hasTerminal,'terminal plate')+'</td>'+
-    '</tr>';}).join('');
-    $('body').innerHTML='<table><thead><tr><th>Reading Room</th><th>State</th><th class="num">Works</th><th class="num">Size</th><th class="ctr">Card</th><th class="ctr">Plate</th></tr></thead><tbody>'+rows+'</tbody></table>';
-    wireBiblio(d,rooms);
+(function () {
+  'use strict';
+
+  var INDEX = 'https://ianingram.github.io/Amenti.live/SOURCES.json';
+  var RAW   = 'https://raw.githubusercontent.com/ianingram/';
+
+  var shelfEl = document.getElementById('shelf');
+  var paperEl = document.getElementById('paper');
+  var nameEl  = document.getElementById('pageName');
+  var countEl = document.getElementById('count');
+  var noteEl  = document.getElementById('note');
+  var btnPrint= document.getElementById('btnPrint');
+  var btnRaw  = document.getElementById('btnRaw');
+  var current = null;
+
+  function esc(s){ return String(s).replace(/[&<>]/g, function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c]; }); }
+
+  /* ── A SMALL MARKDOWN RENDERER ─────────────────────────────────────────
+     Deliberately small and deliberately local. A CDN library would be a
+     fourth-party dependency on a pane whose whole job is to be readable when
+     other things are not, and these documents use a narrow slice of markdown:
+     headings, lists, tables, fences, quotes, rules, bold, code.
+     WHAT IT DOES NOT DO: nested lists, inline HTML, reference links, footnotes.
+     If a document starts needing those, this is the thing to replace. */
+  function md(src){
+    var out = [], lines = String(src).replace(/\r\n?/g,'\n').split('\n');
+    var i = 0, inList = false, listTag = 'ul';
+
+    function inline(t){
+      t = esc(t);
+      t = t.replace(/`([^`]+)`/g, '<code>$1</code>');
+      t = t.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+      t = t.replace(/(^|[\s(])\*([^*\n]+)\*/g, '$1<em>$2</em>');
+      t = t.replace(/\[([^\]]+)\]\((https?:[^)\s]+)\)/g,
+                    '<a href="$2" target="_blank" rel="noopener">$1</a>');
+      return t;
+    }
+    function closeList(){ if (inList){ out.push('</'+listTag+'>'); inList=false; } }
+
+    while (i < lines.length) {
+      var L = lines[i];
+
+      /* fenced code — taken verbatim, never inline-formatted */
+      if (/^```/.test(L)) {
+        closeList(); i++;
+        var buf = [];
+        while (i < lines.length && !/^```/.test(lines[i])) buf.push(lines[i++]);
+        i++;
+        out.push('<pre><code>' + esc(buf.join('\n')) + '</code></pre>');
+        continue;
+      }
+
+      /* table — a header row, a divider, then rows */
+      if (/^\s*\|/.test(L) && i+1 < lines.length && /^\s*\|[\s:|-]+\|\s*$/.test(lines[i+1])) {
+        closeList();
+        var cells = function(r){
+          return r.replace(/^\s*\||\|\s*$/g,'').split('|').map(function(c){return c.trim();});
+        };
+        var head = cells(L); i += 2;
+        var t = '<table><thead><tr>' + head.map(function(h){
+          return '<th>'+inline(h)+'</th>'; }).join('') + '</tr></thead><tbody>';
+        while (i < lines.length && /^\s*\|/.test(lines[i])) {
+          t += '<tr>' + cells(lines[i++]).map(function(c){
+            return '<td>'+inline(c)+'</td>'; }).join('') + '</tr>';
+        }
+        out.push(t + '</tbody></table>');
+        continue;
+      }
+
+      if (/^\s*$/.test(L))            { closeList(); i++; continue; }
+      if (/^---+\s*$/.test(L))        { closeList(); out.push('<hr>'); i++; continue; }
+
+      var h = L.match(/^(#{1,4})\s+(.*)$/);
+      if (h) { closeList();
+        var lv = Math.min(h[1].length, 3);
+        out.push('<h'+lv+'>'+inline(h[2])+'</h'+lv+'>'); i++; continue; }
+
+      if (/^>\s?/.test(L)) { closeList();
+        var q = [];
+        while (i < lines.length && /^>\s?/.test(lines[i])) q.push(lines[i++].replace(/^>\s?/,''));
+        /* PARAGRAPHS FIRST, THEN INLINE — found 29 Aug 2026 by running this
+           against the real documents rather than a sample. Formatting each
+           LINE separately breaks any **bold** that opens on one line and
+           closes on the next, which is most of the emphasised sentences in
+           these files, because they are wrapped at 78 characters.
+           Blank lines separate paragraphs; everything else joins with a space
+           so a wrapped sentence is one string before inline() sees it. */
+        out.push('<blockquote>' + q.join('\n').split(/\n\s*\n/)
+          .filter(function(x){ return x.trim(); })
+          .map(function(x){ return '<p>' + inline(x.replace(/\n/g,' ').trim()) + '</p>'; })
+          .join('') + '</blockquote>');
+        continue; }
+
+      var li = L.match(/^\s*([-*]|\d+\.)\s+(.*)$/);
+      if (li) {
+        var want = /^\d/.test(li[1]) ? 'ol' : 'ul';
+        if (inList && want !== listTag) closeList();
+        if (!inList){ listTag = want; out.push('<'+listTag+'>'); inList = true; }
+        out.push('<li>'+inline(li[2])+'</li>'); i++; continue;
+      }
+
+      closeList();
+      var para = [];
+      while (i < lines.length && !/^\s*$/.test(lines[i]) &&
+             !/^(#{1,4}\s|>|```|---+\s*$|\s*\|)/.test(lines[i]) &&
+             !/^\s*([-*]|\d+\.)\s+/.test(lines[i])) para.push(lines[i++]);
+      out.push('<p>'+inline(para.join(' '))+'</p>');
+    }
+    closeList();
+    return out.join('\n');
   }
-  function wireBiblio(d,rooms){
-    var ww=rooms.filter(function(r){return r.works&&r.works.length;});
-    var sc=ww.reduce(function(n,r){return n+r.works.length;},0);
-    if(!sc)return;
-    $('biblio').style.display='block';
-    $('biblio-note').textContent=sc+' works across '+ww.length+' rooms';
-    $('biblio-btn').onclick=function(){
-      var L=['# THE AMENTI LIBRARY — BIBLIOGRAPHY','','Primary sources held in the reading rooms. A reading of LIBRARY.json, generated '+(d.generatedAt||'')+'.','All texts public domain unless a source states otherwise.','','---',''];
-      ww.slice().sort(function(a,b){return (a.name||a.key).localeCompare(b.name||b.key);}).forEach(function(r){
-        L.push('## '+(r.name||r.key),'');
-        var bs={};r.works.forEach(function(w){var s=w.source||'(source not recorded)';(bs[s]=bs[s]||[]).push(w.title||'');});
-        Object.keys(bs).forEach(function(s){L.push('- '+s);});L.push('');
+
+  /* ── THE SHELF, BUILT FROM THE INDEX ───────────────────────────────── */
+  function build(index){
+    var groups = {}, n = 0;
+
+    Object.keys(index.sources || {}).forEach(function (section) {
+      (index.sources[section] || []).forEach(function (doc) {
+        if (!doc.path || !/\.md$/i.test(doc.path)) return;
+        if (doc.unreachable) return;          /* a 404 is not a document */
+        (groups[section] = groups[section] || []).push(doc); n++;
       });
-      L.push('---','','_'+sc+' works · '+ww.length+' figures · Ingram Manor LLC · Amenti.live_');
-      var b=new Blob([L.join('\n')],{type:'text/markdown'});var a=document.createElement('a');
-      a.href=URL.createObjectURL(b);a.download='amenti-library-bibliography.md';
-      document.body.appendChild(a);a.click();a.remove();
-    };
+    });
+
+    countEl.textContent = n;
+    if (!n) {
+      shelfEl.innerHTML = '<div class="grp err">The index holds no markdown. '
+        + 'That is a finding, not an empty shelf.</div>';
+      return;
+    }
+
+    var html = '';
+    Object.keys(groups).sort().forEach(function (section) {
+      html += '<div class="grp">' + esc(section) + '</div>';
+      groups[section].sort(function(a,b){
+        return a.path.split('/').pop().localeCompare(b.path.split('/').pop());
+      }).forEach(function (doc) {
+        var file = doc.path.split('/').pop();
+        /* The gloss is often a paragraph. The shelf gets its first sentence;
+           the whole thing is the title attribute. */
+        var why = (doc.what || '').split(/\.\s/)[0];
+        if (why.length > 105) why = why.slice(0, 104) + '…';
+        html += '<button class="doc" data-path="' + esc(doc.path) + '" '
+             +  'title="' + esc(doc.what || 'No gloss — this document is undescribed.') + '">'
+             +  '<div class="doc-name">' + esc(file) + '</div>'
+             +  '<div class="doc-why">' + esc(why || 'undescribed') + '</div>'
+             +  '</button>';
+      });
+    });
+    shelfEl.innerHTML = html;
+
+    Array.prototype.forEach.call(shelfEl.querySelectorAll('.doc'), function (b) {
+      b.addEventListener('click', function(){ open(b); });
+    });
   }
+
+  function open(btn){
+    var path = btn.getAttribute('data-path');
+    Array.prototype.forEach.call(shelfEl.querySelectorAll('.doc'), function(o){
+      o.classList.remove('on'); });
+    btn.classList.add('on');
+
+    current = path;
+    nameEl.textContent = path;
+    paperEl.className = 'paper empty';
+    paperEl.textContent = 'reading…';
+    btnPrint.disabled = true; btnRaw.disabled = true;
+
+    fetch(RAW + path, { cache: 'no-store' })
+      .then(function(r){
+        if (!r.ok) throw new Error('HTTP ' + r.status +
+          (r.status === 404 ? ' — the index names a path the repo does not have'
+                            : ' — the source, not the file'));
+        return r.text();
+      })
+      .then(function(text){
+        paperEl.className = 'paper';
+        paperEl.innerHTML = '<div class="md">' + md(text) + '</div>';
+        paperEl.scrollTop = 0;
+        btnPrint.disabled = false; btnRaw.disabled = false;
+        noteEl.textContent = path.split('/').pop() + ' · '
+          + text.split(/\s+/).length.toLocaleString() + ' words · read at '
+          + new Date().toISOString().replace('T',' ').slice(0,16);
+      })
+      ['catch'](function(e){
+        paperEl.className = 'paper empty err';
+        /* ATTRIBUTE, NEVER INFER. A 404 and a network failure are different
+           facts and a reader deserves to know which one happened. */
+        paperEl.textContent = 'Could not read ' + path + ' — ' + e.message;
+        noteEl.textContent = '';
+      });
+  }
+
+  btnPrint.addEventListener('click', function(){ if (current) window.print(); });
+  btnRaw.addEventListener('click', function(){
+    if (current) window.open(RAW + current, '_blank', 'noopener');
+  });
+
+  fetch(INDEX, { cache: 'no-store' })
+    .then(function(r){
+      if (!r.ok) throw new Error('SOURCES.json returned HTTP ' + r.status);
+      return r.json();
+    })
+    .then(build)
+    ['catch'](function(e){
+      /* EMPTY GLASS. The shelf shows nothing and says why, rather than
+         showing an empty list that looks like a fleet with no documents. */
+      shelfEl.innerHTML = '<div class="grp err">THE INDEX DID NOT LOAD<br><br>'
+        + esc(e.message) + '<br><br>This pane holds no list of its own, so it '
+        + 'has nothing to show. That is deliberate: a shelf that invented its '
+        + 'own contents would be worse than an empty one.</div>';
+      countEl.textContent = '—';
+    });
 })();
 </script>
 </body>

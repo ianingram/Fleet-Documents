@@ -86,6 +86,16 @@
        appears in the register it renders. */
     { file: 'surfaces.html',       label: 'SURFACES'     , note:
       'Every place a person can <b>act</b> on this system, and what reaches each one — counted, remembered, dialled, voiced. The register that did not exist until the same gap was found nine times in one day.' },
+
+    /* ── PANE XIX · THE READING DESK ──────────────────────────────────────
+       Eleven markdown documents sat in the flagship's root and the only way to
+       read one was to open GitHub and look at a monospaced blob. Filing them
+       into docs/ was the other answer and was refused: three are FETCHED AT
+       RUNTIME by their root path, and a tidy folder that breaks the hall is
+       not tidy. So the fix is a reading surface rather than a move.
+       It holds no list. The documents come from SOURCES.json. */
+    { file: 'library.html',        label: 'READING DESK' , note:
+      'Every document in the fleet, <b>rendered</b> — and printable to PDF. It holds no list of its own: the shelf is built from SOURCES.json, so a document that acquires a sentence appears here.' },
   ];
   /* ── THE REGISTRY IS PUBLISHED ─────────────────────────────────────────
      The Harbor's card grid was HAND-WRITTEN beside this list, and index.html
