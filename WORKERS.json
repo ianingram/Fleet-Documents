@@ -5,12 +5,12 @@
   "workers": {
     "amenti-mint": {
       "schedules": [{"cron":"0 0 * * mon"}],
-      "bindings": null,
+      "bindings": [{"name":"ADMIN_PASSWORD","type":"secret_text"},{"name":"BRIDGE_SECRET","type":"secret_text"},{"name":"SUPABASE_SECRET","type":"secret_text"}],
       "secretNames": ["ADMIN_PASSWORD","BRIDGE_SECRET","SUPABASE_SECRET"]
     },
     "amenti-proxy": {
-      "schedules": null,
-      "bindings": null,
+      "schedules": [],
+      "bindings": [{"name":"AI","project":"<catalog>","type":"ai"},{"name":"ALLOWED_ORIGINS","text":"https://amenti.live,https://www.amenti.live,https://ianingram.github.io,https://amenti-ai.com,https://www.amenti-ai.com","type":"plain_text"},{"name":"ANTHROPIC_API_KEY","type":"secret_text"},{"name":"ARTICLES","namespace_id":"2409be8763b849049fe05172cfdef54e","type":"kv_namespace"},{"bucket_name":"amenti-audio","name":"AUDIO","type":"r2_bucket"},{"name":"GCP_SA_KEY","type":"secret_text"},{"name":"GEMINI_KEY","type":"secret_text"},{"environment":"production","name":"MINT_SVC","service":"amenti-mint","type":"service"},{"bucket_name":"amenti-scenes","name":"SCENES","type":"r2_bucket"},{"name":"TTS_ROUTE","text":"vertex","type":"plain_text"}],
       "secretNames": ["ANTHROPIC_API_KEY","GCP_SA_KEY","GEMINI_KEY"]
     },
     "amenti-probe": {
@@ -31,7 +31,7 @@
     "amenti-terminal": {
       "schedules": [],
       "bindings": [],
-      "secretNames": null
+      "secretNames": []
     }
   }
 }
