@@ -158,7 +158,7 @@ code{font-family:var(--mono);font-size:.86em;color:var(--gold-light);background:
 <script>
 (function(){
   var $=function(id){return document.getElementById(id)};
-  var A='https://ianingram.github.io/Amenti.live/';
+  var A='https://amenti.live/';
   var loaded=0, tried=0;
   function done(){ tried++; if(tried>=4) $('stamp-read').textContent = loaded? ('LIVE · '+loaded+' counts') : 'authored map · counts offline'; }
   function set(id,v){ var e=$(id); if(e){ e.textContent=v; loaded++; } }
