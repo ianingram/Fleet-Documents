@@ -62,7 +62,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const ROOT = process.argv[2] && !process.argv[2].startsWith('--') ? process.argv[2] : '.';
-const BASE = process.env.PANE_BASE || 'https://ianingram.github.io/Fleet-Documents/';
+const BASE = process.env.PANE_BASE || 'https://harbor.amenti.live/';
 const NAV  = path.join(ROOT, 'fleet-nav.js');
 
 const read = p => { try { return fs.readFileSync(path.join(ROOT, p), 'utf8'); } catch { return null; } };

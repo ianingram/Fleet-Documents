@@ -61,7 +61,7 @@ permissions:
   contents: write
 
 env:
-  PANE_BASE: 'https://ianingram.github.io/Fleet-Documents/'
+  PANE_BASE: 'https://harbor.amenti.live/'
 
 jobs:
   watch:
