@@ -96,6 +96,12 @@
        It holds no list. The documents come from SOURCES.json. */
     { file: 'library.html',        label: 'READING DESK' , note:
       'Every document in the fleet, <b>rendered</b> — and printable to PDF. It holds no list of its own: the shelf is built from SOURCES.json, so a document that acquires a sentence appears here.' },
+    /* 12 Nov 2026 — THE REGISTER. Reads REGISTER.json: every Amenti name and
+       what kind of thing it is (company, product, repo, domain, address).
+       Built because Amenti.live is both a repo and a domain, and the two were
+       taken for each other for months. Public: no keys or emails here. */
+    { file: 'register.html',       label: 'THE REGISTER' , note:
+      'Every Amenti <b>name</b>, and what kind of thing it is &mdash; company, product, repo or address. Built because <b>Amenti.live</b> is both a repo and a domain, and the two were taken for each other for months.' },
   ];
   /* ── THE REGISTRY IS PUBLISHED ─────────────────────────────────────────
      The Harbor's card grid was HAND-WRITTEN beside this list, and index.html

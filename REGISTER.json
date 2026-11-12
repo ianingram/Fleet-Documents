@@ -1,0 +1,35 @@
+{
+  "_": "THE REGISTER. Every Amenti name, and what kind of thing it is. Edit this file; register.html renders it. Public: no keys, emails or secrets here — those live on the bridge.",
+  "updated": "2026-11-12",
+  "law": "Each name is one kind of thing: company, product, repo, domain or address. A repo name is never a domain, and a domain is never a repo.",
+  "decision": "One domain, amenti.live. Everything under one roof. Private parts on subdomains behind Cloudflare Access.",
+  "addresses": [
+    {"address":"amenti.live","url":"https://amenti.live/","what":"The Amenti Interface: Page1, the Hall, the Codex, Ask Amenti. Also /unsub, the VALL·HAL·LA unsubscribe page.","repo":"Amenti.live","branch":"main","access":"public"},
+    {"address":"www.amenti.live","url":"https://www.amenti.live/","what":"Redirects to amenti.live.","repo":"","branch":"","access":"public"},
+    {"address":"bridge.amenti.live","url":"https://bridge.amenti.live/","what":"The Operator Hub. Captain only.","repo":"Admin (private)","branch":"main","access":"locked"},
+    {"address":"harbor.amenti.live","url":"https://harbor.amenti.live/","what":"The Harbor and every fleet pane, this one included. Public on purpose: the newsletter and Page1 link to the Sonar, the Broadcast and the Ocean.","repo":"Fleet-Documents","branch":"branch","access":"public"},
+    {"address":"amenti-ai.com","url":"https://amenti-ai.com/","what":"Redirects to amenti.live, path and query kept. Held until renewal.","repo":"","branch":"","access":"redirect"},
+    {"address":"ianingram.github.io/Amenti.live, /Fleet-Documents","url":"","what":"Old addresses. GitHub sends them on to the new ones, so old links keep working.","repo":"","branch":"","access":"redirect"},
+    {"address":"ianingram.github.io/Amenti-Studios","url":"https://ianingram.github.io/Amenti-Studios/","what":"The Amenti Studios website. Moving to studios.amenti.live with the paywall.","repo":"Amenti-Studios","branch":"main","access":"public"},
+    {"address":"ianingram.github.io/Amenti-Readings","url":"https://ianingram.github.io/Amenti-Readings/","what":"The productions' files: cue sheets, audio, art.","repo":"Amenti-Readings","branch":"main","access":"public"},
+    {"address":"ianingram.github.io/ingram-manor","url":"https://ianingram.github.io/ingram-manor/","what":"The Ingram Manor front door: \"Where history talks back.\"","repo":"ingram-manor","branch":"main","access":"public"},
+    {"address":"studios.amenti.live","url":"","what":"Amenti Studios behind the paywall.","repo":"","branch":"","access":"planned"}
+  ],
+  "names": [
+    {"name":"Ingram Manor LLC","kind":"Company","what":"Owns everything."},
+    {"name":"Amenti Interface","kind":"Product","what":"Live conversations with historical figures; Ask Amenti; the Library of Legends."},
+    {"name":"Amenti Studios","kind":"Product","what":"Staged readings: Dracula, A Christmas Carol, Julius Caesar, Romeo and Juliet, Treasure Island, Quo Vadis."},
+    {"name":"Amenti.live","kind":"Repo","what":"Builds and serves the Interface. Shares its name with the domain, and that is the whole reason this register exists."},
+    {"name":"Admin","kind":"Repo (private)","what":"The Operator Hub, served at bridge.amenti.live."},
+    {"name":"Fleet-Documents","kind":"Repo","what":"The Harbor and its panes. Default branch is named branch."},
+    {"name":"Amenti-Media","kind":"Repo","what":"The Media Door's upload page. The door itself is the amenti-media Worker and its R2 bucket."},
+    {"name":"Amenti-Print-Masters","kind":"Repo (private)","what":"Print masters, upscaled paintings, marketing and print working files."},
+    {"name":"Workers","kind":"Cloudflare","what":"amenti-proxy (chat, voice cache), amenti-media (Media Door), amenti-mint (Operator's Glass data), dilution-monitor, amenti-probe and others. See the WORKERS pane."},
+    {"name":"@amentistudio","kind":"Instagram","what":"Amenti Studios. Facebook Page: Amenti Studios."}
+  ],
+  "lessons": [
+    "GitHub's redirect from an old github.io address carries no CORS header. A fetch() or web font that asks for the old address from another origin fails silently. Repoint first, then move.",
+    "Check what else an old address served before moving it. The unsubscribe page lived with the Hub and broke when the Hub moved.",
+    "Studios and Readings fetch names.csv and the voice bundle from the Interface. Repoint those before Studios moves."
+  ]
+}

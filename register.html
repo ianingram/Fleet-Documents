@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>THE REGISTER · Amenti Fleet</title>
+<meta name="description" content="Every Amenti name, and what kind of thing it is.">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="amenti.css">
+<style>
+  /* ═══════════════════════════════════════════════════════════════════════
+     register.html · THE NAMING REGISTER
+
+     WHY. Amenti.live is a repo AND a domain, and for months the two were
+     taken for each other — in conversation, in memory, in code. On 11–12 Nov
+     2026 everything moved under one roof (amenti.live) and the names were
+     settled. This pane is where they are written down.
+
+     IT TYPES NOTHING. Every row comes from REGISTER.json. Edit that file and
+     this pane follows.
+
+     PUBLIC. The Harbor is public, so this pane carries no keys, emails or
+     account details. Security notes live on the bridge.
+
+     EMPTY GLASS. If REGISTER.json cannot be read, the pane says so and shows
+     nothing else.
+     ═══════════════════════════════════════════════════════════════════════ */
+  :root{
+    --ink:#0a0a0f; --dim:#a4a4b8; --text:#c8ccdc; --slate:#2a2a38;
+    --neon:#00ffe0; --gold:#d4a017; --gold-bright:#f5c542;
+    --term:#57c98a; --amber:#fbbf24; --red:#f87171; --violet:#c4a5ff;
+    --mono:'Share Tech Mono',ui-monospace,Menlo,monospace;
+    --body:'Rajdhani',system-ui,sans-serif;
+    color-scheme:dark;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ink);color:var(--text);font-family:var(--body);font-size:17px;line-height:1.55}
+  .wrap{max-width:1100px;margin:0 auto;padding:0 24px 80px}
+  h1{font-family:var(--disp,var(--mono));font-size:clamp(26px,4vw,38px);letter-spacing:.14em;color:var(--gold-bright);margin:30px 0 6px;font-weight:700}
+  .standfirst{margin:0 0 6px;max-width:70ch;color:var(--dim)}
+  .reading{margin:0 0 22px;font-family:var(--mono);font-size:12px;letter-spacing:.06em;color:var(--neon);opacity:.8}
+  .law{margin:0 0 10px;padding:14px 16px;border-left:2px solid var(--gold);background:rgba(212,160,23,.06);max-width:80ch}
+  .law b{color:var(--gold-bright);font-weight:600}
+  h2{font-family:var(--mono);font-size:12px;letter-spacing:.18em;color:var(--gold);margin:38px 0 10px;font-weight:400;text-transform:uppercase}
+  .tbl{overflow-x:auto}
+  table{width:100%;border-collapse:collapse;min-width:640px}
+  th{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);opacity:.7;text-align:left;font-weight:400;padding:6px 10px;border-bottom:1px solid var(--slate)}
+  td{padding:10px;border-bottom:1px solid rgba(42,42,56,.6);vertical-align:top}
+  td.addr{font-family:var(--mono);font-size:14px;white-space:nowrap}
+  td.repo{font-family:var(--mono);font-size:13px;color:var(--dim)}
+  td.repo small{display:block;opacity:.6}
+  a{color:var(--neon);text-decoration:none}
+  a:hover,a:focus-visible{color:var(--gold-bright);text-decoration:underline}
+  .pill{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;padding:2px 8px;border-radius:3px;border:1px solid}
+  .pill.public{color:var(--term);border-color:rgba(87,201,138,.4)}
+  .pill.locked{color:var(--amber);border-color:rgba(251,191,36,.45)}
+  .pill.redirect{color:var(--dim);border-color:var(--slate)}
+  .pill.planned{color:var(--violet);border-color:rgba(196,165,255,.4)}
+  .kind{font-family:var(--mono);font-size:13px;color:var(--gold)}
+  ol{margin:0;padding-left:1.3em;max-width:80ch}
+  ol li{margin:8px 0}
+  .degraded{margin:20px 0;padding:12px 14px;border-left:2px solid var(--red);color:var(--red);font-family:var(--mono);font-size:13px}
+</style>
+</head>
+<body>
+<div id="fleet-nav"></div>
+<div class="wrap">
+  <h1>THE REGISTER</h1>
+  <p class="standfirst">Every Amenti name, and what kind of thing it is. This pane holds no list of its own. It reads <code>REGISTER.json</code> and renders what is there.</p>
+  <p class="reading" id="reading">reading the register&hellip;</p>
+  <div id="out"></div>
+</div>
+<script src="fleet-nav.js"></script>
+<script>
+(function () {
+  'use strict';
+  function el(tag, cls, text){
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text != null) e.textContent = text;
+    return e;
+  }
+  function table(heads, rows){
+    var w = el('div','tbl'), t = el('table'), tr = el('tr');
+    heads.forEach(function(h){ tr.appendChild(el('th',null,h)); });
+    var th = el('thead'); th.appendChild(tr); t.appendChild(th);
+    var tb = el('tbody'); rows.forEach(function(r){ tb.appendChild(r); });
+    t.appendChild(tb); w.appendChild(t); return w;
+  }
+  var out = document.getElementById('out');
+
+  fetch('REGISTER.json?_=' + Date.now(), { cache:'no-store' })
+    .then(function (r){ if (!r.ok) throw new Error(r.status + ' REGISTER.json'); return r.json(); })
+    .then(function (d){
+      document.getElementById('reading').textContent = 'register last updated ' + (d.updated || 'at an unknown date');
+
+      var law = el('div','law');
+      law.appendChild(el('b',null,'The law. ')); law.appendChild(document.createTextNode(d.law || ''));
+      out.appendChild(law);
+      var dec = el('div','law');
+      dec.appendChild(el('b',null,'The decision. ')); dec.appendChild(document.createTextNode(d.decision || ''));
+      out.appendChild(dec);
+
+      out.appendChild(el('h2',null,'Addresses'));
+      out.appendChild(table(['Address','What','Repo','State'], (d.addresses||[]).map(function(a){
+        var tr = el('tr'), c1 = el('td','addr');
+        if (a.url){ var l = el('a',null,a.address); l.href = a.url; c1.appendChild(l); }
+        else c1.textContent = a.address;
+        tr.appendChild(c1);
+        tr.appendChild(el('td',null,a.what));
+        var c3 = el('td','repo', a.repo || '—');
+        if (a.branch) c3.appendChild(el('small',null,'branch: ' + a.branch));
+        tr.appendChild(c3);
+        var c4 = el('td'); c4.appendChild(el('span','pill ' + (a.access||''), a.access || '')); tr.appendChild(c4);
+        return tr;
+      })));
+
+      out.appendChild(el('h2',null,'Names'));
+      out.appendChild(table(['Name','Kind','What it is'], (d.names||[]).map(function(n){
+        var tr = el('tr');
+        tr.appendChild(el('td','addr',n.name));
+        tr.appendChild(el('td','kind',n.kind));
+        tr.appendChild(el('td',null,n.what));
+        return tr;
+      })));
+
+      out.appendChild(el('h2',null,'Moving a site — the lessons'));
+      var ol = el('ol');
+      (d.lessons||[]).forEach(function(s){ ol.appendChild(el('li',null,s)); });
+      out.appendChild(ol);
+    })
+    .catch(function (e){
+      document.getElementById('reading').textContent = '';
+      out.appendChild(el('div','degraded',
+        'REGISTER.json could not be read — ' + (e.message || e) +
+        '. No names are shown rather than a list that may no longer be true.'));
+    });
+})();
+</script>
+</body>
+</html>
